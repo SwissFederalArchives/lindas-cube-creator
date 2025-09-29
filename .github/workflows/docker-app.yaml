@@ -5,7 +5,7 @@ on:
     branches:
       - "**"
     tags:
-      - "lindas-lindas-cube-creator-app/v*.*.*"
+      - "lindas-lindas-lindas-cube-creator-app/v*.*.*"
   pull_request:
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
         id: docker_meta
         with:
           images: zazuko/cube-creator-app
-          strip-tag-prefix: lindas-cube-creator-app/
+          strip-tag-prefix: lindas-lindas-cube-creator-app/
 
       - name: Build and push
         uses: docker/build-push-action@v2
