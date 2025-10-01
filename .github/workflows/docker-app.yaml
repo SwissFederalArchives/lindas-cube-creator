@@ -3,7 +3,8 @@ name: Build and push frontend Docker image
 on:
   push:
     branches:
-      - "**"
+      - master
+      - main
     tags:
       - "lindas-cube-creator-app/v*.*.*"
 
@@ -42,7 +43,7 @@ jobs:
         uses: zazuko/action-docker-meta@main
         id: docker_meta
         with:
-          images: ghcr.io/rareba/lindas-cube-creator-app
+          images: ghcr.io/swissfederalarchives/lindas-cube-creator-app
           strip-tag-prefix: lindas-cube-creator-app/
           include-pipeline-id: true
 
@@ -62,6 +63,7 @@ jobs:
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         if: ${{ github.actor != 'dependabot[bot]' }}
+        continue-on-error: true
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: zazuko

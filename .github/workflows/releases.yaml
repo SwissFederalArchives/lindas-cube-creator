@@ -54,7 +54,7 @@ jobs:
         continue-on-error: true
         with:
           root: apis/core
-          tag_prefix: cube-creator-api/v
+          tag_prefix: lindas-cube-creator-api/v
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
@@ -63,7 +63,7 @@ jobs:
         continue-on-error: true
         with:
           root: ui
-          tag_prefix: cube-creator-app/v
+          tag_prefix: lindas-cube-creator-app/v
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
@@ -72,6 +72,6 @@ jobs:
         continue-on-error: true
         with:
           root: cli
-          tag_prefix: cube-creator-cli/v
+          tag_prefix: lindas-cube-creator-cli/v
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
