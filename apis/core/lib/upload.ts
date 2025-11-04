@@ -14,6 +14,10 @@ const app = express.Router()
 
 app.use(bodyParser.json())
 
+function getUploadUrls(): string[] {
+  return [env.AWS_S3_ENDPOINT]
+}
+
 // Check if file already exists before companion handler
 app.post('/s3/multipart', async (req, res, next) => {
   const filename = req.body.filename
@@ -50,6 +54,7 @@ app.use(companion.app({
   },
   filePath: os.tmpdir(),
   secret: nanoid(30),
+  uploadUrls: getUploadUrls(),
 }).app)
 
 function buildKey(filename: string, metadata: Record<string, string>) {
