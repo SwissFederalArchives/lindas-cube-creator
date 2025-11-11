@@ -48,8 +48,8 @@ if [ "$SKIP_BUILD" = false ]; then
   echo "📦 Building API image..."
   docker build -f api.Dockerfile -t lindas-cube-creator-api:test-build --build-arg COMMIT=test .
 
-  echo "📦 Building App image..."
-  docker build -f app.Dockerfile -t lindas-cube-creator-app:test-build --build-arg COMMIT=test --build-arg PUBLIC_PATH=/app/ .
+  echo "📦 Building App image (using local Dockerfile)..."
+  docker build -f app.Dockerfile.local -t lindas-cube-creator-app:test-build --build-arg COMMIT=test --build-arg PUBLIC_PATH=/app/ .
 
   echo "📦 Building CLI image..."
   docker build -f cli.Dockerfile -t lindas-cube-creator-cli:test-build --build-arg COMMIT=test .

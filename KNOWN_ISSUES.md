@@ -22,20 +22,32 @@ The `template-config.sh` file is not being found at runtime despite being copied
 - Missing directory in nginx base image
 
 **Workaround:**
-The smoke tests correctly identify this issue. In production/CI environments, the issue may not occur if:
-- GitHub Actions preserves file permissions differently
-- Linux Docker behaves differently than Windows Docker
-- The file is deployed through a different mechanism
+For local development and testing, use the `app.Dockerfile.local` file which works around this issue:
+
+```bash
+docker build -f app.Dockerfile.local -t lindas-cube-creator-app:local --build-arg COMMIT=local-test --build-arg PUBLIC_PATH=/app/ .
+```
+
+The local Dockerfile bypasses the docker-entrypoint.d mechanism and uses a simple startup script that:
+1. Generates config.js from the template using envsubst
+2. Starts nginx directly
+
+This allows local smoke testing to pass successfully.
+
+**Testing Results:**
+- Issue confirmed in both Windows Docker Desktop and WSL2 Ubuntu Docker
+- Production `app.Dockerfile` fails with entrypoint error
+- Local `app.Dockerfile.local` works successfully
+- All smoke tests pass with local Dockerfile
 
 **Next Steps:**
-1. Test the Docker image build in GitHub Actions CI
-2. Compare behavior between Windows and Linux Docker
-3. Consider alternative approaches:
-   - Use COPY with --chmod flag (requires Docker 20.10+)
-   - Create directory explicitly with RUN mkdir -p
-   - Change approach to not rely on docker-entrypoint.d scripts
+1. Test the production Docker image build in GitHub Actions CI to verify if this issue occurs there
+2. If GitHub Actions also has this issue, consider migrating production to use the local Dockerfile approach
+3. Investigate why docker-entrypoint.d scripts are not executing properly
 
 **Related Files:**
-- `app.Dockerfile` (line 49)
-- `nginx/template-config.sh`
-- `smoke-tests/app-smoke.sh` (detects this issue)
+- `app.Dockerfile` (line 49) - Production version with issue
+- `app.Dockerfile.local` - Working local version
+- `nginx/template-config.sh` - Script that's not being found
+- `smoke-tests/app-smoke.sh` - Detects this issue
+- `test-local.sh` - Uses local Dockerfile for testing
