@@ -39,39 +39,47 @@ jobs:
   tags:
     name: Create tags
     runs-on: ubuntu-latest
+    needs: release
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Generate token
         id: generate_token
-        uses: tibdex/github-app-token@v1
+        uses: tibdex/github-app-token@v2
         with:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_PRIVATE_KEY }}
 
-      - name: Tag Core API
-        uses: ButlerLogic/action-autotag@1.1.2
-        continue-on-error: true
-        with:
-          root: apis/core
-          tag_prefix: lindas-cube-creator-api/v
+      - name: Read versions and create tags
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          # Read current versions
+          API_VERSION=$(node -p "require('./apis/core/package.json').version")
+          APP_VERSION=$(node -p "require('./ui/package.json').version")
+          CLI_VERSION=$(node -p "require('./cli/package.json').version")
 
-      - name: Tag UI
-        uses: ButlerLogic/action-autotag@1.1.2
-        continue-on-error: true
-        with:
-          root: ui
-          tag_prefix: lindas-cube-creator-app/v
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          # Function to create tag if it doesn't exist
+          create_tag() {
+            local tag=$1
+            if ! git rev-parse "$tag" >/dev/null 2>&1; then
+              git tag "$tag"
+              git push origin "$tag"
+              echo "✅ Created tag: $tag"
+            else
+              echo "⏭️  Tag already exists: $tag"
+            fi
+          }
 
-      - name: Tag CLI
-        uses: ButlerLogic/action-autotag@1.1.2
-        continue-on-error: true
-        with:
-          root: cli
-          tag_prefix: lindas-cube-creator-cli/v
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          # Create tags for each component
+          create_tag "lindas-cube-creator-api/v${API_VERSION}"
+          create_tag "lindas-cube-creator-app/v${APP_VERSION}"
+          create_tag "lindas-cube-creator-cli/v${CLI_VERSION}"
+
+          echo "## 🏷️ Git Tags Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- \`lindas-cube-creator-api/v${API_VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`lindas-cube-creator-app/v${APP_VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`lindas-cube-creator-cli/v${CLI_VERSION}\`" >> $GITHUB_STEP_SUMMARY

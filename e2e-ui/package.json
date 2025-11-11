@@ -1,0 +1,19 @@
+{
+  "name": "@cube-creator/e2e-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "End-to-end UI tests for Cube Creator",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "install-browsers": "playwright install --with-deps chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0",
+    "typescript": "~4.5.0"
+  }
+}

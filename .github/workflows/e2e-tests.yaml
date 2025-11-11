@@ -1,0 +1,167 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL to test (optional)'
+        required: false
+      skip_ui:
+        description: 'Skip UI tests'
+        type: boolean
+        default: false
+
+jobs:
+  api-tests:
+    name: API E2E Tests (Hypertest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.e2e.yml up -d fuseki minio api
+          echo "Waiting for services to be ready..."
+          timeout 180 bash -c 'until curl -f http://localhost:3000/api/; do sleep 5; done'
+
+      - name: Run API E2E tests
+        run: |
+          docker compose -f docker-compose.e2e.yml run --rm e2e-tests
+        env:
+          BASE_URI: ${{ github.event.inputs.base_url || 'http://api:3000/' }}
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          mkdir -p logs
+          docker compose -f docker-compose.e2e.yml logs api > logs/api.log
+          docker compose -f docker-compose.e2e.yml logs fuseki > logs/fuseki.log
+          docker compose -f docker-compose.e2e.yml logs minio > logs/minio.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-api-logs
+          path: logs/
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v
+
+  ui-tests:
+    name: UI E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip_ui }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+          cache-dependency-path: e2e-ui/yarn.lock
+
+      - name: Install dependencies
+        working-directory: e2e-ui
+        run: |
+          yarn install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: e2e-ui
+        run: |
+          npx playwright install --with-deps chromium
+
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.e2e.yml up -d
+          echo "Waiting for services to be ready..."
+          timeout 180 bash -c 'until curl -f http://localhost:8080/; do sleep 5; done'
+          timeout 180 bash -c 'until curl -f http://localhost:3000/api/; do sleep 5; done'
+
+      - name: Run Playwright tests
+        working-directory: e2e-ui
+        run: |
+          npx playwright test
+        env:
+          BASE_URL: ${{ github.event.inputs.base_url || 'http://localhost:8080/app/' }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e-ui/playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            e2e-ui/test-results.json
+            e2e-ui/test-results.xml
+          retention-days: 30
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          mkdir -p logs
+          docker compose -f docker-compose.e2e.yml logs > logs/all-services.log
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ui-logs
+          path: logs/
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v
+
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [api-tests, ui-tests]
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.e2e.yml up -d
+          echo "Waiting for services to be ready..."
+          timeout 180 bash -c 'until curl -f http://localhost:3000/api/; do sleep 5; done'
+
+      - name: Run API smoke tests
+        run: |
+          echo "Testing API health..."
+          curl -f http://localhost:3000/api/ || exit 1
+          echo "✅ API is healthy"
+
+      - name: Run App smoke tests
+        run: |
+          echo "Testing App..."
+          curl -f http://localhost:8080/ || exit 1
+          echo "✅ App is healthy"
+
+      - name: Run CLI smoke tests
+        run: |
+          echo "Testing CLI..."
+          docker compose -f docker-compose.e2e.yml run --rm cli --help || exit 1
+          echo "✅ CLI is healthy"
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v

@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const { resolve } = require('path')
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-process.env.VUE_APP_VERSION = require('./package.json').version
+process.env.VUE_APP_VERSION = 'lindas-' + require('./package.json').version
 
 const publicPath = process.env.PUBLIC_PATH || '/'
 
