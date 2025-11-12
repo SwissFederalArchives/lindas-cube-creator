@@ -6,16 +6,16 @@ IMAGE_TAG="${1:-lindas-cube-creator-api:test-build}"
 echo "🧪 Running API smoke tests for ${IMAGE_TAG}..."
 
 # Start container
-CONTAINER_ID=$(docker run -d \
-  -e NODE_ENV=production \
-  -e SPARQL_ENDPOINT=http://example.com/sparql \
-  -e S3_ENDPOINT=http://example.com:9000 \
-  -e S3_BUCKET=test \
-  -e MANAGED_DIMENSIONS_GRAPH=http://example.com/managed-dimensions \
-  -e MANAGED_DIMENSIONS_STORE_QUERY_ENDPOINT=http://example.com/sparql
-  -p 3001:3000 \
-  ${IMAGE_TAG})
-
+CONTAINER_ID=$(docker run -d \ \
+  -e NODE_ENV=production \ \
+  -e SPARQL_ENDPOINT=http://example.com/sparql \ \
+  -e S3_ENDPOINT=http://example.com:9000 \ \
+  -e S3_BUCKET=test \ \
+  -e MANAGED_DIMENSIONS_GRAPH=http://example.com/managed-dimensions \ \
+  -e MANAGED_DIMENSIONS_STORE_QUERY_ENDPOINT=http://example.com/sparql \
+  -p 3001:3000 \ \
+  ${IMAGE_TAG}) \
+ \
 echo "Container started: ${CONTAINER_ID}"
 
 # Wait for container to be ready
