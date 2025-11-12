@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - develop
-  tags:
-    - "lindas-cube-creator-app/v*.*.*"
-    - "lindas-cube-creator-api/v*.*.*"
-    - "lindas-cube-creator-cli/v*.*.*"
+    tags:
+      - "lindas-cube-creator-app/v*.*.*"
+      - "lindas-cube-creator-api/v*.*.*"
+      - "lindas-cube-creator-cli/v*.*.*"
   workflow_dispatch:
     inputs:
       environment:
