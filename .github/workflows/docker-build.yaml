@@ -196,6 +196,7 @@ jobs:
           ./smoke-tests/${{ matrix.component }}-smoke.sh lindas-cube-creator-${{ matrix.component }}:test-build
 
       - name: Tag previous image (rollback support)
+        continue-on-error: true
         if: steps.pull_previous.outcome == 'success'
         run: |
           docker tag ${{ steps.tags.outputs.old_latest_tag }} ${{ steps.tags.outputs.previous_tag }}
