@@ -7,6 +7,7 @@ echo "🧪 Running App smoke tests for ${IMAGE_TAG}..."
 
 # Start container
 CONTAINER_ID=$(docker run -d \
+  -e AUTH_ISSUER=https://example.com/auth \
   -p 8080:80 \
   ${IMAGE_TAG})
 

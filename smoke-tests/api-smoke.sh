@@ -11,6 +11,7 @@ CONTAINER_ID=$(docker run -d \
   -e SPARQL_ENDPOINT=http://example.com/sparql \
   -e S3_ENDPOINT=http://example.com:9000 \
   -e S3_BUCKET=test \
+  -e MANAGED_DIMENSIONS_GRAPH=http://example.com/managed-dimensions \
   -p 3001:3000 \
   ${IMAGE_TAG})
 

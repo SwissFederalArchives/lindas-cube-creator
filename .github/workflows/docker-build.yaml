@@ -111,7 +111,8 @@ jobs:
           COMPONENT="${{ matrix.component }}"
           VERSION="${{ steps.version.outputs.version }}"
           ENV="${{ needs.prepare.outputs.environment }}"
-          IMAGE="ghcr.io/${{ github.repository_owner }}/lindas-cube-creator-${COMPONENT}"
+          REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${REPO_OWNER}/lindas-cube-creator-${COMPONENT}"
 
           # Save current latest as previous (for rollback)
           echo "old_latest_tag=${IMAGE}:${ENV}-latest" >> $GITHUB_OUTPUT
