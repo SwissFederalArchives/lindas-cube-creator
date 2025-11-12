@@ -71,7 +71,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install --frozen-lockfile
+          yarn install
 
       - name: Install system dependencies
         run: |

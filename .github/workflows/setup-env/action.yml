@@ -7,7 +7,7 @@ runs:
       with:
         node-version-file: '.nvmrc'
         cache: "yarn"
-    - run: yarn install --frozen-lockfile
+    - run: yarn install
       shell: bash
     - name: Cache Lando
       uses: actions/cache@v4

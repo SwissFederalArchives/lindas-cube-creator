@@ -37,7 +37,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "yarn"
-      - run: yarn install --frozen-lockfile
+      - run: yarn install
       - run: yarn lint
       - run: yarn workspace @cube-creator/ui lint
 
