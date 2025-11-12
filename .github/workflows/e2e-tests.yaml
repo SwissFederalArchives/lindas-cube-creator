@@ -70,7 +70,6 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        working-directory: e2e-ui
         run: |
           yarn install --frozen-lockfile
 
