@@ -6,13 +6,13 @@ IMAGE_TAG="${1:-lindas-cube-creator-app:test-build}"
 echo "🧪 Running App smoke tests for ${IMAGE_TAG}..."
 
 # Start container
-CONTAINER_ID=$(docker run -d \ \
-  -e AUTH_ISSUER=https://example.com/auth \ \
+CONTAINER_ID=$(docker run -d \
+  -e AUTH_ISSUER=https://example.com/auth \
   -e AUTH_CLIENT_ID=example-client-id \
-  -p 8080:80 \ \
-  ${IMAGE_TAG}) \
- \ \
-echo "Container started: ${CONTAINER_ID}"
+  -p 8080:80 \
+  ${IMAGE_TAG})
+
+printf "Container started: %s\n" "${CONTAINER_ID}"
 
 # Wait for container to be ready
 echo "Waiting for App to be ready..."

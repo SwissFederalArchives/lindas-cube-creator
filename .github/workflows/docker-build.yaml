@@ -145,7 +145,7 @@ jobs:
 
       - name: Build Docker image (temp tag) - app
         if: matrix.component == 'app'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           file: ./${{ matrix.component }}.Dockerfile
           context: .
@@ -168,7 +168,7 @@ jobs:
 
       - name: Build Docker image (temp tag) - api/cli
         if: matrix.component != 'app'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           file: ./${{ matrix.component }}.Dockerfile
           context: .

@@ -16,7 +16,7 @@ jobs:
           - test:cli:rest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/workflows/setup-env
       - run: yarn ${{ matrix.command }}
         env:
@@ -25,19 +25,19 @@ jobs:
         if: ${{ failure() }}
         run: lando logs -s core
       - name: Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           cache: "yarn"
-      - run: yarn install --ci
+      - run: yarn install --frozen-lockfile
       - run: yarn lint
       - run: yarn workspace @cube-creator/ui lint
 

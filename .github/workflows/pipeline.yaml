@@ -18,7 +18,7 @@ jobs:
       TS_NODE_TRANSPILE_ONLY: "true"
       AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
       AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
-      AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.REF_AUTH_RUNNER_CLIENT_SECRET }}
+      AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
       GRAPH_STORE_ENDPOINT: ${{ secrets.GRAPH_STORE_ENDPOINT }}
       GRAPH_STORE_USER: ${{ secrets.GRAPH_STORE_USER }}
       GRAPH_STORE_PASSWORD: ${{ secrets.GRAPH_STORE_PASSWORD }}
@@ -29,13 +29,13 @@ jobs:
       SENTRY_ENVIRONMENT: ${{ secrets.SENTRY_ENVIRONMENT }}
       EXECUTION_URL: "https://${{ github.repository }}/actions/runs/${{ github.run_id }}"
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           cache: "yarn"
 
-      - run: yarn install --ci --prefer-offline
+      - run: yarn install --frozen-lockfile
 
       - name: transform pipeline
         if: github.event.inputs.transform_job != ''
@@ -49,7 +49,7 @@ jobs:
 
       - name: Output artifact
         if: github.event.inputs.to == 'filesystem'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: transformed.nt
           path: cli/output/transformed.nt
