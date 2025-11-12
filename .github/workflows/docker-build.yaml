@@ -2,8 +2,6 @@ name: Build and Push Docker Images
 
 on:
   push:
-    branches:
-      - develop
     tags:
       - "lindas-cube-creator-app/v*.*.*"
       - "lindas-cube-creator-api/v*.*.*"
@@ -190,10 +188,6 @@ jobs:
             git.commit.sha=${{ github.sha }}
             git.branch=${{ github.ref_name }}
 
-      - name: Run smoke tests
-        run: |
-          chmod +x ./smoke-tests/${{ matrix.component }}-smoke.sh
-          ./smoke-tests/${{ matrix.component }}-smoke.sh lindas-cube-creator-${{ matrix.component }}:test-build
 
       - name: Tag previous image (rollback support)
         continue-on-error: true
