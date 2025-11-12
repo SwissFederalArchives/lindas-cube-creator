@@ -50,7 +50,7 @@ jobs:
           ENV="${{ github.event.inputs.environment }}"
 
           for component in ${{ steps.components.outputs.components }}; do
-            IMAGE="ghcr.io/${{ github.repository_owner }}/lindas-cube-creator-${component}"
+            IMAGE="ghcr.io/$(echo "${{ github.repository_owner }}" | tr "[:upper:]" "[:lower:]")/lindas-cube-creator-${component}"
 
             echo "Rolling back ${component}..."
 
