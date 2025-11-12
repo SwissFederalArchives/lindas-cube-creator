@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:18-alpine AS builder
+FROM node:18.19.1-alpine3.19 AS builder
 
 # Do not install Cypress
 ENV CYPRESS_INSTALL_BINARY=0
@@ -19,7 +19,7 @@ ADD ./typings ./
 # ADD ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 COPY . .
 
@@ -38,7 +38,8 @@ ENV VUE_APP_COMMIT=$COMMIT
 ENV VUE_APP_SENTRY_RELEASE=cube-creator-app@$COMMIT
 RUN yarn build
 
-FROM nginx:1.23.3-alpine
+FROM nginx:1.25.3-alpine3.18
+RUN apk add --no-cache wget
 HEALTHCHECK --timeout=1s --retries=99 \
         CMD wget -q --spider http://127.0.0.1:80/ \
         || exit 1
@@ -56,3 +57,6 @@ COPY --from=builder /app/ui/dist/index.html /usr/share/nginx/html/index.html
 # This variable is used by the `template-config.sh` script to know where to put
 # the templated `config.js`
 ENV WEB_ROOT=/usr/share/nginx/html$PUBLIC_PATH
+
+EXPOSE 80
+USER root

@@ -89,7 +89,7 @@ function defaultAuthConfig(log: Logger): AuthConfig {
     }
   }
 
-  log.info('OIDC config ' + JSON.stringify({ clientId, clientSecret, issuer }, null, 2))
+  log.info('OIDC config ' + JSON.stringify({ clientId, issuer }, null, 2))
   throw new Error('Incomplete OIDC config')
 }
 

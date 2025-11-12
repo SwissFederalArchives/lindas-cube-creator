@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app.Dockerfile.local
+      args:
+        PUBLIC_PATH: /app/
+        COMMIT: local-build
+    ports:
+      - "8080:80"
+    environment:
+      AUTH_ISSUER: http://localhost:8080/auth
+      AUTH_CLIENT_ID: local-dev-client
+      API_CORE_BASE: http://localhost:3000/api
+      SENTRY_DSN: ""
+      SENTRY_ENVIRONMENT: local
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

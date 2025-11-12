@@ -17,7 +17,7 @@
 # only for local development and testing.
 
 # First step: build the assets
-FROM node:18-alpine AS builder
+FROM node:18.19.1-alpine3.19 AS builder
 
 # Do not install Cypress
 ENV CYPRESS_INSTALL_BINARY=0
@@ -37,7 +37,7 @@ ADD ./typings ./
 # ADD ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 COPY . .
 
@@ -56,7 +56,8 @@ ENV VUE_APP_COMMIT=$COMMIT
 ENV VUE_APP_SENTRY_RELEASE=cube-creator-app@$COMMIT
 RUN yarn build
 
-FROM nginx:1.23.3-alpine
+FROM nginx:1.25.3-alpine3.18
+RUN apk add --no-cache wget
 HEALTHCHECK --timeout=1s --retries=99 \
         CMD wget -q --spider http://127.0.0.1:80/ \
         || exit 1
@@ -74,6 +75,8 @@ COPY --from=builder /app/ui/dist/index.html /usr/share/nginx/html/index.html
 # the templated `config.js`
 ENV WEB_ROOT=/usr/share/nginx/html$PUBLIC_PATH
 
+EXPOSE 80
+
 # Set default environment variables for local development
 ENV AUTH_ISSUER=http://localhost:8080/auth
 ENV AUTH_CLIENT_ID=local-dev-client
@@ -81,20 +84,11 @@ ENV API_CORE_BASE=http://localhost:3000/api
 ENV SENTRY_DSN=""
 ENV SENTRY_ENVIRONMENT=local
 
-# Create a simple startup script that handles config templating
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'set -eu' >> /start.sh && \
-    echo 'echo "Generating config.js from template..."' >> /start.sh && \
-    echo 'OUTPUT="$WEB_ROOT/config.js"' >> /start.sh && \
-    echo 'TEMPLATE="$WEB_ROOT/config.js.template"' >> /start.sh && \
-    echo 'if [ -f "$TEMPLATE" ]; then' >> /start.sh && \
-    echo '  envsubst < $TEMPLATE > $OUTPUT' >> /start.sh && \
-    echo '  echo "Config generated at $OUTPUT"' >> /start.sh && \
-    echo 'else' >> /start.sh && \
-    echo '  echo "Warning: Template not found at $TEMPLATE"' >> /start.sh && \
-    echo 'fi' >> /start.sh && \
-    echo 'echo "Starting nginx..."' >> /start.sh && \
-    echo 'exec nginx -g "daemon off;"' >> /start.sh && \
-    chmod +x /start.sh
-
-CMD ["/start.sh"]
+# Create startup script directly in image
+RUN echo '#!/bin/sh' > /docker-entrypoint.d/90-init-app.sh && \
+    echo 'echo "Generating config.js from template..."' >> /docker-entrypoint.d/90-init-app.sh && \
+    echo 'if [ -f "$WEB_ROOT/config.js.template" ]; then' >> /docker-entrypoint.d/90-init-app.sh && \
+    echo '  envsubst < "$WEB_ROOT/config.js.template" > "$WEB_ROOT/config.js"' >> /docker-entrypoint.d/90-init-app.sh && \
+    echo '  echo "Config generated"' >> /docker-entrypoint.d/90-init-app.sh && \
+    echo 'fi' >> /docker-entrypoint.d/90-init-app.sh && \
+    chmod +x /docker-entrypoint.d/90-init-app.sh

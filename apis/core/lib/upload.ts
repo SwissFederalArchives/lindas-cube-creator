@@ -22,6 +22,12 @@ function getUploadUrls(): string[] {
 app.post('/s3/multipart', async (req, res, next) => {
   const filename = req.body.filename
   const metadata = req.body.metadata || {}
+  // Validate filename
+  if (!filename || typeof filename !== 'string' || filename.includes('..') || filename.includes('/')) {
+    res.status(400).send({ message: 'Invalid filename' })
+    return
+  }
+
   const csvMapping = $rdf.namedNode(metadata.csvMapping)
   const isReplace = !!metadata.replace
 

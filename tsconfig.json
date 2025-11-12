@@ -22,6 +22,7 @@
     "packages",
     "apis",
     "cli",
+    "e2e-ui",
     "mocha-setup.js" 
   ],
   "exclude": [

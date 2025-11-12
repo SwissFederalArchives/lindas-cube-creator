@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:18-alpine AS builder
+FROM node:18.19.1-alpine3.19 AS builder
 
 WORKDIR /app
 ADD package.json yarn.lock ./
@@ -26,7 +26,7 @@ RUN rm -rf ./cli
 
 RUN yarn tsc --outDir dist --module CommonJS
 
-FROM node:18-alpine
+FROM node:18.19.1-alpine3.19
 
 WORKDIR /app
 
@@ -60,6 +60,8 @@ ADD apis/shared-dimensions/lib/shapes/*.ttl ./apis/shared-dimensions/lib/shapes/
 RUN apk add --no-cache tini
 ENTRYPOINT ["tini", "--", "node"]
 
+EXPOSE 3000
+
 # build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)`
 ARG COMMIT
 ENV SENTRY_RELEASE=cube-creator-api@$COMMIT
@@ -68,7 +70,9 @@ ENV SENTRY_RELEASE=cube-creator-api@$COMMIT
 # This should be kept in sync with .lando.yml
 ENV DEBUG creator*,hydra*,hydra-box*,labyrinth*
 
-EXPOSE 45670
+HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+
 # USER nobody. Needs to be a numeric UID, else the "runAsNonRoot" security
 # directive in Kubernetes does not work.
 USER 65534

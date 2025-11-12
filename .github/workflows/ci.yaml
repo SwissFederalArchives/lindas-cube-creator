@@ -21,7 +21,6 @@ jobs:
       - run: yarn ${{ matrix.command }}
         env:
           AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
       - name: logs on fail
         if: ${{ failure() }}
         run: lando logs -s core
@@ -92,7 +91,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/workflows/setup-env
-      - run: echo insecure >> ~/.curlrc
       - run: yarn ${{ matrix.command }}
         env:
           AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}

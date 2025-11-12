@@ -130,10 +130,10 @@ jobs:
             echo "environment=integration" >> $GITHUB_OUTPUT
 
           elif [[ "$ENV" == "prod" ]] || [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            # Production images: v1.15.3, 1.15.3, 1.15, 1, latest
+            # Production images: prod-1.15.3, v1.15.3, 1.15.3, 1.15, 1, latest
             VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
             VERSION_MINOR=$(echo $VERSION | cut -d. -f1-2)
-            TAGS="${IMAGE}:v${VERSION},${IMAGE}:${VERSION},${IMAGE}:${VERSION_MINOR},${IMAGE}:${VERSION_MAJOR},${IMAGE}:latest"
+            TAGS="${IMAGE}:prod-${VERSION},${IMAGE}:v${VERSION},${IMAGE}:${VERSION},${IMAGE}:${VERSION_MINOR},${IMAGE}:${VERSION_MAJOR},${IMAGE}:latest"
             echo "tags=${TAGS}" >> $GITHUB_OUTPUT
             echo "environment=production" >> $GITHUB_OUTPUT
           fi
@@ -161,7 +161,10 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
+            org.opencontainers.image.created=${{ github.event.repository.updated_at }}
             environment=${{ steps.tags.outputs.environment }}
+            git.commit.sha=${{ github.sha }}
+            git.branch=${{ github.ref_name }}
 
       - name: Run smoke tests
         run: |

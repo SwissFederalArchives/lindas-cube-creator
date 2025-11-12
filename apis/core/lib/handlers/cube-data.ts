@@ -10,6 +10,10 @@ export const get = protectedResource(asyncMiddleware(async (req, res, next) => {
   if (!resourceUri || typeof resourceUri !== 'string') {
     return next(new error.BadRequest("Missing 'resource' query parameter"))
   }
+  // Validate URI format
+  if (!resourceUri.startsWith('http://') && !resourceUri.startsWith('https://')) {
+    return next(new error.BadRequest('Invalid resource URI format'))
+  }
 
   const graph = req.hydra.term
   const resourceId = $rdf.namedNode(resourceUri)
