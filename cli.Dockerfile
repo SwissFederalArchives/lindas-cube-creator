@@ -17,7 +17,7 @@ RUN yarn install --frozen-lockfile && yarn cache clean
 COPY . .
 RUN rm -rf ./ui ./apis ./cli/test ./packages/model/test \
     ./packages/testing ./packages/express ./packages/express-rdf-request \
-    ./packages/shacl-middleware
+    ./packages/shacl-middleware ./e2e-ui
 
 RUN yarn tsc --outDir dist --module CommonJS
 

@@ -23,6 +23,7 @@ RUN yarn install --frozen-lockfile && yarn cache clean
 COPY . .
 RUN rm -rf ./ui
 RUN rm -rf ./cli
+RUN rm -rf ./e2e-ui
 
 RUN yarn tsc --outDir dist --module CommonJS
 
