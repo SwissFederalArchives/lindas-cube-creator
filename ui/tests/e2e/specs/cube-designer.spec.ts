@@ -166,10 +166,10 @@ describe('Cube designer', () => {
   })
 })
 
-function random(): string {
+function random (): string {
   return Date.now().toString()
 }
 
-function toIdentifier(name: string): string {
+function toIdentifier (name: string): string {
   return slugify(name, { lower: true })
 }
