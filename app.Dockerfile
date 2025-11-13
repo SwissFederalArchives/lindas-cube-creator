@@ -19,7 +19,7 @@ ADD ./typings ./
 # ADD ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install && yarn cache clean
 
 COPY . .
 

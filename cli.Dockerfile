@@ -12,7 +12,7 @@ COPY ./packages/testing/package.json ./packages/testing/
 # COPY ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install && yarn cache clean
 
 COPY . .
 RUN rm -rf ./ui ./apis ./cli/test ./packages/model/test \
@@ -36,7 +36,7 @@ COPY ./packages/testing/package.json ./packages/testing/
 # for every new package foo add
 #COPY ./packages/foo/package.json ./packages/foo/
 
-RUN yarn install --production --frozen-lockfile && yarn cache clean
+RUN yarn install --production && yarn cache clean
 COPY --from=builder /app/dist/cli ./cli/
 COPY --from=builder /app/dist/packages/ ./packages/
 

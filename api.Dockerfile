@@ -18,7 +18,7 @@ ADD ./packages/shacl-middleware/package.json ./packages/shacl-middleware/
 # ADD ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile && yarn cache clean
+RUN yarn install && yarn cache clean
 
 COPY . .
 RUN rm -rf ./ui
@@ -45,7 +45,7 @@ ADD ./packages/shacl-middleware/package.json ./packages/shacl-middleware/
 # for every new package foo add
 #ADD ./packages/foo/package.json ./packages/foo/
 
-RUN yarn install --production --frozen-lockfile && yarn cache clean
+RUN yarn install --production && yarn cache clean
 COPY --from=builder /app/dist/apis ./apis/
 COPY --from=builder /app/dist/packages/ ./packages/
 
