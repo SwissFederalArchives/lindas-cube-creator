@@ -14,13 +14,15 @@ jobs:
           - test
           - test:queries
           - test:cli:rest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/setup-env
       - run: yarn ${{ matrix.command }}
         env:
           AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
       - name: logs on fail
         if: ${{ failure() }}
         run: lando logs -s core
@@ -94,6 +96,8 @@ jobs:
       - run: yarn ${{ matrix.command }}
         env:
           AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
       - name: logs on fail
         if: ${{ failure() }}
         run: lando logs
