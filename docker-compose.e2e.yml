@@ -19,11 +19,11 @@ services:
       minio:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+      test: ["CMD", "sh", "-c", "curl -sf http://localhost:3000/api/ && curl -sf http://localhost:3000/api/cube-projects"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 90s
 
   app:
     build:
@@ -40,7 +40,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/"]
+      test: ["CMD", "sh", "-c", "wget --spider -q http://localhost:80/ && wget --spider -q http://localhost:80/app/"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -65,13 +65,13 @@ services:
     environment:
       ADMIN_PASSWORD: ${E2E_FUSEKI_PASSWORD:-admin}
       FUSEKI_DATASET_1: cube-creator
-      JVM_ARGS: "-Xmx2g"
+      JVM_ARGS: "-Xmx3g"
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3030/$$/ping"]
-      interval: 10s
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:3030/$$/ping && wget --no-verbose --tries=1 --spider http://localhost:3030/cube-creator/query"]
+      interval: 15s
       timeout: 10s
-      retries: 30
-      start_period: 90s
+      retries: 40
+      start_period: 120s
     volumes:
       - fuseki-data:/fuseki
 
@@ -88,7 +88,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 30
       start_period: 60s
     volumes:
       - minio-data:/data

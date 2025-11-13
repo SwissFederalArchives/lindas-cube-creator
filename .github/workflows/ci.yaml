@@ -55,6 +55,47 @@ jobs:
         if: failure()
         run: lando logs -s core
 
+  pipeline-tests:
+    name: "Pipeline Tests (Critical)"
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        command:
+          - test:cli:transform
+          - test:cli:publish
+          - test:cli:import
+          - test:cli:timeoutJobs
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/setup-env
+      - name: Verify Lando services are healthy
+        run: |
+          echo "Checking Lando service health..."
+          lando info
+          curl -f https://cube-creator.lndo.site/ping || (echo "Core service not healthy" && exit 1)
+      - run: yarn ${{ matrix.command }}
+        env:
+          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== Lando Service Status ==="
+          lando info || true
+          echo "=== Core Service Logs ==="
+          lando logs -s core || true
+          echo "=== Pipeline Service Logs ==="
+          lando logs -s pipeline || true
+
   # ============================================
   # OPTIONAL TESTS - Informational Only
   # These have external deps, timeouts, or are flaky
@@ -83,24 +124,56 @@ jobs:
         if: failure()
         run: lando logs -s core
 
-  e2e-tests:
-    name: "E2E Tests (Optional)"
+  e2e-tests-api:
+    name: "E2E Tests - API (Hydra)"
     runs-on: ubuntu-22.04
-    continue-on-error: true
-    timeout-minutes: 45
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/setup-env
+      - name: Seed test data
+        run: yarn seed-data
+      - name: Pre-flight health checks
+        run: |
+          echo "=== Verifying Services ==="
+          lando info
+          echo "=== Testing API health ==="
+          curl -f https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
+          echo "=== Testing SPARQL endpoint ==="
+          curl -f https://cube-creator.lndo.site/query || (echo "SPARQL not responding" && exit 1)
+      - name: Run Hydra API tests
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== Lando Logs ==="
+          lando logs || true
+          echo "=== Docker Compose Services ==="
+          docker compose -f docker-compose.yml -f docker-compose.posix.yml ps || true
+          docker compose -f docker-compose.yml -f docker-compose.posix.yml logs || true
+
+  e2e-tests-ui:
+    name: "E2E Tests - UI (Cypress)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Set e2e environment variables
         run: echo -e "\nVUE_APP_E2E=true\nVUE_APP_X_USER=john-doe\nVUE_APP_X_PERMISSION=pipelines:read,pipelines:write" >> .local.env
       - uses: ./.github/workflows/setup-env
-      - name: Seed data
+      - name: Seed test data
         run: yarn seed-data
-      - name: Run Hydra E2E tests
-        run: docker compose -f docker-compose.yml -f docker-compose.posix.yml run e2e-tests
-      - name: Run UI E2E tests (Cypress)
+      - name: Pre-flight health checks
+        run: |
+          echo "=== Testing UI application ==="
+          curl -f https://app.cube-creator.lndo.site/ || (echo "UI not responding" && exit 1)
+          echo "=== Testing API backend ==="
+          curl -f https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
+      - name: Run Cypress UI tests
         run: yarn workspace @cube-creator/ui test:e2e --url https://app.cube-creator.lndo.site --headless
-      - name: Save Cypress artifacts on failure
-        if: failure()
+      - name: Save Cypress artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-artifacts
@@ -108,42 +181,11 @@ jobs:
             ui/tests/e2e/videos/*
             ui/tests/e2e/screenshots/*
           retention-days: 7
-      - name: Collect service logs on failure
+      - name: Collect logs on failure
         if: failure()
         run: |
           lando logs -s core || true
           lando logs -s pipeline || true
-
-  pipeline-tests:
-    name: "Pipeline Tests (Optional)"
-    runs-on: ubuntu-22.04
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        command:
-          - test:cli:transform
-          - test:cli:publish
-          - test:cli:import
-          - test:cli:timeoutJobs
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup-env
-      - run: yarn ${{ matrix.command }}
-        env:
-          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
-          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
-          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
-      - name: Upload coverage
-        if: always()
-        uses: codecov/codecov-action@v4
-        continue-on-error: true
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Collect logs on failure
-        if: failure()
-        run: lando logs
 
   # ============================================
   # DEPLOYMENT TRIGGER
@@ -153,7 +195,7 @@ jobs:
   trigger-build:
     name: "Trigger Docker Build"
     runs-on: ubuntu-latest
-    needs: [lint, unit-tests-core]
+    needs: [lint, unit-tests-core, pipeline-tests]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
@@ -173,28 +215,34 @@ jobs:
   status:
     name: "CI Status Report"
     runs-on: ubuntu-latest
-    needs: [lint, unit-tests-core, unit-tests-cli, e2e-tests, pipeline-tests]
+    needs: [lint, unit-tests-core, pipeline-tests, unit-tests-cli, e2e-tests-api, e2e-tests-ui]
     if: always()
     steps:
       - name: Report Status
         run: |
           echo "# CI Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## ✅ Critical Tests (Must Pass)" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Critical Tests (Must Pass for Deployment)" >> $GITHUB_STEP_SUMMARY
           echo "- Lint: **${{ needs.lint.result }}**" >> $GITHUB_STEP_SUMMARY
           echo "- Unit Tests (Core): **${{ needs.unit-tests-core.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Pipeline Tests: **${{ needs.pipeline-tests.result }}**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## ℹ️ Optional Tests (Informational)" >> $GITHUB_STEP_SUMMARY
           echo "- Unit Tests (CLI): ${{ needs.unit-tests-cli.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- E2E Tests: ${{ needs.e2e-tests.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Pipeline Tests: ${{ needs.pipeline-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- E2E Tests (API/Hydra): ${{ needs.e2e-tests-api.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- E2E Tests (UI/Cypress): ${{ needs.e2e-tests-ui.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-tests-core.result }}" == "success" ]]; then
-            echo "✅ **DEPLOYMENT READY** - Critical tests passed!" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-tests-core.result }}" == "success" && "${{ needs.pipeline-tests.result }}" == "success" ]]; then
+            echo "✅ **DEPLOYMENT READY** - All critical tests passed!" >> $GITHUB_STEP_SUMMARY
             if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
               echo "🚀 Docker build triggered automatically" >> $GITHUB_STEP_SUMMARY
             fi
           else
-            echo "❌ **NOT READY** - Critical tests must pass" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **NOT READY** - Critical tests must pass before deployment" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Failed Critical Tests:" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.lint.result }}" != "success" ]] && echo "- ❌ Lint" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.unit-tests-core.result }}" != "success" ]] && echo "- ❌ Unit Tests (Core)" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.pipeline-tests.result }}" != "success" ]] && echo "- ❌ Pipeline Tests" >> $GITHUB_STEP_SUMMARY
           fi
