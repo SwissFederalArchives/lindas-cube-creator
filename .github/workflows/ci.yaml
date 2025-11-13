@@ -74,7 +74,7 @@ jobs:
         run: |
           echo "Checking Lando service health..."
           lando info
-          curl -f https://cube-creator.lndo.site/ping || (echo "Core service not healthy" && exit 1)
+          curl -fk https://cube-creator.lndo.site/ping || (echo "Core service not healthy" && exit 1)
       - run: yarn ${{ matrix.command }}
         env:
           AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
@@ -138,9 +138,9 @@ jobs:
           echo "=== Verifying Services ==="
           lando info
           echo "=== Testing API health ==="
-          curl -f https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
+          curl -fk https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
           echo "=== Testing SPARQL endpoint ==="
-          curl -f https://cube-creator.lndo.site/query || (echo "SPARQL not responding" && exit 1)
+          curl -fk https://cube-creator.lndo.site/query || (echo "SPARQL not responding" && exit 1)
       - name: Run Hydra API tests
         run: |
           docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
@@ -167,9 +167,9 @@ jobs:
       - name: Pre-flight health checks
         run: |
           echo "=== Testing UI application ==="
-          curl -f https://app.cube-creator.lndo.site/ || (echo "UI not responding" && exit 1)
+          curl -fk https://app.cube-creator.lndo.site/ || (echo "UI not responding" && exit 1)
           echo "=== Testing API backend ==="
-          curl -f https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
+          curl -fk https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
       - name: Run Cypress UI tests
         run: yarn workspace @cube-creator/ui test:e2e --url https://app.cube-creator.lndo.site --headless
       - name: Save Cypress artifacts
