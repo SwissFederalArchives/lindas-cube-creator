@@ -21,6 +21,6 @@ runs:
       with:
         version: v3.11.0
         healthcheck: https://cube-creator.lndo.site/ping
-        timeout: 30000
+        timeout: 90000
       env:
         DOCKER_BUILDKIT: "1"
