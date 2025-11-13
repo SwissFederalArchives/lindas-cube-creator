@@ -17,11 +17,11 @@ describe('CSV mapping flow', () => {
       .find('input')
       .type('My project')
 
-    cy.contains('form-property', 'Publishing profile')
+    cy.get('form-property').contains('Publishing profile')
       .find('sl-select')
       .click()
-      .contains('sl-menu-item', 'Federal Office for the Environment')
-      .click()
+
+    cy.get('sl-menu-item').first().click()
 
     cy.contains('form-property', 'Cube identifier')
       .find('input')
