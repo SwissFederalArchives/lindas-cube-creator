@@ -13,13 +13,13 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.lando
-        key: lando-${{ runner.os }}-v3.25.6
+        key: lando-${{ runner.os }}-v3.11.0
         restore-keys: |
           lando-${{ runner.os }}-
     - name: Start site
       uses: tpluscode/action-setup-lando@v0.1.5
       with:
-        version: v3.25.6
+        version: v3.11.0
         healthcheck: https://cube-creator.lndo.site/ping
         timeout: 180000
       env:
