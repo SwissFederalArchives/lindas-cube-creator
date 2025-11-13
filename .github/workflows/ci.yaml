@@ -9,12 +9,11 @@ on:
 
 jobs:
   # ============================================
-  # CRITICAL TESTS - Must Pass for Deployment
-  # Fast, reliable, no external dependencies
+  # STAGE 1: FAST CHECKS (No Lando)
   # ============================================
 
   lint:
-    name: "Lint (Critical)"
+    name: "Lint"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,16 +25,21 @@ jobs:
       - run: yarn lint
       - run: yarn workspace @cube-creator/ui lint
 
-  unit-tests-core:
-    name: "Unit Tests - Core (Critical)"
+  # ============================================
+  # STAGE 2: UNIT TESTS (2 concurrent Lando instances)
+  # ============================================
+
+  unit-tests:
+    name: "Unit Tests"
     runs-on: ubuntu-22.04
+    needs: [lint]
     strategy:
       fail-fast: false
       matrix:
         command:
           - test
           - test:queries
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/setup-env
@@ -53,20 +57,63 @@ jobs:
           files: ./coverage/**/*.lcov
       - name: Collect logs on failure
         if: failure()
-        run: lando logs -s core
+        run: lando logs -s core || true
 
-  pipeline-tests:
-    name: "Pipeline Tests (Critical)"
+  # ============================================
+  # STAGE 3: PIPELINE TESTS (2 concurrent Lando instances at a time)
+  # ============================================
+
+  pipeline-tests-1:
+    name: "Pipeline Tests (Batch 1)"
     runs-on: ubuntu-22.04
+    needs: [unit-tests]
     strategy:
       fail-fast: false
       matrix:
         command:
           - test:cli:transform
+          - test:cli:timeoutJobs
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/setup-env
+      - name: Verify Lando services are healthy
+        run: |
+          echo "Checking Lando service health..."
+          lando info
+          curl -fk https://cube-creator.lndo.site/ping || (echo "Core service not healthy" && exit 1)
+      - run: yarn ${{ matrix.command }}
+        env:
+          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== Lando Service Status ==="
+          lando info || true
+          echo "=== Core Service Logs ==="
+          lando logs -s core || true
+          echo "=== Pipeline Service Logs ==="
+          lando logs -s pipeline || true
+
+  pipeline-tests-2:
+    name: "Pipeline Tests (Batch 2)"
+    runs-on: ubuntu-22.04
+    needs: [pipeline-tests-1]
+    strategy:
+      fail-fast: false
+      matrix:
+        command:
           - test:cli:publish
           - test:cli:import
-          - test:cli:timeoutJobs
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/setup-env
@@ -97,43 +144,36 @@ jobs:
           lando logs -s pipeline || true
 
   # ============================================
-  # OPTIONAL TESTS - Informational Only
-  # These have external deps, timeouts, or are flaky
+  # STAGE 4: INTEGRATION TESTS (Optional - 2 concurrent)
   # ============================================
 
-  unit-tests-cli:
-    name: "Unit Tests - CLI (Optional)"
+  integration-tests:
+    name: "Integration Tests"
     runs-on: ubuntu-22.04
+    needs: [pipeline-tests-2]
     continue-on-error: true
-    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite:
+          - e2e-api
+          - e2e-ui
+          - cli-rest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup-env
-      - run: yarn test:cli:rest
-        env:
-          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
-          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
-          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
-      - name: Upload coverage
-        if: always()
-        uses: codecov/codecov-action@v4
-        continue-on-error: true
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Collect logs on failure
-        if: failure()
-        run: lando logs -s core
 
-  e2e-tests-api:
-    name: "E2E Tests - API (Hydra)"
-    runs-on: ubuntu-22.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/setup-env
-      - name: Seed test data
+      # E2E API Tests
+      - name: Setup for E2E API tests
+        if: matrix.test-suite == 'e2e-api'
+        uses: ./.github/workflows/setup-env
+
+      - name: Seed test data (E2E API)
+        if: matrix.test-suite == 'e2e-api'
         run: yarn seed-data
-      - name: Pre-flight health checks
+
+      - name: Pre-flight health checks (E2E API)
+        if: matrix.test-suite == 'e2e-api'
         run: |
           echo "=== Verifying Services ==="
           lando info
@@ -141,39 +181,38 @@ jobs:
           curl -fk https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
           echo "=== Testing SPARQL endpoint ==="
           curl -fk https://cube-creator.lndo.site/query || (echo "SPARQL not responding" && exit 1)
-      - name: Run Hydra API tests
-        run: |
-          docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
-      - name: Collect logs on failure
-        if: failure()
-        run: |
-          echo "=== Lando Logs ==="
-          lando logs || true
-          echo "=== Docker Compose Services ==="
-          docker compose -f docker-compose.yml -f docker-compose.posix.yml ps || true
-          docker compose -f docker-compose.yml -f docker-compose.posix.yml logs || true
 
-  e2e-tests-ui:
-    name: "E2E Tests - UI (Cypress)"
-    runs-on: ubuntu-22.04
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set e2e environment variables
+      - name: Run Hydra API tests
+        if: matrix.test-suite == 'e2e-api'
+        run: docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
+
+      # E2E UI Tests
+      - name: Setup for E2E UI tests
+        if: matrix.test-suite == 'e2e-ui'
         run: echo -e "\nVUE_APP_E2E=true\nVUE_APP_X_USER=john-doe\nVUE_APP_X_PERMISSION=pipelines:read,pipelines:write" >> .local.env
-      - uses: ./.github/workflows/setup-env
-      - name: Seed test data
+
+      - name: Setup Lando (E2E UI)
+        if: matrix.test-suite == 'e2e-ui'
+        uses: ./.github/workflows/setup-env
+
+      - name: Seed test data (E2E UI)
+        if: matrix.test-suite == 'e2e-ui'
         run: yarn seed-data
-      - name: Pre-flight health checks
+
+      - name: Pre-flight health checks (E2E UI)
+        if: matrix.test-suite == 'e2e-ui'
         run: |
           echo "=== Testing UI application ==="
           curl -fk https://app.cube-creator.lndo.site/ || (echo "UI not responding" && exit 1)
           echo "=== Testing API backend ==="
           curl -fk https://cube-creator.lndo.site/ping || (echo "API not responding" && exit 1)
+
       - name: Run Cypress UI tests
+        if: matrix.test-suite == 'e2e-ui'
         run: yarn workspace @cube-creator/ui test:e2e --url https://app.cube-creator.lndo.site --headless
+
       - name: Save Cypress artifacts
-        if: always()
+        if: matrix.test-suite == 'e2e-ui' && always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-artifacts
@@ -181,21 +220,46 @@ jobs:
             ui/tests/e2e/videos/*
             ui/tests/e2e/screenshots/*
           retention-days: 7
+
+      # CLI REST Tests
+      - name: Setup for CLI REST tests
+        if: matrix.test-suite == 'cli-rest'
+        uses: ./.github/workflows/setup-env
+
+      - name: Run CLI REST tests
+        if: matrix.test-suite == 'cli-rest'
+        run: yarn test:cli:rest
+        env:
+          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
+
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Collect logs on failure
         if: failure()
         run: |
-          lando logs -s core || true
-          lando logs -s pipeline || true
+          echo "=== Lando Logs ==="
+          lando logs || true
+          if [ "${{ matrix.test-suite }}" == "e2e-api" ]; then
+            echo "=== Docker Compose Services ==="
+            docker compose -f docker-compose.yml -f docker-compose.posix.yml ps || true
+            docker compose -f docker-compose.yml -f docker-compose.posix.yml logs || true
+          fi
 
   # ============================================
   # DEPLOYMENT TRIGGER
-  # Auto-builds Docker images when critical tests pass
   # ============================================
 
   trigger-build:
     name: "Trigger Docker Build"
     runs-on: ubuntu-latest
-    needs: [lint, unit-tests-core, pipeline-tests]
+    needs: [lint, unit-tests, pipeline-tests-1, pipeline-tests-2]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
@@ -215,7 +279,7 @@ jobs:
   status:
     name: "CI Status Report"
     runs-on: ubuntu-latest
-    needs: [lint, unit-tests-core, pipeline-tests, unit-tests-cli, e2e-tests-api, e2e-tests-ui]
+    needs: [lint, unit-tests, pipeline-tests-1, pipeline-tests-2, integration-tests]
     if: always()
     steps:
       - name: Report Status
@@ -224,16 +288,21 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## ✅ Critical Tests (Must Pass for Deployment)" >> $GITHUB_STEP_SUMMARY
           echo "- Lint: **${{ needs.lint.result }}**" >> $GITHUB_STEP_SUMMARY
-          echo "- Unit Tests (Core): **${{ needs.unit-tests-core.result }}**" >> $GITHUB_STEP_SUMMARY
-          echo "- Pipeline Tests: **${{ needs.pipeline-tests.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Unit Tests: **${{ needs.unit-tests.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Pipeline Tests (Batch 1): **${{ needs.pipeline-tests-1.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Pipeline Tests (Batch 2): **${{ needs.pipeline-tests-2.result }}**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## ℹ️ Optional Tests (Informational)" >> $GITHUB_STEP_SUMMARY
-          echo "- Unit Tests (CLI): ${{ needs.unit-tests-cli.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- E2E Tests (API/Hydra): ${{ needs.e2e-tests-api.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "- E2E Tests (UI/Cypress): ${{ needs.e2e-tests-ui.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Integration Tests: ${{ needs.integration-tests.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-tests-core.result }}" == "success" && "${{ needs.pipeline-tests.result }}" == "success" ]]; then
+          CRITICAL_PASS=true
+          [[ "${{ needs.lint.result }}" != "success" ]] && CRITICAL_PASS=false
+          [[ "${{ needs.unit-tests.result }}" != "success" ]] && CRITICAL_PASS=false
+          [[ "${{ needs.pipeline-tests-1.result }}" != "success" ]] && CRITICAL_PASS=false
+          [[ "${{ needs.pipeline-tests-2.result }}" != "success" ]] && CRITICAL_PASS=false
+
+          if [ "$CRITICAL_PASS" = true ]; then
             echo "✅ **DEPLOYMENT READY** - All critical tests passed!" >> $GITHUB_STEP_SUMMARY
             if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
               echo "🚀 Docker build triggered automatically" >> $GITHUB_STEP_SUMMARY
@@ -243,6 +312,7 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Failed Critical Tests:" >> $GITHUB_STEP_SUMMARY
             [[ "${{ needs.lint.result }}" != "success" ]] && echo "- ❌ Lint" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.unit-tests-core.result }}" != "success" ]] && echo "- ❌ Unit Tests (Core)" >> $GITHUB_STEP_SUMMARY
-            [[ "${{ needs.pipeline-tests.result }}" != "success" ]] && echo "- ❌ Pipeline Tests" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.unit-tests.result }}" != "success" ]] && echo "- ❌ Unit Tests" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.pipeline-tests-1.result }}" != "success" ]] && echo "- ❌ Pipeline Tests (Batch 1)" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.pipeline-tests-2.result }}" != "success" ]] && echo "- ❌ Pipeline Tests (Batch 2)" >> $GITHUB_STEP_SUMMARY
           fi
