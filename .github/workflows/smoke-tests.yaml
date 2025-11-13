@@ -1,0 +1,69 @@
+name: Smoke Tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    name: "Docker Smoke Tests"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: |
+          docker compose -f docker-compose.e2e.yml build --parallel
+
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.e2e.yml up -d
+          echo "Waiting for services to be healthy..."
+          timeout 180 sh -c 'until docker compose -f docker-compose.e2e.yml ps | grep -q "healthy"; do sleep 2; done'
+
+      - name: Test API health
+        run: |
+          echo "Testing API health endpoint..."
+          curl -f http://localhost:3000/api/ || exit 1
+
+          echo "Testing API cube-projects endpoint..."
+          curl -f http://localhost:3000/api/cube-projects || exit 1
+
+      - name: Test App health
+        run: |
+          echo "Testing App root..."
+          curl -f http://localhost:8080/ || exit 1
+
+          echo "Testing App /app/ endpoint..."
+          curl -f http://localhost:8080/app/ || exit 1
+
+      - name: Test Fuseki health
+        run: |
+          echo "Testing Fuseki ping..."
+          curl -f http://localhost:3030/$/ping || exit 1
+
+          echo "Testing Fuseki dataset query..."
+          curl -f http://localhost:3030/cube-creator/query || exit 1
+
+      - name: Test MinIO health
+        run: |
+          echo "Testing MinIO health..."
+          curl -f http://localhost:9000/minio/health/live || exit 1
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== API Logs ==="
+          docker compose -f docker-compose.e2e.yml logs api
+          echo "=== App Logs ==="
+          docker compose -f docker-compose.e2e.yml logs app
+          echo "=== Fuseki Logs ==="
+          docker compose -f docker-compose.e2e.yml logs fuseki
+          echo "=== MinIO Logs ==="
+          docker compose -f docker-compose.e2e.yml logs minio
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose -f docker-compose.e2e.yml down -v
