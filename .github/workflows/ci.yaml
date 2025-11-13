@@ -44,18 +44,29 @@ jobs:
   smoke-test:
     name: "Smoke Tests (Docker)"
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker images
         run: docker compose -f docker-compose.e2e.yml build --parallel
+        env:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
 
       - name: Start services
         run: |
           docker compose -f docker-compose.e2e.yml up -d
-          echo "Waiting for services to be healthy..."
-          timeout 180 sh -c 'until docker compose -f docker-compose.e2e.yml ps | grep -q "healthy"; do sleep 2; done'
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for all services to be healthy (max 5 minutes)..."
+          timeout 300 sh -c 'until [ $(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") -ge 4 ]; do echo "Waiting... ($(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") / 4 services healthy)"; sleep 5; done'
+          echo "All services are healthy!"
+          docker compose -f docker-compose.e2e.yml ps
 
       - name: Test API endpoints
         run: |
