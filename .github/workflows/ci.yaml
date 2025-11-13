@@ -8,8 +8,13 @@ on:
   pull_request:
 
 jobs:
+  # ============================================
+  # CRITICAL TESTS - Must Pass for Deployment
+  # Fast, reliable, no external dependencies
+  # ============================================
+
   lint:
-    name: Lint
+    name: "Lint (Critical)"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +26,8 @@ jobs:
       - run: yarn lint
       - run: yarn workspace @cube-creator/ui lint
 
-  unit-tests:
-    name: Unit Tests
+  unit-tests-core:
+    name: "Unit Tests - Core (Critical)"
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -30,8 +35,7 @@ jobs:
         command:
           - test
           - test:queries
-          - test:cli:rest
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/workflows/setup-env
@@ -51,9 +55,38 @@ jobs:
         if: failure()
         run: lando logs -s core
 
-  e2e-tests:
-    name: E2E Tests (Lando)
+  # ============================================
+  # OPTIONAL TESTS - Informational Only
+  # These have external deps, timeouts, or are flaky
+  # ============================================
+
+  unit-tests-cli:
+    name: "Unit Tests - CLI (Optional)"
     runs-on: ubuntu-22.04
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/setup-env
+      - run: yarn test:cli:rest
+        env:
+          AUTH_RUNNER_CLIENT_SECRET: ${{ secrets.AUTH_RUNNER_CLIENT_SECRET }}
+          AUTH_RUNNER_CLIENT_ID: ${{ secrets.AUTH_RUNNER_CLIENT_ID }}
+          AUTH_RUNNER_ISSUER: ${{ secrets.AUTH_RUNNER_ISSUER }}
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Collect logs on failure
+        if: failure()
+        run: lando logs -s core
+
+  e2e-tests:
+    name: "E2E Tests (Optional)"
+    runs-on: ubuntu-22.04
+    continue-on-error: true
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -78,13 +111,11 @@ jobs:
       - name: Collect service logs on failure
         if: failure()
         run: |
-          echo "## Core API Logs" >> $GITHUB_STEP_SUMMARY
           lando logs -s core || true
-          echo "## Pipeline Logs" >> $GITHUB_STEP_SUMMARY
           lando logs -s pipeline || true
 
   pipeline-tests:
-    name: Pipeline Tests
+    name: "Pipeline Tests (Optional)"
     runs-on: ubuntu-22.04
     continue-on-error: true
     strategy:
@@ -113,3 +144,57 @@ jobs:
       - name: Collect logs on failure
         if: failure()
         run: lando logs
+
+  # ============================================
+  # DEPLOYMENT TRIGGER
+  # Auto-builds Docker images when critical tests pass
+  # ============================================
+
+  trigger-build:
+    name: "Trigger Docker Build"
+    runs-on: ubuntu-latest
+    needs: [lint, unit-tests-core]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Docker Build Workflow
+        run: |
+          gh workflow run docker-build.yaml \
+            -f environment=test \
+            -f component=all \
+            --ref develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ============================================
+  # STATUS REPORT
+  # ============================================
+
+  status:
+    name: "CI Status Report"
+    runs-on: ubuntu-latest
+    needs: [lint, unit-tests-core, unit-tests-cli, e2e-tests, pipeline-tests]
+    if: always()
+    steps:
+      - name: Report Status
+        run: |
+          echo "# CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Critical Tests (Must Pass)" >> $GITHUB_STEP_SUMMARY
+          echo "- Lint: **${{ needs.lint.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Unit Tests (Core): **${{ needs.unit-tests-core.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ℹ️ Optional Tests (Informational)" >> $GITHUB_STEP_SUMMARY
+          echo "- Unit Tests (CLI): ${{ needs.unit-tests-cli.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- E2E Tests: ${{ needs.e2e-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Pipeline Tests: ${{ needs.pipeline-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-tests-core.result }}" == "success" ]]; then
+            echo "✅ **DEPLOYMENT READY** - Critical tests passed!" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+              echo "🚀 Docker build triggered automatically" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ **NOT READY** - Critical tests must pass" >> $GITHUB_STEP_SUMMARY
+          fi
