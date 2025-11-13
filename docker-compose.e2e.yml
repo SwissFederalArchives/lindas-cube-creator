@@ -67,7 +67,7 @@ services:
       FUSEKI_DATASET_1: cube-creator
       JVM_ARGS: "-Xmx3g"
     healthcheck:
-      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:3030/$$/ping && wget --no-verbose --tries=1 --spider http://localhost:3030/cube-creator/query"]
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider 'http://localhost:3030/$/ping' && wget --no-verbose --tries=1 --spider 'http://localhost:3030/cube-creator/query'"]
       interval: 15s
       timeout: 10s
       retries: 40
