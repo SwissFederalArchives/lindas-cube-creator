@@ -7,7 +7,7 @@ runs:
       with:
         node-version-file: '.nvmrc'
         cache: "yarn"
-    - run: yarn install
+    - run: yarn install --immutable
       shell: bash
     - name: Cache Lando
       uses: actions/cache@v4
@@ -21,6 +21,6 @@ runs:
       with:
         version: v3.11.0
         healthcheck: https://cube-creator.lndo.site/ping
-        timeout: 180000
+        timeout: 30000
       env:
         DOCKER_BUILDKIT: "1"
