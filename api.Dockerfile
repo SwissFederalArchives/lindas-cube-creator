@@ -79,4 +79,4 @@ HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
 USER 65534
 
 WORKDIR /app/apis
-CMD ["core"]
+CMD ["core/index.js"]
