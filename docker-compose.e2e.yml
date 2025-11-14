@@ -88,7 +88,6 @@ services:
       - "3030:3030"
     environment:
       ADMIN_PASSWORD: ${E2E_FUSEKI_PASSWORD:-admin}
-      FUSEKI_DATASET_1: cube-creator
       JVM_ARGS: "-Xmx3g"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3030/$$/ping"]
@@ -98,6 +97,7 @@ services:
       start_period: 120s
     volumes:
       - fuseki-data:/fuseki
+      - ./fuseki/config.ttl:/fuseki/config.ttl:ro
 
   minio:
     image: minio/minio:latest
