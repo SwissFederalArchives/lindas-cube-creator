@@ -101,17 +101,32 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Set e2e environment variables
-        run: echo -e "\nVUE_APP_E2E=true\nVUE_APP_X_USER=john-doe\nVUE_APP_X_PERMISSION=pipelines:read,pipelines:write" >> .local.env
-      - uses: ./.github/workflows/setup-env
-      - name: Seed data
-        run: yarn seed-data
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.e2e.yml build --parallel
+
+      - name: Start services
+        run: docker compose -f docker-compose.e2e.yml up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for API to be healthy..."
+          timeout 300 sh -c 'until docker compose -f docker-compose.e2e.yml ps api | grep -q "healthy"; do echo "Waiting for API..."; sleep 5; done'
+          echo "Waiting for App to be healthy..."
+          timeout 300 sh -c 'until docker compose -f docker-compose.e2e.yml ps app | grep -q "healthy"; do echo "Waiting for App..."; sleep 5; done'
+          echo "All services are healthy!"
+
       - name: Run Hydra E2E tests
-        run: docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
+        run: docker compose -f docker-compose.e2e.yml run --rm e2e-tests
+
       - name: Run UI E2E tests (Cypress)
-        run: yarn workspace @cube-creator/ui test:e2e --url https://app.cube-creator.lndo.site --headless
+        run: yarn workspace @cube-creator/ui test:e2e --url http://localhost:8080/app/ --headless
         env:
           TERM: xterm
+
       - name: Save Cypress artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -121,11 +136,14 @@ jobs:
             ui/tests/e2e/videos/*
             ui/tests/e2e/screenshots/*
           retention-days: 7
+
       - name: Collect service logs on failure
         if: failure()
-        run: |
-          lando logs -s core || true
-          lando logs -s pipeline || true
+        run: docker compose -f docker-compose.e2e.yml logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v
 
   trigger-build:
     name: "Trigger Docker Build"
