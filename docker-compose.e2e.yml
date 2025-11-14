@@ -62,6 +62,10 @@ services:
       - "8080:80"
     environment:
       API_CORE_BASE: http://api:3000/api/
+      AUTH_ISSUER: http://localhost:8080/auth
+      AUTH_CLIENT_ID: e2e-test-client
+      SENTRY_DSN: ""
+      SENTRY_ENVIRONMENT: e2e-test
     depends_on:
       api:
         condition: service_healthy
