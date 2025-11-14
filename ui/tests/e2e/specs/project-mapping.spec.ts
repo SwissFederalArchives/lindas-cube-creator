@@ -17,8 +17,12 @@ describe('CSV mapping flow', () => {
       .find('input')
       .type('My project')
 
-    cy.get('form-property').contains('Publishing profile')
+    // Select a publishing profile using a more robust selector. We first
+    // locate the whole form-property element by its label text instead of
+    // the inner label span to avoid querying from the wrong element.
+    cy.contains('form-property', 'Publishing profile')
       .find('sl-select')
+      .should('be.visible')
       .click()
 
     cy.get('sl-menu-item').first().click()

@@ -110,6 +110,8 @@ jobs:
         run: docker compose -f docker-compose.yml -f docker-compose.posix.yml run --rm e2e-tests
       - name: Run UI E2E tests (Cypress)
         run: yarn workspace @cube-creator/ui test:e2e --url https://app.cube-creator.lndo.site --headless
+        env:
+          TERM: xterm
       - name: Save Cypress artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
