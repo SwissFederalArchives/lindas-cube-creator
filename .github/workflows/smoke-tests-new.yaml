@@ -1,0 +1,83 @@
+name: Smoke Tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+      - master
+    paths:
+      - 'smoke-test/**'
+      - '.github/workflows/smoke-tests.yaml'
+
+jobs:
+  smoke-test:
+    name: "Smoke Tests (Jest)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        test: [api, app, cli]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "npm"
+          cache-dependency-path: 'smoke-test/package-lock.json'
+
+      - name: Install test dependencies
+        working-directory: ./smoke-test
+        run: npm install
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.e2e.yml build --parallel
+
+      - name: Start services
+        run: docker compose -f docker-compose.e2e.yml up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for all services to be healthy (max 5 minutes)..."
+          timeout 300 sh -c 'until [ $(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") -ge 4 ]; do echo "Waiting... ($(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") / 4 services healthy)"; sleep 5; done'
+          echo "All services are healthy!"
+
+      - name: Run API Smoke Tests
+        if: matrix.test == 'api'
+        working-directory: ./smoke-test
+        env:
+          API_IMAGE_TAG: lindas-cube-creator-api:test-build
+        run: npm run test:api
+
+      - name: Run App Smoke Tests
+        if: matrix.test == 'app'
+        working-directory: ./smoke-test
+        env:
+          APP_IMAGE_TAG: lindas-cube-creator-app:test-build
+        run: npm run test:app
+
+      - name: Run CLI Smoke Tests
+        if: matrix.test == 'cli'
+        working-directory: ./smoke-test
+        env:
+          CLI_IMAGE_TAG: lindas-cube-creator-cli:test-build
+        run: npm run test:cli
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== API Logs ==="
+          docker compose -f docker-compose.e2e.yml logs api
+          echo "=== App Logs ==="
+          docker compose -f docker-compose.e2e.yml logs app
+          echo "=== Fuseki Logs ==="
+          docker compose -f docker-compose.e2e.yml logs fuseki
+          echo "=== MinIO Logs ==="
+          docker compose -f docker-compose.e2e.yml logs minio
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v

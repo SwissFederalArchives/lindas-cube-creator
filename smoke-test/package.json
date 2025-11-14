@@ -1,0 +1,30 @@
+{
+  "name": "@cube-creator/smoke-test",
+  "version": "1.0.0",
+  "description": "Smoke tests for Docker images",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand",
+    "test:api": "jest --runInBand --testPathPattern=api",
+    "test:app": "jest --runInBand --testPathPattern=app",
+    "test:cli": "jest --runInBand --testPathPattern=cli"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "puppeteer": "^21.5.0",
+    "child_process": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testTimeout": 60000,
+    "maxWorkers": 1
+  }
+}

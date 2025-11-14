@@ -1,0 +1,229 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "yarn"
+      - run: yarn install --immutable
+      - run: yarn lint
+      - run: yarn workspace @cube-creator/ui lint
+
+  unit-test:
+    name: "Unit Tests"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "yarn"
+      - run: yarn install --immutable
+      - run: yarn test
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/**/*.lcov
+
+  smoke-test:
+    name: "Smoke Tests (Jest)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        test: [api, app, cli]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "npm"
+          cache-dependency-path: 'smoke-test/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./smoke-test
+        run: npm install
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.e2e.yml build --parallel
+
+      - name: Start services
+        run: docker compose -f docker-compose.e2e.yml up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for all services to be healthy (max 5 minutes)..."
+          timeout 300 sh -c 'until [ $(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") -ge 4 ]; do echo "Waiting... ($(docker compose -f docker-compose.e2e.yml ps --format json | grep -c "\"Health\":\"healthy\"") / 4 services healthy)"; sleep 5; done'
+          echo "All services are healthy!"
+
+      - name: Run API Smoke Tests
+        if: matrix.test == 'api'
+        working-directory: ./smoke-test
+        env:
+          API_IMAGE_TAG: lindas-cube-creator-api:test-build
+        run: npm run test:api
+
+      - name: Run App Smoke Tests
+        if: matrix.test == 'app'
+        working-directory: ./smoke-test
+        env:
+          APP_IMAGE_TAG: lindas-cube-creator-app:test-build
+        run: npm run test:app
+
+      - name: Run CLI Smoke Tests
+        if: matrix.test == 'cli'
+        working-directory: ./smoke-test
+        env:
+          CLI_IMAGE_TAG: lindas-cube-creator-cli:test-build
+        run: npm run test:cli
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.e2e.yml logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v
+
+  e2e-tests:
+    name: "E2E Tests (Jest + Playwright)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "npm"
+          cache-dependency-path: 'e2e-test/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./e2e-test
+        run: npm install
+
+      - name: Install Playwright Browsers
+        working-directory: ./e2e-test
+        run: npx playwright install --with-deps
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.e2e.yml build --parallel
+
+      - name: Start services
+        run: docker compose -f docker-compose.e2e.yml up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for API to be healthy..."
+          timeout 300 sh -c 'until docker compose -f docker-compose.e2e.yml ps api | grep -q "healthy"; do echo "Waiting for API..."; sleep 5; done'
+          echo "Waiting for App to be healthy..."
+          timeout 300 sh -c 'until docker compose -f docker-compose.e2e.yml ps app | grep -q "healthy"; do echo "Waiting for App..."; sleep 5; done'
+          echo "All services are healthy!"
+
+      - name: Run API E2E tests
+        working-directory: ./e2e-test
+        env:
+          API_BASE_URL: http://localhost:3000
+        run: npm run test:api
+
+      - name: Run UI E2E tests
+        working-directory: ./e2e-test
+        env:
+          APP_BASE_URL: http://localhost:8080/app
+        run: npm run test:ui
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e-test/playwright-report/
+          retention-days: 7
+
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.e2e.yml logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down -v
+
+  trigger-build:
+    name: "Trigger Docker Build"
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, smoke-test]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Docker Build Workflow
+        run: |
+          gh workflow run docker-build.yaml \
+            -f environment=test \
+            -f component=all \
+            --ref develop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  status:
+    name: "CI Status Report"
+    runs-on: ubuntu-latest
+    needs: [lint, unit-test, smoke-test, e2e-tests]
+    if: always()
+    steps:
+      - name: Report Status
+        run: |
+          echo "# CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Required Tests (Must Pass)" >> $GITHUB_STEP_SUMMARY
+          echo "- Lint: **${{ needs.lint.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Unit Tests: **${{ needs.unit-test.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "- Smoke Tests (Jest): **${{ needs.smoke-test.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## ℹ️ Informational Tests (Optional)" >> $GITHUB_STEP_SUMMARY
+          echo "- E2E Tests: **${{ needs.e2e-tests.result }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          CRITICAL_PASS=true
+          [[ "${{ needs.lint.result }}" != "success" ]] && CRITICAL_PASS=false
+          [[ "${{ needs.unit-test.result }}" != "success" ]] && CRITICAL_PASS=false
+          [[ "${{ needs.smoke-test.result }}" != "success" ]] && CRITICAL_PASS=false
+
+          if [ "$CRITICAL_PASS" = true ]; then
+            echo "✅ **DEPLOYMENT READY** - All tests passed!" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+              echo "🚀 Docker build triggered automatically" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ **NOT READY** - Tests must pass before deployment" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Failed Required Tests:" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.lint.result }}" != "success" ]] && echo "- ❌ Lint" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.unit-test.result }}" != "success" ]] && echo "- ❌ Unit Tests" >> $GITHUB_STEP_SUMMARY
+            [[ "${{ needs.smoke-test.result }}" != "success" ]] && echo "- ❌ Smoke Tests (Jest)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Coverage:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Lint**: Code quality and style" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Tests**: Isolated logic testing" >> $GITHUB_STEP_SUMMARY
+          echo "- **Smoke Tests**: Docker images start and respond correctly (Jest-based)" >> $GITHUB_STEP_SUMMARY
+          echo "- **E2E Tests**: Full user workflows (Jest + Playwright)" >> $GITHUB_STEP_SUMMARY
