@@ -122,7 +122,7 @@ async function main() {
       .listen(443, () => log('Dev server listening on 443'))
   }
   http.createServer(app)
-    .listen(45670, () => log('Api ready'))
+    .listen(3000, () => log('Api ready'))
 }
 
 main().catch(error)

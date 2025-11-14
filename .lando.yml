@@ -132,7 +132,7 @@ proxy:
   trifid:
     - trifid.cube-creator.lndo.site:8080
   core:
-    - cube-creator.lndo.site:45670
+    - cube-creator.lndo.site:3000
   ui:
     - app.cube-creator.lndo.site
   s3:
