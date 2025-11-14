@@ -101,7 +101,7 @@ jobs:
         run: yarn test:e2e
 
       - name: Run UI E2E tests
-        run: yarn workspace @cube-creator/ui test:e2e
+        run: yarn workspace @cube-creator/ui test:e2e --headless
 
       - name: Show logs on failure
         if: failure()
