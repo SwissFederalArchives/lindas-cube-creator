@@ -63,7 +63,9 @@ describe('Cube designer', () => {
       .should('be.visible')
       .click()
 
-    cy.get('sl-menu-item').first().click()
+    // Shoelace <sl-menu-item> is rendered with 0x0 size in Cypress headless,
+    // so we need to force the click to bypass Cypress's visibility check.
+    cy.get('sl-menu-item').first().click({ force: true })
 
     cy.contains('form-property', 'Cube identifier')
       .find('input')
@@ -147,8 +149,9 @@ describe('Cube designer', () => {
         .should('be.visible')
         .click()
 
+      // Same Shoelace behaviour here: menu items may report 0x0 size.
       cy.contains('sl-menu-item', sharedDimensionName)
-        .click()
+        .click({ force: true })
     })
 
     it('Confirms selection', () => {

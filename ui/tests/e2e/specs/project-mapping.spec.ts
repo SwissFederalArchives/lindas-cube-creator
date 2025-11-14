@@ -25,7 +25,9 @@ describe('CSV mapping flow', () => {
       .should('be.visible')
       .click()
 
-    cy.get('sl-menu-item').first().click()
+    // Shoelace <sl-menu-item> elements appear with 0x0 size to Cypress,
+    // so force the click to actually select the option in headless runs.
+    cy.get('sl-menu-item').first().click({ force: true })
 
     cy.contains('form-property', 'Cube identifier')
       .find('input')
@@ -130,7 +132,7 @@ describe('CSV mapping flow', () => {
       .find('sl-select')
       .click()
       .contains('sl-menu-item', 'string')
-      .click()
+      .click({ force: true })
 
     cy.contains('Data type')
       // Click somewhere to validate the datatype selection
@@ -152,7 +154,7 @@ describe('CSV mapping flow', () => {
       .should('be.visible')
       .click()
       .contains('sl-menu-item', 'test.csv')
-      .click()
+      .click({ force: true })
 
     cy.contains('form-property', 'Table name')
       .find('input')
