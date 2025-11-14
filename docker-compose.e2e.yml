@@ -42,8 +42,10 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -sf http://localhost:3000/api/ && curl -sf http://localhost:3000/api/cube-projects"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
       interval: 15s
       timeout: 10s
       retries: 20
@@ -116,6 +118,23 @@ services:
       start_period: 60s
     volumes:
       - minio-data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO to be ready...';
+      sleep 5;
+      mc alias set local http://minio:9000 $${E2E_MINIO_USER:-minioadmin} $${E2E_MINIO_PASSWORD:-minioadmin};
+      mc mb -p local/cube-creator || true;
+      exit 0;
+      "
+    environment:
+      E2E_MINIO_USER: ${E2E_MINIO_USER:-minioadmin}
+      E2E_MINIO_PASSWORD: ${E2E_MINIO_PASSWORD:-minioadmin}
 
   e2e-tests:
     image: hydrofoil/hypertest:0.6.7
