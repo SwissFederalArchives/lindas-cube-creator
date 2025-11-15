@@ -101,11 +101,10 @@ jobs:
       - name: Run API E2E tests
         run: yarn test:e2e
 
-      # UI E2E tests are skipped in CI because they require OIDC authentication infrastructure
-      # The smoke tests above already verify the UI is accessible and responding
-      # Run UI E2E tests locally with: cd ui && yarn test:e2e
-      # - name: Run UI E2E tests (skipped - requires auth)
-      #   run: cd ui && npx cypress run
+      - name: Run UI Smoke Tests
+        run: cd ui && npx cypress run --spec "tests/e2e/specs/ui-smoke.spec.ts"
+
+      # Full UI E2E tests require OIDC authentication - run locally with: cd ui && yarn test:e2e
 
       - name: Show logs on failure
         if: failure()
