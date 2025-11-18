@@ -36,6 +36,12 @@ ENV PUBLIC_PATH=$PUBLIC_PATH
 ENV NODE_ENV=production
 ENV VUE_APP_COMMIT=$COMMIT
 ENV VUE_APP_SENTRY_RELEASE=cube-creator-app@$COMMIT
+
+ARG VUE_APP_E2E
+ENV VUE_APP_E2E=$VUE_APP_E2E
+ARG VUE_APP_X_USER
+ENV VUE_APP_X_USER=$VUE_APP_X_USER
+
 RUN yarn build
 
 FROM nginx:1.25.3-alpine3.18
@@ -47,7 +53,8 @@ HEALTHCHECK --timeout=1s --retries=99 \
 ARG PUBLIC_PATH
 
 ADD ./nginx/default.conf /etc/nginx/conf.d/default.conf
-ADD ./nginx/template-config.sh /docker-entrypoint.d/50-template-config.sh
+COPY ./nginx/template-config.sh /docker-entrypoint.d/99-template-config.sh
+RUN chmod +x /docker-entrypoint.d/99-template-config.sh
 COPY --from=builder /app/ui/dist /usr/share/nginx/html$PUBLIC_PATH
 
 # Have the index.html at the root of the web directory to have the "catch-all"
