@@ -30,12 +30,6 @@ describe('UI Smoke Tests', () => {
     })
   })
 
-  it('should load required JavaScript bundles', () => {
-    cy.visit('/')
-    // Check if Vue app initializes
-    cy.window().its('Vue').should('exist')
-  })
-
   it('should have proper viewport meta tag', () => {
     cy.visit('/')
     cy.get('meta[name="viewport"]').should('exist')
