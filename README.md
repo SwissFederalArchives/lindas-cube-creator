@@ -1,41 +1,108 @@
-![act-logo](https://raw.githubusercontent.com/wiki/nektos/act/img/logo-150.png)
 
-# Overview [![push](https://github.com/nektos/act/workflows/push/badge.svg?branch=master&event=push)](https://github.com/nektos/act/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/nektos/act)](https://goreportcard.com/report/github.com/nektos/act) [![awesome-runners](https://img.shields.io/badge/listed%20on-awesome--runners-blue.svg)](https://github.com/jonico/awesome-runners)
+# Cube Creator
 
-> "Think globally, `act` locally"
+Cube Creator is a tool to create RDF data Cubes (based on
+[rdf-cube-schema](https://github.com/zazuko/rdf-cube-schema)) out of CSV files.
 
-Run your [GitHub Actions](https://developer.github.com/actions/) locally! Why would you want to do this? Two reasons:
+## Technologies
 
-- **Fast Feedback** - Rather than having to commit/push every time you want to test out the changes you are making to your `.github/workflows/` files (or for any changes to embedded GitHub actions), you can use `act` to run the actions locally. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#filesystems-on-github-hosted-runners) are all configured to match what GitHub provides.
-- **Local Task Runner** - I love [make](<https://en.wikipedia.org/wiki/Make_(software)>). However, I also hate repeating myself. With `act`, you can use the GitHub Actions defined in your `.github/workflows/` to replace your `Makefile`!
+The tool is built with [Typescript](https://www.typescriptlang.org/) and is
+currently composed of two main parts: a Hydra API (built with
+[hydra-box](https://github.com/zazuko/hydra-box)) and a [Vue.js](https://vuejs.org/)
+user interface. See the [Architecture](docs/architecture.md) document for a high-level overview.
 
-> [!TIP]
-> **Now Manage and Run Act Directly From VS Code!**<br/>
-> Check out the [GitHub Local Actions](https://sanjulaganepola.github.io/github-local-actions-docs/) Visual Studio Code extension which allows you to leverage the power of `act` to run and test workflows locally without leaving your editor.
+## Running locally
 
-# How Does It Work?
+### Preparing the environment
 
-When you run `act` it reads in your GitHub Actions from `.github/workflows/` and determines the set of actions that need to be run. It uses the Docker API to either pull or build the necessary images, as defined in your workflow files and finally determines the execution path based on the dependencies that were defined. Once it has the execution path, it then uses the Docker API to run containers for each action based on the images prepared earlier. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#file-systems) are all configured to match what GitHub provides.
+To be able to run transform/publish pipelines locally, an OIDC secret must be added to `cli/.env` as
 
-Let's see it in action with a [sample repo](https://github.com/cplee/github-actions-demo)!
+```
+AUTH_RUNNER_CLIENT_SECRET=foo-bar
+```
 
-![Demo](https://raw.githubusercontent.com/wiki/nektos/act/quickstart/act-quickstart-2.gif)
+It is obtained from [keycloak](https://keycloak.zazukoians.org/admin/master/console/#/zazuko-dev/clients/64f92868-71e3-48e1-9d8b-7bfaf5fac2bd/credentials)
 
-# Act User Guide
+Alternatively, you can bypass authentication altogether by setting the environment variables in `.env` similar to the following example:
 
-Please look at the [act user guide](https://nektosact.com) for more documentation.
+```dotenv
+VUE_APP_E2E=true
+VUE_APP_X_USER=john-doe
+VUE_APP_X_PERMISSION=pipelines:read,pipelines:write
+```
 
-# Support
+If you have already started the application, make sure to run `lando rebuild -y` to apply the changes.
 
-Need help? Ask in [discussions](https://github.com/nektos/act/discussions)!
+### Starting
 
-# Contributing
+The easiest way it to start a local dockerized environment which will run the database, API and UI, and provide set up local HTTPS endpoints for them.
 
-Want to contribute to act? Awesome! Check out the [contributing guidelines](CONTRIBUTING.md) to get involved.
+1. Download and install [lando](https://github.com/lando/lando/releases)
+   * it will install docker desktop if necessary
+2. Run `yarn` to install packages
+3. Run `lando start` inside the repo
+   * Docker daemon is also started automatically
+4. (Optional) Run `yarn seed-data` to add sample projects to the database
 
-## Manually building from source
+Docker containers will start and the services will be available under the these URLs:
 
-- Install Go tools 1.20+ - (<https://golang.org/doc/install>)
-- Clone this repo `git clone git@github.com:nektos/act.git`
-- Run unit tests with `make test`
-- Build and install: `make install`
+| Service    | URL                                        |
+| ---------- | ------------------------------------------ |
+| API        | <https://cube-creator.lndo.site/>          |
+| UI         | <https://app.cube-creator.lndo.site/>      |
+| Fuseki     | <https://db.cube-creator.lndo.site/>       |
+| Minio      | <https://s3.cube-creator.lndo.site/>       |
+| Jaeger     | <http://jaeger.cube-creator.lndo.site>     |
+| Prometheus | <http://prometheus.cube-creator.lndo.site> |
+
+Lando uses its own Certificate Authority and it won't be trusted by your system.
+To trust the CA, follow the steps on <https://docs.lando.dev/config/security.html#trusting-the-ca>
+
+## Workflow
+
+This repository is using the [GitHub-Flow](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/github-flow). Hence all changes should be integrated using pull requests.
+
+Commit messages usually follow the guidelines from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) with the types in lower case.
+
+To submit a bug or a feature request please create an issue in this repository.
+
+## Release process
+
+All notable changes to the project(s) should be documented using [@atlassian/changesets](https://github.com/atlassian/changesets). When preparing a PR, run `yarn changeset` in the repository which will ask what changed, the affected packages, and create a small markdown file which must be committed to the repository.
+
+Alternatively, that file can be created directly in the browser, courtesy of [Changesets bot](https://github.com/changesets/bot) which creates PR comment summarising the changes included in the PR in question.
+
+Releases are managed automatically by [GitHub actions](.github/workflows/releases.yaml). As PRs get merged to master, the first job creates or updates a pull request which bumps package versions according to the combined information from all accumulated changeset files. Once merged, the second job kicks in which tags the repository and triggers INT deployment.
+
+The package versions can also be bumped manually by running `yarn changeset version` in the repository and committing the result. When pushed, the new versions will be picked up by the aforementioned GitHub workflow job to tag the respository.
+
+## E2E tests
+
+There are two types of e2e tests:
+- API (Hydra): e2e tests that take the API as entrypoint
+- UI (Cypress): browser-based e2e tests
+
+### API e2e tests
+
+Running the E2E tests can be done using: `docker compose run --rm e2e-tests`, and `docker compose run --rm e2e-tests -- --grep pattern` lets you select which tests to run.
+
+For brevity, use npm script `npm run test:e2e --grep pattern`
+
+### UI e2e tests
+
+We use Cypress to run UI e2e tests.
+
+To simplify the tests, we circumvent authentication in the app. For that, the following variables need to be set in `.env` before running the UI:
+```
+VUE_APP_E2E=true
+VUE_APP_X_USER=john-doe
+VUE_APP_X_PERMISSION=pipelines:read,pipelines:write
+```
+
+We need a running instance of the app to test. The easiest way is to start lando: `lando start`
+
+Then the following command can be used to run the tests interactively:
+
+`yarn --cwd ui test:e2e --url https://app.cube-creator.lndo.site`
+
+The `--headless` option allows running the tests without seeing the browser.
