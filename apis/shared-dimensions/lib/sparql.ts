@@ -1,5 +1,6 @@
 import ParsingClient from 'sparql-http-client/ParsingClient'
 import StreamClient from 'sparql-http-client/StreamClient'
+import { customFetch } from '@cube-creator/core/customFetch'
 import env from './env'
 
 export const sparql = {
@@ -8,6 +9,7 @@ export const sparql = {
   storeUrl: env.MANAGED_DIMENSIONS_STORE_GRAPH_ENDPOINT,
   user: env.maybe.MANAGED_DIMENSIONS_STORE_USERNAME,
   password: env.maybe.MANAGED_DIMENSIONS_STORE_PASSWORD,
+  fetch: customFetch,
 }
 
 export const parsingClient = new ParsingClient(sparql)
