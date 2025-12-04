@@ -5,11 +5,11 @@ services:
       context: .
       dockerfile: api.Dockerfile
     ports:
-      - "3000:3000"
+      - "45670:45670"
     environment:
       NODE_ENV: test
       # Core API Base URL
-      API_CORE_BASE: ${API_CORE_BASE:-http://localhost:3000/}
+      API_CORE_BASE: ${API_CORE_BASE:-http://localhost:45670/}
       UI_BASE: ${UI_BASE:-http://localhost:8080/app/}
       # SPARQL Store Configuration
       STORE_QUERY_ENDPOINT: ${STORE_QUERY_ENDPOINT:-http://fuseki:3030/cube-creator/query}
@@ -32,7 +32,7 @@ services:
       ALLOW_ORIGIN: "*"
       # Shared Dimensions environment variables
       MANAGED_DIMENSIONS_GRAPH: ${MANAGED_DIMENSIONS_GRAPH:-http://example.org/dimensions}
-      MANAGED_DIMENSIONS_API_BASE: ${MANAGED_DIMENSIONS_API_BASE:-http://localhost:3000/}
+      MANAGED_DIMENSIONS_API_BASE: ${MANAGED_DIMENSIONS_API_BASE:-http://localhost:45670/}
       MANAGED_DIMENSIONS_BASE: ${MANAGED_DIMENSIONS_BASE:-http://example.org/}
       MANAGED_DIMENSIONS_STORE_QUERY_ENDPOINT: ${MANAGED_DIMENSIONS_STORE_QUERY_ENDPOINT:-http://fuseki:3030/cube-creator/query}
       MANAGED_DIMENSIONS_STORE_UPDATE_ENDPOINT: ${MANAGED_DIMENSIONS_STORE_UPDATE_ENDPOINT:-http://fuseki:3030/cube-creator/update}
@@ -51,7 +51,7 @@ services:
       minio-init:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:45670/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
       interval: 15s
       timeout: 10s
       retries: 20
@@ -74,7 +74,7 @@ services:
     ports:
       - "8080:80"
     environment:
-      API_CORE_BASE: http://localhost:3000/
+      API_CORE_BASE: http://localhost:45670/
       AUTH_ISSUER: http://localhost:8080/auth
       AUTH_CLIENT_ID: local-dev-client
       SENTRY_DSN: ""
@@ -104,7 +104,7 @@ services:
 #      - .env
 #    environment:
 #      NODE_ENV: test
-#      API_CORE_BASE: http://api:3000/api/
+#      API_CORE_BASE: http://api:45670/api/
 #      SPARQL_ENDPOINT: http://fuseki:3030/cube-creator
 #    depends_on:
 #      api:
@@ -167,7 +167,7 @@ services:
   e2e-tests:
     image: hydrofoil/hypertest:0.6.7
     environment:
-      BASE_URI: http://api:3000/
+      BASE_URI: http://api:45670/
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
     volumes:
       - ./e2e-tests:/tests
