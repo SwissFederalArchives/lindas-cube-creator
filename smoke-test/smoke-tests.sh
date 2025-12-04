@@ -6,7 +6,7 @@ echo "🧪 Running smoke tests..."
 
 # API Smoke Test
 echo "Testing API..."
-if curl -f http://localhost:3000/api/ > /dev/null 2>&1; then
+if curl -f http://localhost:45670/api/ > /dev/null 2>&1; then
   echo "✅ API is responding"
 else
   echo "❌ API health check failed"

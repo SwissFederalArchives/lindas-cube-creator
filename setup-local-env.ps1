@@ -55,6 +55,6 @@ docker-compose -f docker-compose.offline.yml exec -w /app -T api node /app/packa
 
 Write-Host "Setup complete!"
 Write-Host "UI: http://localhost:8080"
-Write-Host "API: http://localhost:3000"
+Write-Host "API: http://localhost:45670"
 Write-Host "Fuseki: http://localhost:3030"
 Write-Host "Minio: http://localhost:9000 (Console: http://localhost:9001)"

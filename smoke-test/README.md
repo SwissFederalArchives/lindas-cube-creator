@@ -6,7 +6,7 @@ Simple shell script-based smoke tests for Docker images.
 
 `smoke-tests.sh` - Tests that Docker containers are running and responding correctly:
 
-- ✅ API health check (http://localhost:3000/api/)
+- ✅ API health check (http://localhost:45670/api/)
 - ✅ App health check (http://localhost:8080/)
 - ✅ App route check (http://localhost:8080/app/)
 - ✅ Fuseki health check (http://localhost:3030/$/ping)

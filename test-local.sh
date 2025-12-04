@@ -91,7 +91,7 @@ if [ "$SKIP_E2E" = false ]; then
   docker compose -f docker-compose.e2e.yml up -d
 
   echo "⏳ Waiting for services to be ready..."
-  timeout 180 bash -c 'until curl -f http://localhost:3000/api/ > /dev/null 2>&1; do sleep 5; echo -n "."; done'
+  timeout 180 bash -c 'until curl -f http://localhost:45670/api/ > /dev/null 2>&1; do sleep 5; echo -n "."; done'
   echo ""
   echo "✅ API is ready"
 

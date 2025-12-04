@@ -86,7 +86,7 @@ EXPOSE 80
 # Set default environment variables for local development
 ENV AUTH_ISSUER=http://localhost:8080/auth
 ENV AUTH_CLIENT_ID=local-dev-client
-ENV API_CORE_BASE=http://localhost:3000/api
+ENV API_CORE_BASE=http://localhost:45670/api
 ENV SENTRY_DSN=""
 ENV SENTRY_ENVIRONMENT=local
 
