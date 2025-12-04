@@ -61,7 +61,7 @@ ADD apis/shared-dimensions/lib/shapes/*.ttl ./apis/shared-dimensions/lib/shapes/
 RUN apk add --no-cache tini
 ENTRYPOINT ["tini", "--", "node"]
 
-EXPOSE 3000
+EXPOSE 45670
 
 # build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)`
 ARG COMMIT
@@ -72,7 +72,7 @@ ENV SENTRY_RELEASE=cube-creator-api@$COMMIT
 ENV DEBUG creator*,hydra*,hydra-box*,labyrinth*
 
 HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+    CMD node -e "require('http').get('http://localhost:45670/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # USER nobody. Needs to be a numeric UID, else the "runAsNonRoot" security
 # directive in Kubernetes does not work.
