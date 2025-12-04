@@ -23,7 +23,8 @@
     "files": ["*.test.ts"],
     "rules": {
       "no-unused-expressions": "off",
-      "prefer-regex-literals": "off"
+      "prefer-regex-literals": "off",
+      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
     }
   }]
 }
