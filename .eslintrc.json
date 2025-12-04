@@ -20,7 +20,7 @@
     "mocha/max-top-level-suites": "off"
   },
   "overrides": [{
-    "files": ["*.test.ts"],
+    "files": ["**/*.test.ts"],
     "rules": {
       "no-unused-expressions": "off",
       "prefer-regex-literals": "off",
