@@ -2,7 +2,7 @@ import type { Term } from '@rdfjs/types'
 import { describe, it, beforeEach, before } from 'mocha'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import clownface, { AnyPointer, GraphPointer } from 'clownface'
+import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import { View } from 'rdf-cube-view-query/lib/View'
 import Cube from 'rdf-cube-view-query/lib/Cube'
@@ -58,10 +58,10 @@ describe('lib/domain/observations/lib', () => {
     let dimension: sinon.SinonStub
 
     beforeEach(() => {
-      filter = clownface({ dataset: $rdf.dataset() })
+      filter = @lindas/clownface({ dataset: $rdf.dataset() })
       dimension = sinon.stub()
       view = {
-        ptr: clownface({ dataset: $rdf.dataset() }).blankNode(),
+        ptr: @lindas/clownface({ dataset: $rdf.dataset() }).blankNode(),
         dimension,
       } as any as View
     })
@@ -183,13 +183,13 @@ describe('lib/domain/observations/lib', () => {
     let observations: Record<string, Term>[]
 
     before(() => {
-      templateParams = clownface({ dataset: $rdf.dataset() })
+      templateParams = @lindas/clownface({ dataset: $rdf.dataset() })
         .blankNode()
         .addOut(ns.cc.cube, 'CUBE')
         .addOut(ns.cc.cubeGraph, 'GRAPH')
         .addOut(ns.view.view, 'FILTERS')
         .addOut(hydra.limit, $rdf.literal('20', xsd.integer))
-      const templatePointer = clownface({ dataset: $rdf.dataset() })
+      const templatePointer = @lindas/clownface({ dataset: $rdf.dataset() })
         .blankNode()
         .addOut(rdf.type, hydra.IriTemplate)
       template = RdfResource.factory.createEntity(templatePointer, [], {

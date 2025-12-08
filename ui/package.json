@@ -45,12 +45,9 @@
     "@uppy/progress-bar": "^3.0.1",
     "@uppy/status-bar": "^3.0.1",
     "@uppy/vue": "^1.0.1",
-    "@zazuko/cube-hierarchy-query": "^1.0.2",
-    "@zazuko/rdf-vocabularies": ">=2021.3.17",
     "alcaeus": "^2.1",
     "buffer": "^6.0.3",
     "bulma-quickview": "^2.0.0",
-    "clownface": "^1.5.1",
     "clownface-shacl-path": "^1.0.1",
     "cookie-storage": "^6.1.0",
     "core-js": "^3.6.5",
@@ -70,7 +67,10 @@
     "vue-router": "^4.0.0",
     "vue-select": "^4.0.0-beta.3",
     "vuex": "^4.0.0",
-    "vuex-oidc": "^3.10.1"
+    "vuex-oidc": "^3.10.1",
+    "@lindas/rdf-vocabularies": "^1.0.0",
+    "@lindas/cube-hierarchy-query": "^1.0.0",
+    "@lindas/clownface": "^1.0.0"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.4.10",

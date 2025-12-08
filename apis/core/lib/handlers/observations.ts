@@ -2,7 +2,7 @@ import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import asyncMiddleware from 'middleware-async'
 import error from 'http-errors'
 import { IriTemplate, IriTemplateMixin } from '@rdfine/hydra'
-import clownface, { AnyContext, AnyPointer } from 'clownface'
+import @lindas/clownface, { AnyContext, AnyPointer } from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import Parser from '@rdfjs/parser-n3'
 import toStream from 'string-to-stream'
@@ -23,7 +23,7 @@ export const query = protectedResource(
       return next(new error.BadRequest())
     }
 
-    const query = clownface({ dataset: await req.dataset() }).has(cc.cube)
+    const query = @lindas/clownface({ dataset: await req.dataset() }).has(cc.cube)
 
     const cubeId = query.out(cc.cube).value
     if (!cubeId) {
@@ -43,7 +43,7 @@ export const query = protectedResource(
     const viewArgument = query.out(ns.view.view).value
     if (viewArgument) {
       try {
-        filters = clownface({ dataset: await $rdf.dataset().import(parser.import(toStream(viewArgument))) })
+        filters = @lindas/clownface({ dataset: await $rdf.dataset().import(parser.import(toStream(viewArgument))) })
       } catch (e: any) {
         warning('Failed to parse cube view')
         warning(e.toString())
@@ -52,7 +52,7 @@ export const query = protectedResource(
     }
 
     const templatePointer: { term: Term; dataset: DatasetCore } = req.hydra.operation.out(hydraBox.variables).toArray()[0]
-    const template = RdfResourceImpl.factory.createEntity<IriTemplate>(clownface(templatePointer), [IriTemplateMixin])
+    const template = RdfResourceImpl.factory.createEntity<IriTemplate>(@lindas/clownface(templatePointer), [IriTemplateMixin])
     const collection = await getObservations({
       sourceGraph,
       pageSize,

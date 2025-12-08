@@ -1,7 +1,7 @@
 import { describe, it, beforeEach } from 'mocha'
 import express from 'express'
 import request from 'supertest'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import TermSet from '@rdfjs/term-set'
 import { Resource } from 'hydra-box'
@@ -37,7 +37,7 @@ describe('lib/middleware/operations', () => {
       app.use(appMock(hydra => {
         hydra.operations = [{
           resource,
-          operation: clownface(hydra.api).node(ex.Operation),
+          operation: @lindas/clownface(hydra.api).node(ex.Operation),
         }]
       }))
       app.use(expectsDisambiguate)
@@ -57,12 +57,12 @@ describe('lib/middleware/operations', () => {
       app.use(appMock(hydraBox => {
         hydraBox.operations = [{
           resource,
-          operation: clownface(hydraBox.api).node(ex.Operation1),
+          operation: @lindas/clownface(hydraBox.api).node(ex.Operation1),
         }, {
           resource,
-          operation: clownface(hydraBox.api).node(ex.Operation2),
+          operation: @lindas/clownface(hydraBox.api).node(ex.Operation2),
         }]
-        clownface(hydraBox.api)
+        @lindas/clownface(hydraBox.api)
           .node(ex.Super)
           .addOut(rdf.type, hydra.Class)
           .addOut(hydra.supportedOperation, ex.Operation1, postSubClass1 => {
@@ -100,12 +100,12 @@ describe('lib/middleware/operations', () => {
       app.use(appMock(hydraBox => {
         hydraBox.operations = [{
           resource,
-          operation: clownface(hydraBox.api)
+          operation: @lindas/clownface(hydraBox.api)
             .node(ex.ResourceOperation)
             .addIn(hydra.supportedOperation, hydra.Resource),
         }, {
           resource,
-          operation: clownface(hydraBox.api)
+          operation: @lindas/clownface(hydraBox.api)
             .node(ex.CollectionOperation)
             .addIn(hydra.supportedOperation, hydra.Collection),
         }]

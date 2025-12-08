@@ -30,10 +30,8 @@
     "@tpluscode/rdfine": "^0.5.43",
     "@tpluscode/sparql-builder": "^0.3.24",
     "@uppy/companion": "^4.1.1",
-    "@zazuko/rdf-vocabularies": ">=2021.3.17",
     "aws-sdk": "^2.1361.0",
     "body-parser": "^1.20.3",
-    "clownface": "^1.0.0",
     "commander": "^6.1.0",
     "content-disposition": "^0.5.3",
     "cors": "^2.8.5",
@@ -67,7 +65,9 @@
     "sparql-http-client": "^2.2.2",
     "string-to-stream": "^3.0.1",
     "through2": "^4.0.2",
-    "url-slugify": "^1.0.6"
+    "url-slugify": "^1.0.6",
+    "@lindas/rdf-vocabularies": "^1.0.0",
+    "@lindas/clownface": "^1.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.11.5",

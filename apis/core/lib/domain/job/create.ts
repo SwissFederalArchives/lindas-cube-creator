@@ -1,7 +1,7 @@
 import type { NamedNode, Term } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
-import { GraphPointer } from 'clownface'
+import { GraphPointer } from '@lindas/clownface'
 import { DESCRIBE } from '@tpluscode/sparql-builder'
 import * as Job from '@cube-creator/model/Job'
 import * as ImportJob from '@cube-creator/model/ImportJob'

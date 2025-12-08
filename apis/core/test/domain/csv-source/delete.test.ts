@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
 import { rdf, schema } from '@tpluscode/rdf-ns-builders'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import * as TableQueries from '../../../lib/domain/queries/table'
 import '../../../lib/domain'
@@ -35,16 +35,16 @@ describe('domain/csv-sources/delete', () => {
 
     sinon.stub(DeleteTable, 'deleteTable')
   })
-  const csvSource = clownface({ dataset: $rdf.dataset() })
+  const csvSource = @lindas/clownface({ dataset: $rdf.dataset() })
     .namedNode('source')
     .addOut(rdf.type, cc.CSVSource)
     .addOut(schema.associatedMedia, file => { file.addOut(schema.identifier, 'FileKey') })
     .addOut(cc.csvMapping, $rdf.namedNode('csv-mapping'))
-  const csvMapping = clownface({ dataset: $rdf.dataset() })
+  const csvMapping = @lindas/clownface({ dataset: $rdf.dataset() })
     .namedNode('csv-mapping')
     .addOut(rdf.type, cc.CsvMapping)
     .addOut(cc.csvSource, csvSource)
-  const table = clownface({ dataset: $rdf.dataset() })
+  const table = @lindas/clownface({ dataset: $rdf.dataset() })
     .namedNode('table')
     .addOut(rdf.type, cc.Table)
     .addOut(cc.csvSource, csvSource)

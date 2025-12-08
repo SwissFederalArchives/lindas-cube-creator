@@ -1,6 +1,6 @@
 import type { NamedNode } from '@rdfjs/types'
 import namespace from '@rdfjs/namespace'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import env from '../lib/env'
 import { log } from '../lib/log'
@@ -15,7 +15,7 @@ export interface BootstrappedResourceFactory {
 }
 
 const ns = namespace(`${env.MANAGED_DIMENSIONS_BASE}dimension/`)
-const pointerFactory = (term: string) => clownface({ dataset: $rdf.dataset(), term: ns(term) })
+const pointerFactory = (term: string) => @lindas/clownface({ dataset: $rdf.dataset(), term: ns(term) })
 
 const resources = [
   terms(pointerFactory),

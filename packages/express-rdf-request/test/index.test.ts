@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import request from 'supertest'
 import express from 'express'
 import $rdf from 'rdf-ext'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import { turtle } from '@tpluscode/rdf-string'
 import { rdfs } from '@tpluscode/rdf-ns-builders'
 import { appMock } from '@cube-creator/testing/middleware'
@@ -25,8 +25,8 @@ describe('middleware/resource', () => {
         quadStream() {
           return dataset.toStream()
         },
-        async clownface() {
-          return clownface({ dataset }).node(this.term) as any
+        async @lindas/clownface() {
+          return @lindas/clownface({ dataset }).node(this.term) as any
         },
       }
     }))

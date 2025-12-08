@@ -1,6 +1,6 @@
 import type { Quad, Term } from '@rdfjs/types'
 import { Collection, IriTemplate } from '@rdfine/hydra'
-import { AnyPointer, GraphPointer } from 'clownface'
+import { AnyPointer, GraphPointer } from '@lindas/clownface'
 import { rdf } from '@tpluscode/rdf-ns-builders'
 import * as ns from '@cube-creator/core/namespace'
 import { loadResourceLabels as _loadResourceLabels } from '../queries/observations'

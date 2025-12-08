@@ -5,7 +5,7 @@ import { Enrichment } from '@hydrofoil/labyrinth/lib/middleware/preprocessResour
 import { fromPointer } from '@rdfine/prov/lib/Dictionary'
 import env from '@cube-creator/shared-dimensions-api/lib/env'
 import $rdf from 'rdf-ext'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import { Dictionary } from '@rdfine/prov'
 import { cc, md } from '@cube-creator/core/namespace'
 import { rdf } from '@tpluscode/rdf-ns-builders/strict'
@@ -52,7 +52,7 @@ export const put = protectedResource(
 
     const { dimensionMapping, hasChanges } = await update({
       resource: req.hydra.resource.term,
-      mappings: clownface({ dataset }).node(mappings.term),
+      mappings: @lindas/clownface({ dataset }).node(mappings.term),
       store: req.resourceStore(),
     })
 

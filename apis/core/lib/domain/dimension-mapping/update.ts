@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import { GraphPointer } from 'clownface'
+import { GraphPointer } from '@lindas/clownface'
 import error from 'http-errors'
 import { Dictionary } from '@rdfine/prov'
 import { cc, md } from '@cube-creator/core/namespace'

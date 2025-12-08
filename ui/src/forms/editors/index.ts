@@ -4,13 +4,13 @@ import { instancesSelect } from '@hydrofoil/shaperone-wc-shoelace/components.js'
 import * as ns from '@cube-creator/core/namespace'
 import { dash, rdfs, schema, xsd } from '@tpluscode/rdf-ns-builders/strict'
 import $rdf from 'rdf-ext'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import { FocusNode } from '@hydrofoil/shaperone-core'
 import { createCustomElement } from '../custom-element'
 import '@rdfine/dash/extensions/sh/PropertyShape'
 import type { Literal } from '@rdfjs/types'
-import * as hierarchyIntrospectionQueries from '@zazuko/cube-hierarchy-query/introspect'
-import * as hierarchyResourceQueries from '@zazuko/cube-hierarchy-query/resources'
+import * as hierarchyIntrospectionQueries from '@lindas/cube-hierarchy-query/introspect'
+import * as hierarchyResourceQueries from '@lindas/cube-hierarchy-query/resources'
 import { loader } from './hierarchy/index'
 import { SingleEditorRenderParams } from '@hydrofoil/shaperone-core/models/components/index'
 import { InstancesSelect } from '@hydrofoil/shaperone-core/lib/components/instancesSelect'
@@ -279,7 +279,7 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
     const stream = await query.execute(client.query)
     const dataset = await $rdf.dataset().import(stream)
     updateComponentState({
-      example: clownface({ dataset }).in().toArray().shift(),
+      example: @lindas/clownface({ dataset }).in().toArray().shift(),
       moreExamples: moreExamples?.toString()
     })
   },

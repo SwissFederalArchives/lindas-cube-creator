@@ -5,7 +5,7 @@ import { fromPointer } from '@rdfine/shacl/lib/NodeShape'
 import { ShapeBundle, ValidationResultBundle } from '@rdfine/shacl/bundles'
 import RdfResourceImpl, { Initializer, RdfResource, ResourceIdentifier } from '@tpluscode/rdfine/RdfResource'
 import $rdf from 'rdf-ext'
-import clownface, { GraphPointer, MultiPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer, MultiPointer } from '@lindas/clownface'
 import Validator from 'rdf-validate-shacl'
 import type * as Validate from 'rdf-validate-shacl/src/validation-report'
 import { rdf, sh } from '@tpluscode/rdf-ns-builders'
@@ -64,21 +64,21 @@ chai.Assertion.addMethod('matchShape', function (shapeInit: Initializer<NodeShap
   } else if (isGraphPointer(obj)) {
     resourceDataset = obj.dataset
     targetNode = [...obj.terms]
-    actual = targetNode.map(term => new RdfResourceImpl(clownface({ dataset: resourceDataset, term })).toJSON())
+    actual = targetNode.map(term => new RdfResourceImpl(@lindas/clownface({ dataset: resourceDataset, term })).toJSON())
   } else {
     throw new Error(`Cannot match given object to a SHACL Shape. Expecting a rdfine object, graph pointer or RDF/JS dataset. Got ${obj?.constructor.name}`)
   }
 
   let shape: NodeShape
   if (isDataset(shapeInit)) {
-    const [shapePointer] = clownface({ dataset: shapeInit })
+    const [shapePointer] = @lindas/clownface({ dataset: shapeInit })
       .has(rdf.type, [sh.Shape, sh.NodeShape]).toArray()
     shape = fromPointer(shapePointer, { targetNode })
   } else if (isGraphPointer(shapeInit)) {
     shape = fromPointer(shapeInit, { targetNode })
   } else {
     shape = fromPointer(
-      clownface({ dataset: $rdf.dataset() }).blankNode(),
+      @lindas/clownface({ dataset: $rdf.dataset() }).blankNode(),
       { ...shapeInit, targetNode })
   }
 

@@ -1,6 +1,6 @@
 import type { Quad, Term } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import env from './env'
 
 export function rewriteTerm<T extends Term>(term: T): T {
@@ -24,7 +24,7 @@ function rewriteQuad({ subject, predicate, object, graph }: Quad): Quad {
  * Rewrite pointer's dataset by replacing the API_BASE with BASE as configured in the environment
  */
 export function rewrite<T extends Term>(pointer: GraphPointer<T>): GraphPointer<T> {
-  return clownface({
+  return @lindas/clownface({
     dataset: $rdf.dataset([...pointer.dataset].map(rewriteQuad)),
   }).node(rewriteTerm<T>(pointer.term as any))
 }

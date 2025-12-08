@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import { GraphPointer } from 'clownface'
+import { GraphPointer } from '@lindas/clownface'
 import { hydra } from '@tpluscode/rdf-ns-builders'
 
 type ManagesBlock = {

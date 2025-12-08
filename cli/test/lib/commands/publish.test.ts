@@ -3,13 +3,13 @@ import env from '@cube-creator/core/env'
 import { before, describe, it } from 'mocha'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
-import { prefixes } from '@zazuko/rdf-vocabularies'
+import { prefixes } from '@lindas/rdf-vocabularies'
 import { ASK, CONSTRUCT, DELETE, SELECT, WITH } from '@tpluscode/sparql-builder'
 import { csvw, dcat, dcterms, qudt, rdf, schema, sh, vcard, xsd, _void, foaf } from '@tpluscode/rdf-ns-builders'
 import { ccClients } from '@cube-creator/testing/lib'
 import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { cc, cube } from '@cube-creator/core/namespace'
-import clownface, { AnyPointer } from 'clownface'
+import @lindas/clownface, { AnyPointer } from '@lindas/clownface'
 import namespace, { NamespaceBuilder } from '@rdfjs/namespace'
 import runner from '../../../lib/commands/publish'
 import { setupEnv } from '../../support/env'
@@ -67,7 +67,7 @@ describe('@cube-creator/cli/lib/commands/publish', function () {
       .WHERE`?s ?p ?o`
       .execute(ccClients.streamClient.query))
 
-    cubePointer = clownface({ dataset })
+    cubePointer = @lindas/clownface({ dataset })
   }
 
   async function removesHydraTerms() {
@@ -410,7 +410,7 @@ describe('@cube-creator/cli/lib/commands/publish', function () {
     it('adds work examples', async function () {
       const cube = cubePointer.namedNode(targetCube())
 
-      const shape = clownface({ dataset: $rdf.dataset(), term: $rdf.blankNode() })
+      const shape = @lindas/clownface({ dataset: $rdf.dataset(), term: $rdf.blankNode() })
         .addOut(sh.property, property => {
           property
             .addOut(sh.path, schema.workExample)

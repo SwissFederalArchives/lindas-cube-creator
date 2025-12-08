@@ -1,6 +1,6 @@
 import type { NamedNode, Term } from '@rdfjs/types'
 import DatasetExt from 'rdf-ext/lib/Dataset'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import TermMap from '@rdfjs/term-map'
 import { RdfResourceCore } from '@tpluscode/rdfine/RdfResource'
 import ResourceStore from '../../lib/ResourceStore'
@@ -33,7 +33,7 @@ class InMemoryStorage {
       throw new Error('Pointer must be named node')
     }
 
-    const changelogPointer = clownface({ dataset: new ChangelogDataset(pointer.dataset) }).node(pointer.term)
+    const changelogPointer = @lindas/clownface({ dataset: new ChangelogDataset(pointer.dataset) }).node(pointer.term)
     this.__resources.set(pointer.term, changelogPointer)
   }
 }

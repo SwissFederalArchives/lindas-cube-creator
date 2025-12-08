@@ -22,7 +22,6 @@
     "@tpluscode/rdfine": "^0.5.25",
     "@tpluscode/sparql-builder": "^0.3.21",
     "camouflage-rewrite": "^1.2.0",
-    "clownface": "^1.4.0",
     "cors": "^2.8.5",
     "debug": "^4.3.1",
     "express": "^4.20.0",
@@ -44,7 +43,8 @@
     "rdf-validate-shacl": "^0.4.3",
     "slugify": "^1.6.5",
     "sparql-http-client": "^2.2.2",
-    "through2": "^2.0.5"
+    "through2": "^2.0.5",
+    "@lindas/clownface": "^1.0.0"
   },
   "devDependencies": {
     "@cube-creator/testing": "^0.1.21",

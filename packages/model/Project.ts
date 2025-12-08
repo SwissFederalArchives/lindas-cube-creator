@@ -1,7 +1,7 @@
 import type { DatasetCore, NamedNode } from '@rdfjs/types'
 import { ResourceMixin } from '@rdfine/rdfs'
 import { Constructor, namespace, property, RdfResource, ResourceIdentifier } from '@tpluscode/rdfine'
-import type { GraphPointer } from 'clownface'
+import type { GraphPointer } from '@lindas/clownface'
 import RdfResourceImpl, { Initializer, RdfResourceCore } from '@tpluscode/rdfine/RdfResource'
 import { Mixin } from '@tpluscode/rdfine/lib/ResourceFactory'
 import { cc, lindasSchema } from '@cube-creator/core/namespace'

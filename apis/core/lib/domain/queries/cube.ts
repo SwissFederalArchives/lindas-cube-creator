@@ -6,7 +6,7 @@ import * as ns from '@cube-creator/core/namespace'
 import { schema, sh } from '@tpluscode/rdf-ns-builders'
 import ParsingClient from 'sparql-http-client/ParsingClient'
 import $rdf from 'rdf-ext'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 
 async function selectIdentifiers(datasetId: Term, parsingClient: ParsingClient): Promise<Record<string, NamedNode> | undefined> {
   const [result] = await SELECT`?cube ?cubeData ?project ?shape`
@@ -48,7 +48,7 @@ export async function loadCubeShapes(datasetId: Term, excludeInLists: boolean, {
   const identifiers = await selectIdentifiers(datasetId, parsingClient)
   if (identifiers) {
     const { cube, cubeData, project, shape } = identifiers
-    const graph = clownface({ dataset: $rdf.dataset() })
+    const graph = @lindas/clownface({ dataset: $rdf.dataset() })
       .node(project).addOut(ns.cc.cubeGraph, cubeData)
       .node(cube).addOut(ns.cube.observationConstraint, shape)
 

@@ -6,7 +6,7 @@ import asyncMiddleware from 'middleware-async'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
 import { rdf, schema } from '@tpluscode/rdf-ns-builders/strict'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import { isMultipart, multiPartResourceHandler } from '../multipart'
 
 describe('@cube-creator/express/multipart', () => {
@@ -143,7 +143,7 @@ describe('@cube-creator/express/multipart', () => {
         app.use(asyncMiddleware(async (req, res) => {
           const { part } = req.multipartFileQuadsStreams()
           const dataset = await $rdf.dataset().import(part('http://foo.bar/baz/'))
-          const parsed = clownface({ dataset })
+          const parsed = @lindas/clownface({ dataset })
           res.send(parsed.has(rdf.type, schema.Person).value)
         }))
 

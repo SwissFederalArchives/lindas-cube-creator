@@ -1,6 +1,6 @@
 import type { DatasetCore } from '@rdfjs/types'
 import RdfResourceImpl, { RdfResource, Constructor, namespace, property, ResourceIdentifier } from '@tpluscode/rdfine'
-import type { GraphPointer } from 'clownface'
+import type { GraphPointer } from '@lindas/clownface'
 import { Mixin } from '@tpluscode/rdfine/lib/ResourceFactory'
 import type * as Csvw from '@rdfine/csvw'
 import { cc } from '@cube-creator/core/namespace'

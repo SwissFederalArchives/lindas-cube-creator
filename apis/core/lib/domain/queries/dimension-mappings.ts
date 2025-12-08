@@ -9,7 +9,7 @@ import { prov } from '@tpluscode/rdf-ns-builders/strict'
 import { ResourceIdentifier } from '@tpluscode/rdfine'
 import { toRdf } from 'rdf-literal'
 import through2 from 'through2'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import getStream from 'get-stream'
 import { publicClient, streamClient } from '../../query-client'
@@ -118,7 +118,7 @@ export async function importMappingsFromSharedDimension({ dimensionMapping, dime
       return next()
     }
 
-    const pointer = clownface({ dataset: $rdf.dataset(), graph: dimensionMapping })
+    const pointer = @lindas/clownface({ dataset: $rdf.dataset(), graph: dimensionMapping })
       .node(dimensionMapping)
       .addOut(prov.hadDictionaryMember, member => {
         member

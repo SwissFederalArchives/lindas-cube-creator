@@ -2,7 +2,7 @@ import env from '@cube-creator/core/env'
 import { before, describe, it } from 'mocha'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import { ASK, DESCRIBE, SELECT } from '@tpluscode/sparql-builder'
 import namespace from '@rdfjs/namespace'
 import { Hydra } from 'alcaeus/node'
@@ -77,7 +77,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
       const query = DESCRIBE`${cubeNs('observation/so2-blBAS-2000-annualmean')}`.FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
-      const observation = clownface({ dataset }).node(cubeNs('observation/so2-blBAS-2000-annualmean'))
+      const observation = @lindas/clownface({ dataset }).node(cubeNs('observation/so2-blBAS-2000-annualmean'))
 
       expect(observation).to.matchShape({
         property: [{
@@ -143,7 +143,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
       const query = DESCRIBE`${cubeNs('station/blBAS')}`.FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
-      const station = clownface({ dataset }).node(cubeNs('station/blBAS'))
+      const station = @lindas/clownface({ dataset }).node(cubeNs('station/blBAS'))
 
       expect(station).to.matchShape({
         property: [{
@@ -251,7 +251,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
         `
         .execute(ccClients.streamClient.query, { base: cubeBase }))
 
-      const ins = [...clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
+      const ins = [...@lindas/clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
 
       expect(ins).to.deep.contain.members([$rdf.literal('', cube.Undefined)])
     })
@@ -265,7 +265,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
         `
         .execute(ccClients.streamClient.query, { base: cubeBase }))
 
-      const propShape = clownface({ dataset }).has(sh.path)
+      const propShape = @lindas/clownface({ dataset }).has(sh.path)
 
       expect(propShape.has(sh.in).terms).to.have.length(0)
       expect(propShape.has(sh.minInclusive).terms).to.have.length(1)
@@ -281,7 +281,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
         `
         .execute(ccClients.streamClient.query, { base: cubeBase }))
 
-      const ins = [...clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
+      const ins = [...@lindas/clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
 
       expect(ins).to.deep.contain.members([cube.Undefined])
     })
@@ -295,7 +295,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
         `
         .execute(ccClients.streamClient.query, { base: cubeBase }))
 
-      const ors = [...clownface({ dataset }).has(sh.or).out(sh.or).list()!]
+      const ors = [...@lindas/clownface({ dataset }).has(sh.or).out(sh.or).list()!]
         .flatMap(ptr => ptr.out(sh.datatype).terms)
 
       expect(ors).to.have.length(2)

@@ -4,7 +4,7 @@ import E, { Router } from 'express'
 import { parsers } from '@rdfjs-elements/formats-pretty'
 import once from 'once'
 import { BadRequest } from 'http-errors'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import $rdf from 'rdf-ext'
 import asyncMiddleware from 'middleware-async'
 import mime from 'mime-types'
@@ -59,7 +59,7 @@ multiPartResourceHandler.use(asyncMiddleware((req, res, next) => {
       throw new BadRequest('Missing request part "representation"')
     }
 
-    return clownface({
+    return @lindas/clownface({
       dataset: await $rdf.dataset().import(parseFile(representation, req.hydra.term.value)),
       term: req.hydra.term,
     })

@@ -3,7 +3,7 @@ import type { PropertyShape } from '@rdfine/shacl'
 import type { NamedNode, Term } from '@rdfjs/types'
 import { sh1 } from '@cube-creator/core/namespace'
 import { FocusNode } from '@hydrofoil/shaperone-core'
-import { findNodes } from 'clownface-shacl-path'
+import { findNodes } from '@lindas/clownface-shacl-path'
 
 function hasValueEquals (focusNode: FocusNode, discriminator: NamedNode, actualValue: Term | undefined) {
   return (shape: PropertyShape) => {

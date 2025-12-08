@@ -1,7 +1,7 @@
 /* eslint-disable no-redeclare */
 import { Mixin } from '@tpluscode/rdfine/lib/ResourceFactory'
 import RdfResourceImpl, { ResourceIdentifier } from '@tpluscode/rdfine'
-import type { GraphPointer } from 'clownface'
+import type { GraphPointer } from '@lindas/clownface'
 import { Initializer } from '@tpluscode/rdfine/RdfResource'
 
 type MandatoryFields<T, TRequired extends Extract<keyof T, string>> = Pick<Required<Initializer<T>>, TRequired>

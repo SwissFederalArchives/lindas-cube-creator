@@ -3,7 +3,7 @@ import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { before, describe, it } from 'mocha'
 import getStream from 'get-stream'
 import env from '@cube-creator/core/env'
-import clownface, { GraphPointer } from 'clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
 import { expect } from 'chai'
 import { Context, VariableMap, Variables } from 'barnard59-core'
 import { Hydra } from 'alcaeus/node'
@@ -53,7 +53,7 @@ describe('@cube-creator/cli/lib/metadata @SPARQL', function () {
       }))
 
       // then
-      const concept = clownface({ dataset })
+      const concept = @lindas/clownface({ dataset })
         .namedNode('https://environment.ld.admin.ch/foen/ubd/28/1/station/blBAS')
       expect(concept.out().terms).to.have.length(0)
       expect(concept.in().terms).to.have.length.greaterThan(0)
@@ -71,7 +71,7 @@ describe('@cube-creator/cli/lib/metadata @SPARQL', function () {
     }))
 
     // then
-    const shOr = clownface({ dataset })
+    const shOr = @lindas/clownface({ dataset })
       .has(sh.path, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28/dimension/year'))
       .out(sh.or)
       .list()!

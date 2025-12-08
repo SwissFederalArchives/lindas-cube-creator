@@ -1,8 +1,8 @@
 import $rdf from '@rdf-esm/dataset'
 import type { Quad } from '@rdfjs/types'
-import { shrink as _shrink } from '@zazuko/rdf-vocabularies/shrink'
-import { expand as _expand } from '@zazuko/rdf-vocabularies/expand'
-import prefixes from '@zazuko/rdf-vocabularies/prefixes'
+import { shrink as _shrink } from '@lindas/rdf-vocabularies/shrink'
+import { expand as _expand } from '@lindas/rdf-vocabularies/expand'
+import prefixes from '@lindas/rdf-vocabularies/prefixes'
 import { rdf } from '@tpluscode/rdf-ns-builders'
 
 export async function loadCommonProperties (): Promise<string[]> {

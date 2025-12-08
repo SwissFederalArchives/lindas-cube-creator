@@ -5,7 +5,7 @@ import { View } from 'rdf-cube-view-query/lib/View'
 import { Cube } from 'rdf-cube-view-query/lib/Cube'
 import env from '@cube-creator/core/env'
 import * as ns from '@cube-creator/core/namespace'
-import clownface, { AnyPointer, GraphPointer } from 'clownface'
+import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
 import { Collection, CollectionMixin, IriTemplate } from '@rdfine/hydra'
 import { cc } from '@cube-creator/core/namespace'
 import $rdf from 'rdf-ext'
@@ -61,7 +61,7 @@ interface HydraCollectionParams {
 }
 
 function pageId({ offset, page, template, ...rest }: { template: IriTemplate; templateParams: GraphPointer; page?: number; offset?: number }) {
-  const templateParams = clownface({
+  const templateParams = @lindas/clownface({
     dataset: $rdf.dataset([...rest.templateParams.dataset]),
     term: rest.templateParams.term,
   })
@@ -82,12 +82,12 @@ function pageId({ offset, page, template, ...rest }: { template: IriTemplate; te
 
 export function createHydraCollection({ templateParams, template, observations, totalItems, pageSize }: HydraCollectionParams): Collection {
   const collectionId = template.expand(
-    clownface({ dataset: $rdf.dataset() }).blankNode()
+    @lindas/clownface({ dataset: $rdf.dataset() }).blankNode()
       .addOut(cc.cube, templateParams.out(cc.cube))
       .addOut(cc.cubeGraph, templateParams.out(cc.cubeGraph)),
   )
 
-  const collectionPointer = clownface({ dataset: $rdf.dataset() })
+  const collectionPointer = @lindas/clownface({ dataset: $rdf.dataset() })
     .namedNode(new URL(collectionId, env.API_CORE_BASE).toString())
 
   const lastPage = Math.ceil(totalItems / pageSize)

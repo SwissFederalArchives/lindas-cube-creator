@@ -8,7 +8,7 @@ import TermSet from '@rdfjs/term-set'
 import TermMap from '@rdfjs/term-map'
 import { as, hydra } from '@tpluscode/rdf-ns-builders'
 import { IN, VALUES } from '@tpluscode/sparql-builder/expressions'
-import clownface from 'clownface'
+import @lindas/clownface from '@lindas/clownface'
 import express from 'express'
 
 interface CreateResourceGetters {
@@ -28,7 +28,7 @@ export default class Loader extends SparqlQueryLoader {
 
     const client: ParsingClient = (this as any).__client
     const createDatasetGetters: CreateResourceGetters = (this as any).__createDatasetGetters.bind(this)
-    const supportedProperties = clownface(req.hydra.api)
+    const supportedProperties = @lindas/clownface(req.hydra.api)
       .any()
       .has(hydra.supportedProperty)
       .out(hydra.supportedProperty)

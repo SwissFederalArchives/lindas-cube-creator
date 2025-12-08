@@ -1,4 +1,4 @@
-import { GraphPointer } from 'clownface'
+import { GraphPointer } from '@lindas/clownface'
 import nodeFetch, { Response } from 'node-fetch'
 import type { ParsingClient } from 'sparql-http-client/ParsingClient'
 

@@ -5,7 +5,7 @@ import type { Context } from 'barnard59-core'
 import { customAlphabet } from 'nanoid'
 import dict from 'nanoid-dictionary'
 import $rdf from 'rdf-ext'
-import prefixes from '@zazuko/rdf-vocabularies/prefixes'
+import prefixes from '@lindas/rdf-vocabularies/prefixes'
 
 const nanoid = customAlphabet(dict.alphanumeric, 15)
 

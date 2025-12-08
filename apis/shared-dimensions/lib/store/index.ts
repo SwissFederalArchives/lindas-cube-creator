@@ -1,6 +1,6 @@
 import type { NamedNode, Term } from '@rdfjs/types'
 import ParsingClient from 'sparql-http-client/ParsingClient'
-import clownface, { AnyPointer, GraphPointer } from 'clownface'
+import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
 import { ASK, INSERT, SELECT } from '@tpluscode/sparql-builder'
 import { rdf, schema, sh } from '@tpluscode/rdf-ns-builders/strict'
 import onetime from 'onetime'
@@ -36,7 +36,7 @@ export default class implements SharedDimensionsStore {
       operation: 'postDirect',
       defaultGraphUri: [this.graph],
     })
-    return clownface({
+    return @lindas/clownface({
       dataset: $rdf.dataset(quads),
       term,
     })
@@ -79,7 +79,7 @@ export default class implements SharedDimensionsStore {
 
     const graph = shapes.has(sh.targetClass, types.map(b => b.type))
     if (!isGraphPointer(graph)) {
-      return clownface({ dataset: $rdf.dataset() })
+      return @lindas/clownface({ dataset: $rdf.dataset() })
         .blankNode()
         .addOut(sh.property, shp => {
           shp.addOut(sh.path, rdf.type)
@@ -93,7 +93,7 @@ export default class implements SharedDimensionsStore {
   }
 
   private async createDynamicProperties({ dataset, term }: GraphPointer, sharedTerm: Term) {
-    const shape = clownface({
+    const shape = @lindas/clownface({
       dataset: $rdf.dataset([...dataset]),
       term,
     })

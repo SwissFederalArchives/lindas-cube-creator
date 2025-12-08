@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import { GraphPointer } from 'clownface'
+import { GraphPointer } from '@lindas/clownface'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import { Conflict } from 'http-errors'
 import { CsvMapping } from '@cube-creator/model'

@@ -1,7 +1,7 @@
 import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach, afterEach } from 'mocha'
-import clownface, { GraphPointer } from 'clownface'
-import { blankNode, namedNode } from '@cube-creator/testing/clownface'
+import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import { blankNode, namedNode } from '@cube-creator/testing/@lindas/clownface'
 import $rdf from 'rdf-ext'
 import { expect } from 'chai'
 import { BadRequest } from 'http-errors'
@@ -75,7 +75,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
 
@@ -100,7 +100,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
 
@@ -161,7 +161,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
         const exported = (project: string) => {
           const dataset = $rdf.dataset()
 
-          const ptr = clownface({ dataset, graph: $rdf.namedNode(project) })
+          const ptr = @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
             .namedNode(project)
             .addOut(dcterms.identifier, 'UBD')
           if (term) {
@@ -189,11 +189,11 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
           .addOut(cc.projectSourceKind, cc['projectSourceKind/CSV'])
-        clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
           .namedNode(`${project}dataset`)
           .addOut(rdf.type, schema.Dataset)
           .addOut(schema.hasPart, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28'))
@@ -239,18 +239,18 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
           .addOut(cc.projectSourceKind, cc['projectSourceKind/CSV'])
           .addOut(cc.csvMapping, $rdf.namedNode(`${project}mapping`))
-        clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
           .namedNode(`${project}dataset`)
           .addOut(rdf.type, schema.Dataset)
           .addOut(schema.hasPart, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28'))
           .namedNode('https://environment.ld.admin.ch/foen/ubd/28')
           .addOut(rdf.type, cube.Cube)
-        clownface({ dataset, graph: $rdf.namedNode(`${project}dimensions-metadata`) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(`${project}dimensions-metadata`) })
           .namedNode(`${project}dimensions-metadata/dimension-year`)
           .addOut(schema.about, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28/dimension/year'))
 
@@ -269,7 +269,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
 
       // then
       const ns = namespace(project.id.value)
-      const data = clownface({ dataset: importedDataset })
+      const data = @lindas/clownface({ dataset: importedDataset })
       expect(
         data.namedNode(ns('/dimensions-metadata/dimension-year')).out(schema.about).term,
       ).to.deep.equal($rdf.namedNode('https://test.ld.admin.ch/org/cube/id/dimension/year'))
@@ -294,7 +294,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
           .addOut(dcterms.creator, $rdf.namedNode('previous creator'))
@@ -302,7 +302,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
           .addOut(schema.maintainer, ex.Bar)
           .addOut(rdfs.label, 'UBD29')
           .addOut(cc.projectSourceKind, cc['projectSourceKind/CSV'])
-        clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
           .namedNode(`${project}dataset`)
           .addOut(rdf.type, schema.Dataset)
           .addOut(schema.hasPart, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28'))
@@ -319,7 +319,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       })
 
       // then
-      const importedProject = clownface({ dataset: importedDataset, graph: project.id, term: project.id })
+      const importedProject = @lindas/clownface({ dataset: importedDataset, graph: project.id, term: project.id })
       expect(importedProject.out([
         dcterms.creator,
         schema.maintainer,
@@ -333,7 +333,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       const exported = (project: string) => {
         const dataset = $rdf.dataset()
 
-        clownface({ dataset, graph: $rdf.namedNode(project) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(project) })
           .namedNode(project)
           .addOut(dcterms.identifier, 'UBD')
           .addOut(dcterms.creator, $rdf.namedNode('previous creator'))
@@ -343,10 +343,10 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
           .addOut(cc.projectSourceKind, cc['projectSourceKind/CSV'])
 
         const csvSource = $rdf.namedNode(`${project}source`)
-        clownface({ dataset, graph: csvSource })
+        @lindas/clownface({ dataset, graph: csvSource })
           .namedNode(csvSource)
           .addOut(rdf.type, cc.CSVSource)
-        clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
+        @lindas/clownface({ dataset, graph: $rdf.namedNode(`${project}dataset`) })
           .namedNode(`${project}dataset`)
           .addOut(rdf.type, schema.Dataset)
           .addOut(schema.hasPart, $rdf.namedNode('https://environment.ld.admin.ch/foen/ubd/28'))
@@ -363,7 +363,7 @@ describe('@cube-creator/core-api/lib/domain/cube-projects/import', () => {
       })
 
       // then
-      const importedCsvSource = clownface({
+      const importedCsvSource = @lindas/clownface({
         dataset: importedDataset,
         graph: $rdf.namedNode(`${project.id.value}/source`),
         term: $rdf.namedNode(`${project.id.value}/source`),
