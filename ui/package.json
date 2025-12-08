@@ -68,9 +68,9 @@
     "vue-select": "^4.0.0-beta.3",
     "vuex": "^4.0.0",
     "vuex-oidc": "^3.10.1",
-    "@lindas/rdf-vocabularies": "^1.0.0",
-    "@lindas/cube-hierarchy-query": "^1.0.0",
-    "@lindas/clownface": "^1.0.0"
+    "@lindas/rdf-vocabularies": "^4.0.1",
+    "@lindas/cube-hierarchy-query": "^3.0.0",
+    "@lindas/clownface": "^2.0.3"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.4.10",

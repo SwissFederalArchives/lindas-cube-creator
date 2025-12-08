@@ -22,7 +22,7 @@
     "rdf-transform-triple-to-quad": "^1.0.2",
     "rdf-validate-shacl": "^0.4.0",
     "sparql-http-client": "^2.2.2",
-    "@lindas/clownface": "^1.0.0"
+    "@lindas/clownface": "^2.0.3"
   },
   "devDependencies": {
     "@types/hydra-box": "^0.6.0",
