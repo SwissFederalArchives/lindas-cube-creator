@@ -3,11 +3,11 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import $rdf from 'rdf-ext'
 import StreamClient from 'sparql-http-client'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import { Files } from '@cube-creator/express/multipart'
 import { md, meta } from '@cube-creator/core/namespace'
 import { hydra, rdf, schema, sh } from '@tpluscode/rdf-ns-builders/strict'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import { ASK } from '@tpluscode/sparql-builder'
 import { nanoid } from 'nanoid'
 import ValidationReport from 'rdf-validate-shacl/src/validation-report'
@@ -25,7 +25,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
     let client: StreamClient
 
     beforeEach(() => {
-      resource = @lindas/clownface({
+      resource =.clownface({
         dataset: $rdf.dataset(),
       }).namedNode('')
       files = {}
@@ -88,7 +88,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
       files['dim.ttl'] = () => {
         const dataset = $rdf.dataset()
 
-        @lindas/clownface({ dataset })
+       .clownface({ dataset })
           .namedNode('dim-1')
           .addOut(rdf.type, md.SharedDimension)
           .namedNode('dim-2')
@@ -134,7 +134,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
       files['dim.ttl'] = () => {
         const dataset = $rdf.dataset()
 
-        @lindas/clownface({ dataset })
+       .clownface({ dataset })
           .namedNode('dim')
           .addOut(rdf.type, md.SharedDimension)
 
@@ -159,7 +159,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
       files['dim.ttl'] = () => {
         const dataset = $rdf.dataset()
 
-        @lindas/clownface({ dataset })
+       .clownface({ dataset })
           .namedNode('dim')
           .addOut(rdf.type, [
             md.SharedDimension,
@@ -198,7 +198,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
       files['dim.ttl'] = () => {
         const dataset = $rdf.dataset()
 
-        @lindas/clownface({ dataset })
+       .clownface({ dataset })
           .namedNode(dimension)
           .addOut(rdf.type, [
             md.SharedDimension,
@@ -244,7 +244,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension/import
       files['dim.ttl'] = () => {
         const dataset = $rdf.dataset()
 
-        @lindas/clownface({ dataset })
+       .clownface({ dataset })
           .namedNode('dim')
           .addOut(rdf.type, [
             md.SharedDimension,

@@ -1,6 +1,6 @@
 import type { NamedNode, Quad, Stream } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import { hydra, rdf } from '@tpluscode/rdf-ns-builders'
 
 export interface CollectionData<M extends Stream | Iterable<Quad> = Stream | Iterable<Quad>> {
@@ -19,7 +19,7 @@ interface CollectionHandler {
 export function getCollection({ collection, view, data: { members: memberQuads, totalItems }, memberType, collectionType }: CollectionHandler): GraphPointer<NamedNode> {
   const dataset = $rdf.dataset([...memberQuads])
 
-  const graph = @lindas/clownface({ dataset })
+  const graph =.clownface({ dataset })
   const members = graph.has(rdf.type, memberType)
 
   graph.node(collection)

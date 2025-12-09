@@ -2,7 +2,7 @@ import { PassThrough } from 'stream'
 import toStream from 'rdf-dataset-ext/toStream.js'
 import type { DatasetCore, NamedNode, Term } from '@rdfjs/types'
 import asyncMiddleware from 'middleware-async'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import parsePreferHeader from 'parse-prefer-header'
 import $rdf from 'rdf-ext'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
@@ -21,9 +21,9 @@ import { getCubesAndGraphs } from '../domain/dataset/queries'
 export const put = protectedResource(
   shaclValidate,
   asyncMiddleware(async (req, res) => {
-    const pointer: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.@lindas/clownface()
+    const pointer: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.clownface()
     const dataset = await update({
-      dataset: @lindas/clownface(pointer),
+      dataset:.clownface(pointer),
       resource: await req.resource(),
       store: req.resourceStore(),
     })
@@ -37,14 +37,14 @@ export const put = protectedResource(
 export const get = protectedResource(asyncMiddleware(async (req, res) => {
   const { includeInLists } = parsePreferHeader(req.header('Prefer'))
 
-  const ptr: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.@lindas/clownface()
-  const dataset = @lindas/clownface(ptr)
+  const ptr: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.clownface()
+  const dataset =.clownface(ptr)
   const shapeStreams = [...await loadCubeShapes(req.hydra.resource.term, !includeInLists, clients)]
   const outStream = new PassThrough({
     objectMode: true,
   })
 
-  const types = @lindas/clownface({
+  const types =.clownface({
     dataset: req.hydra.api.dataset,
     term: dataset.out(rdf.type).terms,
   })
@@ -59,7 +59,7 @@ export const get = protectedResource(asyncMiddleware(async (req, res) => {
 
 async function observationTemplate(dataset: Term) {
   const results = await getCubesAndGraphs(dataset)
-  const cf = @lindas/clownface({ dataset: $rdf.dataset() })
+  const cf =.clownface({ dataset: $rdf.dataset() })
 
   for (const { cube, graph } of results) {
     const template = fromPointer(cf.blankNode(), {

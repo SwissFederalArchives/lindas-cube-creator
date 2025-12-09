@@ -10,7 +10,7 @@ import {
   ReferenceColumnMapping,
   Table,
 } from '@cube-creator/model'
-import cf from '@lindas/clownface'
+import cf from .clownface'
 import $rdf from 'rdf-ext'
 import RdfResource from '@tpluscode/rdfine'
 import { Initializer } from '@tpluscode/rdfine/RdfResource'

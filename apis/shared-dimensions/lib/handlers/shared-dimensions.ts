@@ -4,7 +4,7 @@ import { asyncMiddleware } from 'middleware-async'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import { Enrichment } from '@hydrofoil/labyrinth/lib/middleware/preprocessResource'
 import httpError from 'http-errors'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import * as ns from '@cube-creator/core/namespace'
 import conditional from 'express-conditional-middleware'
@@ -23,7 +23,7 @@ export const get = asyncMiddleware(async (req, res, next) => {
   if (!req.dataset) {
     return next(new httpError.BadRequest())
   }
-  const query = @lindas/clownface({ dataset: await req.dataset() })
+  const query =.clownface({ dataset: await req.dataset() })
   const pageSize = Number(query.out(hydra.limit).value || 10)
   const page = Number(query.out(hydra.pageIndex).value || 1)
   const offset = (page - 1) * pageSize
@@ -71,7 +71,7 @@ export const getTerms = asyncMiddleware(async (req, res, next) => {
     return next(new httpError.BadRequest())
   }
 
-  const query = @lindas/clownface({ dataset: await req.dataset() })
+  const query =.clownface({ dataset: await req.dataset() })
   const termSet = query
     .has(schema.inDefinedTermSet)
     .out(schema.inDefinedTermSet)

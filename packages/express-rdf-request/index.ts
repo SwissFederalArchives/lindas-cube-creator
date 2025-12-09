@@ -1,6 +1,6 @@
 import type { NamedNode } from '@rdfjs/types'
 import express from 'express'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import { hydra, rdf } from '@tpluscode/rdf-ns-builders'
 
@@ -17,7 +17,7 @@ export function resource(req: express.Request, res: unknown, next: express.NextF
     const dataset = $rdf.dataset()
 
     if (!req.dataset) {
-      return @lindas/clownface({ dataset }).node(req.hydra.term)
+      return.clownface({ dataset }).node(req.hydra.term)
     }
 
     for (const quad of await req.dataset()) {
@@ -28,7 +28,7 @@ export function resource(req: express.Request, res: unknown, next: express.NextF
       dataset.add($rdf.quad(subject, predicate, object, graph))
     }
 
-    const pointer = @lindas/clownface({ dataset }).namedNode(req.hydra.term)
+    const pointer =.clownface({ dataset }).namedNode(req.hydra.term)
 
     if (req.hydra.operation) {
       const expectedTypes = req.hydra.operation

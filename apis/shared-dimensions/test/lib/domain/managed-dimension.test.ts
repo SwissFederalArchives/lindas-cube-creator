@@ -1,14 +1,14 @@
 import type { DatasetCore } from '@rdfjs/types'
 import { describe, it, beforeEach, before } from 'mocha'
 import { expect } from 'chai'
-import { blankNode, namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { blankNode, namedNode } from '@cube-creator/testing.clownface'
 import { insertTestDimensions } from '@cube-creator/testing/lib/seedData'
 import { mdClients } from '@cube-creator/testing/lib/index'
 import { dcterms, hydra, rdf, schema, xsd } from '@tpluscode/rdf-ns-builders'
 import { md, meta } from '@cube-creator/core/namespace'
 import $rdf from 'rdf-ext'
 import httpError from 'http-errors'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import sinon, { SinonSpy } from 'sinon'
 import { ex } from '@cube-creator/testing/lib/namespace'
 import { create, createTerm, update, getExportedDimension } from '../../../lib/domain/shared-dimension'
@@ -501,7 +501,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension', () =
     })
 
     it('exports set and terms', () => {
-      const graph = @lindas/clownface({ dataset })
+      const graph =.clownface({ dataset })
       const termSet = graph.node(termSetId)
 
       // then
@@ -509,7 +509,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension', () =
     })
 
     it('exports dimension properties', () => {
-      const dimension = @lindas/clownface({ dataset }).node(termSetId)
+      const dimension =.clownface({ dataset }).node(termSetId)
 
       expect(dimension).to.matchShape({
         property: [{
@@ -527,7 +527,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension', () =
     })
 
     it('exports term properties', () => {
-      const dimension = @lindas/clownface({ dataset })
+      const dimension =.clownface({ dataset })
         .namedNode('dimension/technologies/rdf')
 
       expect(dimension).to.matchShape({
@@ -552,7 +552,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/shared-dimension', () =
 
     it('exported data conforms import shape', async () => {
       // given
-      const termSet = @lindas/clownface({ dataset }).namedNode('dimension/technologies')
+      const termSet =.clownface({ dataset }).namedNode('dimension/technologies')
 
       // when
       const report = await validateTermSet(termSet)

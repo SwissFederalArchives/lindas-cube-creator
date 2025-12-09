@@ -4,7 +4,7 @@ import * as labyrinth from '@hydrofoil/labyrinth/resource'
 import { Enrichment } from '@hydrofoil/labyrinth/lib/middleware/preprocessResource'
 import { cc } from '@cube-creator/core/namespace'
 import { fromPointer as mediaObjectFromPointer } from '@cube-creator/model/MediaObject'
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import { ResourceIdentifier } from '@tpluscode/rdfine/RdfResource'
 import type { DatasetCore, NamedNode } from '@rdfjs/types'
@@ -18,7 +18,7 @@ import { getMediaStorage } from '../storage'
 export const post = labyrinth.protectedResource(
   shaclValidate,
   asyncMiddleware(async (req, res) => {
-    const csvMapping = (await req.hydra.resource.@lindas/clownface()).out(cc.csvMapping).term
+    const csvMapping = (await req.hydra.resource.clownface()).out(cc.csvMapping).term
 
     if (!csvMapping) {
       throw new Error('Multiple csv mapping found')
@@ -67,8 +67,8 @@ const getCSVSource: express.RequestHandler = asyncMiddleware(async (req, res, ne
     return next()
   }
 
-  const csvSource: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.@lindas/clownface()
-  const directDownload = getPresignedLink(@lindas/clownface(csvSource))
+  const csvSource: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.clownface()
+  const directDownload = getPresignedLink.clownface(csvSource))
   if (!directDownload) {
     return next(new Error('s3 key not found'))
   }

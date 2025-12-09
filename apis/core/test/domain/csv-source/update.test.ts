@@ -9,7 +9,7 @@ import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { csvw, rdf, schema, sh, xsd } from '@tpluscode/rdf-ns-builders'
 import { cc } from '@cube-creator/core/namespace'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import '../../../lib/domain'
 import { update } from '../../../lib/domain/csv-source/update'
@@ -29,7 +29,7 @@ describe('domain/csv-sources/upload', () => {
       getDownloadLink: sinon.spy(),
     }
     getStorage = () => (storage)
-    csvSource = @lindas/clownface({ dataset: $rdf.dataset() })
+    csvSource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'Old name')
@@ -45,7 +45,7 @@ describe('domain/csv-sources/upload', () => {
 
   it('it updates the name', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'New name')
@@ -76,7 +76,7 @@ describe('domain/csv-sources/upload', () => {
 
   it('it does not load source if dialect does not change', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'Old name')
@@ -101,7 +101,7 @@ describe('domain/csv-sources/upload', () => {
 
   it('loads the source file when dialect changes', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'Old name')
@@ -126,7 +126,7 @@ describe('domain/csv-sources/upload', () => {
 
   it('it updates dialect when necessary', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'Old name')
@@ -171,7 +171,7 @@ describe('domain/csv-sources/upload', () => {
 
   it('when updating to incompatible dialect, data get cleared', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('source')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(schema.name, 'Old name')

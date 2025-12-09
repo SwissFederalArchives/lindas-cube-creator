@@ -1,6 +1,6 @@
 import onetime from 'onetime'
 import { md } from '@cube-creator/core/namespace'
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import { isGraphPointer } from 'is-graph-pointer'
 import { hydra, sh } from '@tpluscode/rdf-ns-builders'
 import { Parameters, PropertyShape } from '@hydrofoil/shape-to-query/model/constraint/ConstraintComponent'
@@ -133,7 +133,7 @@ async function defineConstraintComponents() {
 
       const fts = namespace('tag:stardog:api:search:')
 
-      const patterns = @lindas/clownface({ dataset: $rdf.dataset() })
+      const patterns =.clownface({ dataset: $rdf.dataset() })
         .blankNode()
         .addOut(fts.query, $rdf.literal(this.pattern + '*'))
         .addOut(fts.result, valueNode)
@@ -161,7 +161,7 @@ async function defineConstraintComponents() {
         throw new Error('Property path must be a named node')
       }
 
-      const patterns = @lindas/clownface({ dataset: $rdf.dataset() })
+      const patterns =.clownface({ dataset: $rdf.dataset() })
         .node(focusNode)
         .addList($rdf.namedNode('http://jena.apache.org/text#query'), [propertyPath, $rdf.literal(this.pattern + '*')])
         .addOut(propertyPath, valueNode) // Second filtering to make sure the word starts with the given query

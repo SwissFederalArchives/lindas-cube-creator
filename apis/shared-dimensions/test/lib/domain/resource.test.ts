@@ -7,7 +7,7 @@ import $rdf from 'rdf-ext'
 import { mdClients } from '@cube-creator/testing/lib'
 import { insertTestDimensions } from '@cube-creator/testing/lib/seedData'
 import { parsers } from '@rdfjs/formats-common'
-import @lindas/clownface, { AnyPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer } from .clownface'
 import namespace from '@rdfjs/namespace'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import { cascadeDelete } from '../../../lib/domain/resource'
@@ -22,7 +22,7 @@ describe('@cube-creator/shared-dimensions-api/lib/domain/resource @SPARQL', () =
 
   before(async () => {
     const apiStream = parsers.import('text/turtle', fs.createReadStream(path.join(__dirname, '../../../hydra/index.ttl')))
-    api = @lindas/clownface({
+    api =.clownface({
       dataset: await $rdf.dataset().import(apiStream!),
     })
   })

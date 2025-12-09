@@ -1,7 +1,7 @@
 import RdfResourceImpl, { Initializer, RdfResource } from '@tpluscode/rdfine/RdfResource'
 import { Mixin } from '@tpluscode/rdfine/lib/ResourceFactory'
 import { Constructor, property, ResourceIdentifier } from '@tpluscode/rdfine'
-import type { GraphPointer } from '@lindas/clownface'
+import type { GraphPointer } from .clownface'
 import { csvw, dtype, schema } from '@tpluscode/rdf-ns-builders'
 import { cc } from '@cube-creator/core/namespace'
 import { initializer } from './lib/initializer'

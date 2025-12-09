@@ -6,7 +6,7 @@ import { cc } from '@cube-creator/core/namespace'
 import { Files } from '@cube-creator/express/multipart'
 import { createMinimalProject, Project } from '@cube-creator/model/Project'
 import { dcterms, rdfs, schema, rdf } from '@tpluscode/rdf-ns-builders/strict'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import { obj } from 'through2'
 import TermSet from '@rdfjs/term-set'
 import { Organization } from '@rdfine/schema'
@@ -73,10 +73,10 @@ function alignCubeNamespace(before: string, after: string) {
 
 function setCsvSourceErrors(dataset: DatasetCore) {
   // errors will notify users that CSVs need to be uploaded
-  @lindas/clownface({ dataset })
+ .clownface({ dataset })
     .has(rdf.type, cc.CSVSource)
     .forEach(source => {
-      @lindas/clownface({ dataset, graph: source.term })
+     .clownface({ dataset, graph: source.term })
         .node(source)
         .addOut(schema.error, 'CSV must be uploaded after importing project')
     })
@@ -116,7 +116,7 @@ export async function importProject({
     await importedDataset.import(next(project.id.value + '/').pipe(adjustTerms(project)))
   }
 
-  const importedProject = @lindas/clownface({ dataset: importedDataset, graph: project.id }).node(project.id)
+  const importedProject =.clownface({ dataset: importedDataset, graph: project.id }).node(project.id)
   const cubeIdentifier = resource.out(dcterms.identifier).value || importedProject.out(dcterms.identifier).value
   if (!cubeIdentifier) {
     throw new BadRequest('Missing cube identifier name in imported data')
@@ -145,7 +145,7 @@ export async function importProject({
     .addOut(dcterms.identifier, cubeIdentifier)
 
   if (project.sourceKind.equals(cc['projectSourceKind/CSV'])) {
-    const originalCubeId = @lindas/clownface({ dataset: importedDataset })
+    const originalCubeId =.clownface({ dataset: importedDataset })
       .has(rdf.type, schema.Dataset)
       .out(schema.hasPart)
       .term

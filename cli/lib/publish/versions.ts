@@ -1,7 +1,7 @@
 import type { Context } from 'barnard59-core'
 import $rdf from 'rdf-ext'
 import through2 from 'through2'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import { schema } from '@tpluscode/rdf-ns-builders/strict'
 
 export function inject(this: Pick<Context, 'variables'>) {
@@ -13,7 +13,7 @@ export function inject(this: Pick<Context, 'variables'>) {
   const cubeId = $rdf.namedNode(`${cubeNamespace}/${revision}`)
 
   const dataset = $rdf.dataset()
-  @lindas/clownface({ dataset })
+ .clownface({ dataset })
     .node(cubeId)
     .addOut(schema.actionApplication, api => {
       api.addOut(schema.name, 'cube-creator-api').addOut(schema.softwareVersion, apiVersion)

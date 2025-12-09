@@ -2,13 +2,13 @@ import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { csvw, hydra, rdf, schema } from '@tpluscode/rdf-ns-builders'
 import { cc } from '@cube-creator/core/namespace'
 import * as Organization from '@cube-creator/model/Organization'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import * as Project from '@cube-creator/model/Project'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import * as DimensionMetadataQueries from '../../../lib/domain/queries/dimension-metadata'
@@ -36,12 +36,12 @@ describe('domain/table/update', () => {
       cubeIdentifier: 'test-cube',
     })
 
-    const csvMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    const csvMapping =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myCsvMapping')
       .addOut(rdf.type, cc.CsvMapping)
       .addOut(cc.tables, $rdf.namedNode('tables'))
 
-    const csvSource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const csvSource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('foo')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(csvw.column, $rdf.namedNode('id'), (column) => {
@@ -51,14 +51,14 @@ describe('domain/table/update', () => {
         column.addOut(schema.name, $rdf.literal('id2'))
       })
 
-    columnMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    columnMapping =.clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode('columnMapping'))
       .addOut(rdf.type, cc.ColumnMapping)
       .addOut(rdf.type, hydra.Resource)
       .addOut(cc.sourceColumn, $rdf.namedNode('my-column'))
       .addOut(cc.targetProperty, $rdf.namedNode('test'))
 
-    const table = @lindas/clownface({ dataset: $rdf.dataset() })
+    const table =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myTable')
       .addOut(rdf.type, cc.Table)
       .addOut(cc.csvMapping, csvMapping)
@@ -68,14 +68,14 @@ describe('domain/table/update', () => {
       .addOut(cc.identifierTemplate, '{id}')
       .addOut(cc.columnMapping, columnMapping)
 
-    const columnMappingObservation = @lindas/clownface({ dataset: $rdf.dataset() })
+    const columnMappingObservation =.clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode('columnMappingObservation'))
       .addOut(rdf.type, cc.ColumnMapping)
       .addOut(rdf.type, hydra.Resource)
       .addOut(cc.sourceColumn, $rdf.namedNode('my-column'))
       .addOut(cc.targetProperty, $rdf.namedNode('testObservation'))
 
-    const observationTable = @lindas/clownface({ dataset: $rdf.dataset() })
+    const observationTable =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myObservationTable')
       .addOut(rdf.type, cc.Table)
       .addOut(rdf.type, cc.ObservationTable)
@@ -86,7 +86,7 @@ describe('domain/table/update', () => {
       .addOut(cc.identifierTemplate, '{id}')
       .addOut(cc.columnMapping, columnMappingObservation)
 
-    dimensionMetadata = @lindas/clownface({ dataset: $rdf.dataset() })
+    dimensionMetadata =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myDimensionMetadata')
       .addOut(rdf.type, cc.DimensionMetadataCollection)
       .addOut(schema.hasPart, $rdf.namedNode('myDimension'), dim => {
@@ -123,7 +123,7 @@ describe('domain/table/update', () => {
 
   it('updates simple properties', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myTable')
       .addOut(schema.name, 'the other name')
       .addOut(schema.color, '#bababa')
@@ -159,7 +159,7 @@ describe('domain/table/update', () => {
 
     beforeEach(async () => {
       // given
-      const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+      const resource =.clownface({ dataset: $rdf.dataset() })
         .namedNode('myTable')
         .addOut(schema.name, 'the other name')
         .addOut(schema.color, '#bababa')
@@ -224,7 +224,7 @@ describe('domain/table/update', () => {
 
   it('define as observation table', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myTable')
       .addOut(schema.name, 'the other name')
       .addOut(schema.color, '#bababa')
@@ -264,7 +264,7 @@ describe('domain/table/update', () => {
 
   it('is not an observation table anymore', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myObservationTable')
       .addOut(schema.name, 'the other name')
       .addOut(schema.color, '#bababa')
@@ -296,7 +296,7 @@ describe('domain/table/update', () => {
   it('is not an observation table anymore but shared dimension', async () => {
     // given
     dimensionIsUsedByOtherMapping.resolves(true)
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myObservationTable')
       .addOut(schema.name, 'the other name')
       .addOut(schema.color, '#bababa')

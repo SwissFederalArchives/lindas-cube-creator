@@ -1,12 +1,12 @@
 import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { dcterms, rdf, rdfs, schema, xsd, _void } from '@tpluscode/rdf-ns-builders'
 import { cc } from '@cube-creator/core/namespace'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import { update } from '../../../lib/domain/job/update'
 import '../../../lib/domain'
@@ -22,16 +22,16 @@ describe('domain/job/update', () => {
     maintainer = namedNode('org')
       .addOut(rdf.type, schema.Organization)
       .addOut(cc.namespace, 'http://example.com/')
-    job = @lindas/clownface({ dataset: $rdf.dataset() })
+    job =.clownface({ dataset: $rdf.dataset() })
       .namedNode('job')
       .addOut(rdf.type, cc.Job)
-    project = @lindas/clownface({ dataset: $rdf.dataset() })
+    project =.clownface({ dataset: $rdf.dataset() })
       .namedNode('project')
       .addOut(rdf.type, cc.CubeProject)
       .addOut(cc.latestPublishedRevision, 2)
       .addOut(cc.dataset, $rdf.namedNode('dataset'))
       .addOut(schema.maintainer, maintainer)
-    dataset = @lindas/clownface({ dataset: $rdf.dataset() })
+    dataset =.clownface({ dataset: $rdf.dataset() })
       .namedNode('dataset')
       .addOut(rdf.type, _void.Dataset)
 
@@ -45,7 +45,7 @@ describe('domain/job/update', () => {
 
   it('updates status', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('job')
       .addOut(schema.actionStatus, schema.FailedActionStatus)
 
@@ -67,7 +67,7 @@ describe('domain/job/update', () => {
 
   it('updates execution link', async () => {
     // given
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('job')
       .addOut(rdfs.seeAlso, $rdf.namedNode('http://gitlab.link/'))
 
@@ -92,7 +92,7 @@ describe('domain/job/update', () => {
     job.addOut(schema.error, error => {
       error.addOut(schema.description, 'Previous error')
     })
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('job')
       .addOut(rdfs.seeAlso, $rdf.namedNode('http://gitlab.link/'))
 
@@ -116,7 +116,7 @@ describe('domain/job/update', () => {
     job.addOut(schema.error, error => {
       error.addOut(schema.description, 'Previous error')
     })
-    const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const resource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('job')
       .addOut(rdfs.seeAlso, $rdf.namedNode('http://gitlab.link/'))
       .addOut(schema.error, error => {
@@ -155,7 +155,7 @@ describe('domain/job/update', () => {
 
     it("increments project's cc:publishedRevision when succeeded", async () => {
       // given
-      const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+      const resource =.clownface({ dataset: $rdf.dataset() })
         .namedNode('job')
         .addOut(schema.actionStatus, schema.CompletedActionStatus)
 
@@ -178,7 +178,7 @@ describe('domain/job/update', () => {
 
     it('sets dataset published date on first revision', async () => {
       // given
-      const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+      const resource =.clownface({ dataset: $rdf.dataset() })
         .namedNode('job')
         .addOut(schema.actionStatus, schema.CompletedActionStatus)
         .addOut(dcterms.modified, $rdf.literal('2020-12-12T11:30:30', xsd.dateTime))
@@ -204,7 +204,7 @@ describe('domain/job/update', () => {
 
     it('does not change dataset published date on first revision', async () => {
       // given
-      const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+      const resource =.clownface({ dataset: $rdf.dataset() })
         .namedNode('job')
         .addOut(schema.actionStatus, schema.CompletedActionStatus)
         .addOut(dcterms.modified, $rdf.literal('2020-12-12T11:30:30', xsd.dateTime))
@@ -231,7 +231,7 @@ describe('domain/job/update', () => {
 
     it('does not change dataset published date on revision>1', async () => {
       // given
-      const resource = @lindas/clownface({ dataset: $rdf.dataset() })
+      const resource =.clownface({ dataset: $rdf.dataset() })
         .namedNode('job')
         .addOut(schema.actionStatus, schema.CompletedActionStatus)
         .addOut(dcterms.modified, $rdf.literal('2020-12-12T11:30:30', xsd.dateTime))

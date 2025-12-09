@@ -1,13 +1,13 @@
 import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { fromPointer } from '@rdfine/prov/lib/Dictionary'
-import { GraphPointer } from '@lindas/clownface'
+import { GraphPointer } from .clownface'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
 import namespace from '@rdfjs/namespace'
 import TermSet from '@rdfjs/term-set'
 import { prov, rdf, xsd } from '@tpluscode/rdf-ns-builders'
-import { blankNode, namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { blankNode, namedNode } from '@cube-creator/testing.clownface'
 import '../../../lib/domain'
 
 const wtd = namespace('http://www.wikidata.org/entity/')

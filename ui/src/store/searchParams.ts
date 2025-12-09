@@ -1,9 +1,9 @@
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import { query } from '@cube-creator/core/namespace'
 
 export function clone (collection: AnyPointer): GraphPointer {
-  const cloned = @lindas/clownface({ dataset: $rdf.dataset() })
+  const cloned =.clownface({ dataset: $rdf.dataset() })
   const searchParams = collection.out(query.templateMappings)
 
   if (!searchParams.term) {

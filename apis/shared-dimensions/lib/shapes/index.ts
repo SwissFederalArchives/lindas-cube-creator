@@ -1,6 +1,6 @@
 import type { NamedNode } from '@rdfjs/types'
 import TermMap from '@rdfjs/term-map'
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import type { Initializer } from '@tpluscode/rdfine/RdfResource'
 import type { NodeShape } from '@rdfine/shacl'
@@ -26,7 +26,7 @@ interface ShapeFactory {
 
 function entry(id: NamedNode, init: (graph: AnyPointer) => Initializer<NodeShape>): [NamedNode, ShapeFactory] {
   async function factory(req: Request) {
-    const pointer = @lindas/clownface({ dataset: $rdf.dataset() }).namedNode(id)
+    const pointer =.clownface({ dataset: $rdf.dataset() }).namedNode(id)
     fromPointer(pointer, init(pointer.any()))
 
     const { targetClass } = parsePreferHeader(req.header('Prefer'))

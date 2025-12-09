@@ -4,7 +4,7 @@ import { hydra, rdf, schema, sh } from '@tpluscode/rdf-ns-builders'
 import $rdf from 'rdf-ext'
 import { toRdf, fromRdf } from 'rdf-literal'
 import { fromFile } from 'rdf-utils-fs'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import { isResource } from 'is-graph-pointer'
 import { StreamClient } from 'sparql-http-client/StreamClient'
 import { ParsingClient } from 'sparql-http-client/ParsingClient'
@@ -40,14 +40,14 @@ export async function getSharedDimensions(client: StreamClient, { freetextQuery 
   await rewriteTemplates(totalQueryShape, variables)
 
   const dataset = await $rdf.dataset().import(await client.query.construct(constructQuery(memberQueryShape)))
-  @lindas/clownface({ dataset })
+ .clownface({ dataset })
     .has(rdf.type, schema.DefinedTermSet)
     .forEach(termSet => {
       termSet.addOut(md.export, $rdf.namedNode(`${MANAGED_DIMENSIONS_BASE}dimension/_export?dimension=${termSet.value}`))
       termSet.addOut(md.terms, $rdf.namedNode(`${MANAGED_DIMENSIONS_BASE}dimension/_terms?dimension=${termSet.value}`))
     })
 
-  const totalItems = @lindas/clownface({
+  const totalItems =.clownface({
     dataset: await $rdf.dataset().import(await client.query.construct(constructQuery(totalQueryShape))),
   }).has(hydra.totalItems).out(hydra.totalItems).term as Literal
 
@@ -108,7 +108,7 @@ export async function getSharedTerms<C extends StreamClient | ParsingClient>({ s
 async function loadShape(shape: string, shapeType: NamedNode = sh.NodeShape) {
   const dataset = await $rdf.dataset().import(fromFile(path.resolve(__dirname, `../shapes/${shape}.ttl`)))
 
-  const ptr = @lindas/clownface({
+  const ptr =.clownface({
     dataset,
   }).has(rdf.type, shapeType)
 

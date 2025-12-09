@@ -1,6 +1,6 @@
 import type { NamedNode, Term } from '@rdfjs/types'
 import { cc } from '@cube-creator/core/namespace'
-import { GraphPointer } from '@lindas/clownface'
+import { GraphPointer } from .clownface'
 import {
   CsvSource,
   DimensionMetadataCollection,

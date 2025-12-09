@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import { GraphPointer } from '@lindas/clownface'
+import { GraphPointer } from .clownface'
 import type { MediaObject } from '@rdfine/schema'
 import { CsvSource } from '@cube-creator/model'
 import { fromPointer as mediaObjectFromPointer } from '@cube-creator/model/MediaObject'

@@ -8,7 +8,7 @@ import { schema, xsd } from '@tpluscode/rdf-ns-builders'
 import { ccClients } from '@cube-creator/testing/lib'
 import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { cc } from '@cube-creator/core/namespace'
-import @lindas/clownface, { AnyPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer } from .clownface'
 import namespace from '@rdfjs/namespace'
 import runner from '../../../lib/commands/unlist'
 import { setupEnv } from '../../support/env'
@@ -59,7 +59,7 @@ describe('@cube-creator/cli/lib/commands/unlist', function () {
       .WHERE`?s ?p ?o`
       .execute(ccClients.streamClient.query))
 
-    cubePointer = @lindas/clownface({ dataset })
+    cubePointer =.clownface({ dataset })
   }
 
   before(resetData)

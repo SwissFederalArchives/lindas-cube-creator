@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import { GraphPointer } from '@lindas/clownface'
+import { GraphPointer } from .clownface'
 import { cc } from '@cube-creator/core/namespace'
 import {
   ColumnMapping,

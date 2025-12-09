@@ -1,7 +1,7 @@
 import type { NamedNode, Quad } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
 import { sparql } from '@tpluscode/rdf-string'
-import { AnyPointer, GraphPointer } from '@lindas/clownface'
+import { AnyPointer, GraphPointer } from .clownface'
 import { rdf, sh } from '@tpluscode/rdf-ns-builders'
 import { query } from '@cube-creator/core/namespace'
 import { SELECT } from '@tpluscode/sparql-builder'

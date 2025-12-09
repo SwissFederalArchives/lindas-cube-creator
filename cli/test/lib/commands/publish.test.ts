@@ -9,7 +9,7 @@ import { csvw, dcat, dcterms, qudt, rdf, schema, sh, vcard, xsd, _void, foaf } f
 import { ccClients } from '@cube-creator/testing/lib'
 import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { cc, cube } from '@cube-creator/core/namespace'
-import @lindas/clownface, { AnyPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer } from .clownface'
 import namespace, { NamespaceBuilder } from '@rdfjs/namespace'
 import runner from '../../../lib/commands/publish'
 import { setupEnv } from '../../support/env'
@@ -67,7 +67,7 @@ describe('@cube-creator/cli/lib/commands/publish', function () {
       .WHERE`?s ?p ?o`
       .execute(ccClients.streamClient.query))
 
-    cubePointer = @lindas/clownface({ dataset })
+    cubePointer =.clownface({ dataset })
   }
 
   async function removesHydraTerms() {
@@ -410,7 +410,7 @@ describe('@cube-creator/cli/lib/commands/publish', function () {
     it('adds work examples', async function () {
       const cube = cubePointer.namedNode(targetCube())
 
-      const shape = @lindas/clownface({ dataset: $rdf.dataset(), term: $rdf.blankNode() })
+      const shape =.clownface({ dataset: $rdf.dataset(), term: $rdf.blankNode() })
         .addOut(sh.property, property => {
           property
             .addOut(sh.path, schema.workExample)

@@ -2,7 +2,7 @@ import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import { multiPartResourceHandler } from '@cube-creator/express/multipart'
 import asyncMiddleware from 'middleware-async'
 import { INSERT } from '@tpluscode/sparql-builder'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import $rdf from 'rdf-ext'
 import { parsers } from '@rdfjs-elements/formats-pretty'
 import toStream from 'string-to-stream'
@@ -25,9 +25,9 @@ export const postImportedProject = protectedResource(
       throw new Error('User is not defined')
     }
 
-    const pointer: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.@lindas/clownface()
+    const pointer: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.clownface()
     const { project, importedDataset } = await importProject({
-      projectsCollection: @lindas/clownface(pointer),
+      projectsCollection:.clownface(pointer),
       resource: await req.parseFromMultipart(),
       files: req.multipartFileQuadsStreams(),
       store: req.resourceStore(),
@@ -41,7 +41,7 @@ export const postImportedProject = protectedResource(
     disableShClass: true,
     async parseResource(req, res) {
       const { project, importedDataset } = res.locals
-      return @lindas/clownface({ dataset: importedDataset }).node(project.id)
+      return.clownface({ dataset: importedDataset }).node(project.id)
     },
     async loadShapes() {
       const shapes = [

@@ -1,5 +1,5 @@
 import type { Term } from '@rdfjs/types'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import type { Plugin } from '@captaincodeman/rdx/typings/modelStore'
 import { api } from '@/api/index'
 import $rdf from 'rdf-ext'
@@ -72,7 +72,7 @@ export const dimensionMetaHierarchySynchronizer: Plugin = {
 
 async function loadHierarchy (term: Term) {
   const hierarchy = await api.fetchResource(term.value)
-  const copy = @lindas/clownface({ dataset: $rdf.dataset() })
+  const copy =.clownface({ dataset: $rdf.dataset() })
     .blankNode()
     .addOut(schema.isBasedOn, term)
     .addOut(rdf.type, meta.Hierarchy)

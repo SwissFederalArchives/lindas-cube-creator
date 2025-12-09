@@ -7,7 +7,7 @@ import $rdf from 'rdf-ext'
 import SHACLValidator from 'rdf-validate-shacl'
 import ValidationReport from 'rdf-validate-shacl/src/validation-report'
 import { parsers } from '@rdfjs/formats-common'
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import { rdf, schema } from '@tpluscode/rdf-ns-builders'
 import { INSERT } from '@tpluscode/sparql-builder'
 import { StreamClient } from 'sparql-http-client/StreamClient'
@@ -64,7 +64,7 @@ export async function importDimension({
       this.push($rdf.quad(subject, predicate, object, graph))
       next()
     }))
-  const termSet = @lindas/clownface({ dataset: await $rdf.dataset().import(importStream) })
+  const termSet =.clownface({ dataset: await $rdf.dataset().import(importStream) })
     .has(rdf.type, md.SharedDimension)
 
   if (!termSet.term || !isNamedNode(termSet)) {

@@ -5,7 +5,7 @@ import './FormSubmitCancel'
 import './HydraOperationError'
 import type { Quad, Quad_Graph as Graph } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 
 interface ParseError {
   detail: { error: string }
@@ -36,7 +36,7 @@ export class HydraRawRdfForm extends HydraOperationFormBase {
   }
 
   get value () {
-    return @lindas/clownface({
+    return.clownface({
       dataset: $rdf.dataset(this.editor.quads),
       term: this.resource!.term,
     })

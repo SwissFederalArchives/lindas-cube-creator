@@ -1,7 +1,7 @@
 import type { Quad, Term } from '@rdfjs/types'
 import { describe, it, beforeEach, before, after } from 'mocha'
 import { expect } from 'chai'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import { IriTemplate } from '@rdfine/hydra'
 import sinon from 'sinon'
@@ -47,7 +47,7 @@ describe('lib/domain/observations', () => {
 
   beforeEach(() => {
     observations = []
-    templateParams = @lindas/clownface({ dataset: $rdf.dataset() }).blankNode()
+    templateParams =.clownface({ dataset: $rdf.dataset() }).blankNode()
 
     cubes = [
       new Cube({

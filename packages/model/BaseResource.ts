@@ -1,6 +1,6 @@
 import { Constructor, namespace, property, RdfResource } from '@tpluscode/rdfine'
 import { RdfResourceCore } from '@tpluscode/rdfine/RdfResource'
-import type { GraphPointer } from '@lindas/clownface'
+import type { GraphPointer } from .clownface'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import * as Schema from '@rdfine/schema'
 import { cc } from '../core/namespace'

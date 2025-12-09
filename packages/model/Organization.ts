@@ -4,7 +4,7 @@ import { Constructor, namespace, property, ResourceIdentifier } from '@tpluscode
 import { cc } from '@cube-creator/core/namespace'
 import { dcat, schema, _void } from '@tpluscode/rdf-ns-builders'
 import RdfResourceImpl, { Initializer, RdfResourceCore } from '@tpluscode/rdfine/RdfResource'
-import type { GraphPointer } from '@lindas/clownface'
+import type { GraphPointer } from .clownface'
 
 interface CreateIdentifier {
   cubeIdentifier: string

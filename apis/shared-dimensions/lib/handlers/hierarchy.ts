@@ -7,7 +7,7 @@ import { md, meta } from '@cube-creator/core/namespace'
 import onetime from 'onetime'
 import { sh } from '@tpluscode/rdf-ns-builders/strict'
 import { isGraphPointer, isNamedNode } from 'is-graph-pointer'
-import @lindas/clownface, { AnyPointer, GraphPointer } from '@lindas/clownface'
+import.clownface, { AnyPointer, GraphPointer } from .clownface'
 import sharedDimensionsEnv from '../env'
 import { ShouldRewrite } from '../middleware/canonicalRewrite'
 import shapeToQuery from '../shapeToQuery'
@@ -15,7 +15,7 @@ import { loadShapes } from '../store/shapes'
 import { parsingClient } from '../sparql'
 
 export const get = asyncMiddleware(async (req, res) => {
-  const hierarchy: any = await req.hydra.resource.@lindas/clownface()
+  const hierarchy: any = await req.hydra.resource.clownface()
 
   ensureEndpoint(hierarchy)
 
@@ -43,7 +43,7 @@ export const getExternal = asyncMiddleware(async (req, res) => {
     throw new Error('Shape not found')
   }
 
-  const queryParams = @lindas/clownface({ dataset: await req.dataset!() })
+  const queryParams =.clownface({ dataset: await req.dataset!() })
   const focusNode = queryParams.out(schema.identifier)
   if (!isNamedNode(focusNode)) {
     throw new Error('Missing or invalid id param')
@@ -55,7 +55,7 @@ export const getExternal = asyncMiddleware(async (req, res) => {
     focusNode: $rdf.namedNode(url),
   })
 
-  const hierarchy = @lindas/clownface({
+  const hierarchy =.clownface({
     dataset: $rdf.dataset(await parsingClient.query.construct(query)),
   }).namedNode(url)
   ensureEndpoint(hierarchy)

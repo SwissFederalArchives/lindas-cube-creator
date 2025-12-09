@@ -4,7 +4,7 @@ import { instancesSelect } from '@hydrofoil/shaperone-wc-shoelace/components.js'
 import * as ns from '@cube-creator/core/namespace'
 import { dash, rdfs, schema, xsd } from '@tpluscode/rdf-ns-builders/strict'
 import $rdf from 'rdf-ext'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import { FocusNode } from '@hydrofoil/shaperone-core'
 import { createCustomElement } from '../custom-element'
 import '@rdfine/dash/extensions/sh/PropertyShape'
@@ -279,7 +279,7 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
     const stream = await query.execute(client.query)
     const dataset = await $rdf.dataset().import(stream)
     updateComponentState({
-      example: @lindas/clownface({ dataset }).in().toArray().shift(),
+      example:.clownface({ dataset }).in().toArray().shift(),
       moreExamples: moreExamples?.toString()
     })
   },

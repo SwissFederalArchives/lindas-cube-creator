@@ -18,9 +18,9 @@ import JobCollectionMixin from './mixins/JobCollection'
 import OperationMixin from './mixins/Operation'
 import SharedDimensionMixin from './mixins/SharedDimension'
 import * as Models from '@cube-creator/model'
-import { findNodes } from '@lindas/clownface-shacl-path'
+import { findNodes } from .clownface-shacl-path'
 import { FileLiteral } from '@/forms/FileLiteral'
-import { GraphPointer } from '@lindas/clownface'
+import { GraphPointer } from .clownface'
 import type { Term } from '@rdfjs/types'
 
 export const rootURL = window.APP_CONFIG.apiCoreBase

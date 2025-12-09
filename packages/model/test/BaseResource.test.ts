@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha'
 import RdfResource from '@tpluscode/rdfine/RdfResource'
-import { blankNode } from '@cube-creator/testing/@lindas/clownface'
+import { blankNode } from '@cube-creator/testing.clownface'
 import { fromPointer } from '@rdfine/schema/lib/Thing'
 import { expect } from 'chai'
 import { schema } from '@tpluscode/rdf-ns-builders/strict'

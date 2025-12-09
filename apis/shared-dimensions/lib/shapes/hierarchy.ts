@@ -4,7 +4,7 @@ import { PropertyShape } from '@rdfine/shacl'
 import { fromPointer as iriTemplate } from '@rdfine/hydra/lib/IriTemplate'
 import { dash, dcterms, foaf, hydra, rdf, schema, sd, sh, xsd } from '@tpluscode/rdf-ns-builders/strict'
 import { editor, md, meta } from '@cube-creator/core/namespace'
-import { AnyPointer } from '@lindas/clownface'
+import { AnyPointer } from .clownface'
 import env from '@cube-creator/core/env'
 
 export default function ({ rdfTypeProperty = false }: { rdfTypeProperty?: boolean } = {}) {

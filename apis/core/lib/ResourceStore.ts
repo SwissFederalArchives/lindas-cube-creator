@@ -1,6 +1,6 @@
 import type { NamedNode, Quad, Term } from '@rdfjs/types'
 import type StreamClient from 'sparql-http-client/StreamClient'
-import cf, { GraphPointer } from '@lindas/clownface'
+import cf, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { CONSTRUCT, INSERT } from '@tpluscode/sparql-builder'

@@ -1,7 +1,7 @@
 import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach, afterEach } from 'mocha'
 import { expect } from 'chai'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import { DomainError } from '@cube-creator/api-errors'
 import sinon from 'sinon'
@@ -9,7 +9,7 @@ import DatasetExt from 'rdf-ext/lib/Dataset'
 import { ResourceIdentifier } from '@tpluscode/rdfine'
 import { dcterms, prov, rdfs, schema, rdf } from '@tpluscode/rdf-ns-builders/strict'
 import { cc } from '@cube-creator/core/namespace'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import { Dataset, Project } from '@cube-creator/model'
 import { fromPointer } from '@cube-creator/model/Organization'
 import { createProject } from '../../../lib/domain/cube-projects/create'
@@ -22,15 +22,15 @@ import * as orgQueries from '../../../lib/domain/organization/query'
 describe('domain/cube-projects/update', () => {
   let store: TestResourceStore
   const user = $rdf.namedNode('userId')
-  const projectsCollection = @lindas/clownface({ dataset: $rdf.dataset() }).namedNode('projects')
+  const projectsCollection =.clownface({ dataset: $rdf.dataset() }).namedNode('projects')
   let projectExists: sinon.SinonStub
   let previouslyPublished: sinon.SinonStub
 
-  const bafu = fromPointer(@lindas/clownface({ dataset: $rdf.dataset() }).namedNode('bafu'), {
+  const bafu = fromPointer.clownface({ dataset: $rdf.dataset() }).namedNode('bafu'), {
     namespace: $rdf.namedNode('http://bafu.namespace/'),
     publishGraph: $rdf.namedNode('http://bafu.cubes/'),
   })
-  const bar = fromPointer(@lindas/clownface({ dataset: $rdf.dataset() }).namedNode('bar'), {
+  const bar = fromPointer.clownface({ dataset: $rdf.dataset() }).namedNode('bar'), {
     namespace: $rdf.namedNode('http://bar.namespace/'),
     publishGraph: $rdf.namedNode('http://bar.cubes/'),
   })
@@ -51,7 +51,7 @@ describe('domain/cube-projects/update', () => {
 
   describe('CSV project', () => {
     function projectPointer(id: ResourceIdentifier = $rdf.namedNode('')) {
-      return @lindas/clownface({ dataset: $rdf.dataset() })
+      return.clownface({ dataset: $rdf.dataset() })
         .node(id)
         .addOut(rdfs.label, 'Created name')
         .addOut(schema.maintainer, bafu.id)
@@ -356,7 +356,7 @@ describe('domain/cube-projects/update', () => {
 
   describe('Import project', () => {
     function projectPointer(id: ResourceIdentifier = $rdf.namedNode('')) {
-      return @lindas/clownface({ dataset: $rdf.dataset() })
+      return.clownface({ dataset: $rdf.dataset() })
         .node(id)
         .addOut(rdfs.label, 'Created name')
         .addOut(schema.maintainer, bafu.id)

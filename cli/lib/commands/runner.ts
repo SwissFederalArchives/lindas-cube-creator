@@ -1,5 +1,5 @@
 import path from 'path'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import $rdf from 'rdf-ext'
 import fromFile from 'rdf-utils-fs/fromFile.js'
 import { schema, xsd } from '@tpluscode/rdf-ns-builders'
@@ -104,7 +104,7 @@ export function create<TOptions extends RunOptions>({ pipelineSources, prepare, 
 
     const { default: Runner } = await importDynamic<typeof import('barnard59/runner.js')>('barnard59/runner.js')
     const env = await importDynamic<typeof import('barnard59-env')>('barnard59-env')
-    const run = await Runner(@lindas/clownface({
+    const run = await Runner.clownface({
       dataset,
       term: pipelines.Entrypoint,
     }), env.default, {

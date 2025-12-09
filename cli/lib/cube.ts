@@ -1,7 +1,7 @@
 import type { DataFactory, DatasetCore, Quad, Term } from '@rdfjs/types'
 import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import type { Context } from 'barnard59-core'
 import { obj } from 'through2'
 import { CONSTRUCT, sparql } from '@tpluscode/sparql-builder'
@@ -133,7 +133,7 @@ export async function injectRevision(this: Pick<Context, 'variables' | 'logger'>
 
     return callback()
   }, function (done) {
-    const metadataPointer = @lindas/clownface({
+    const metadataPointer =.clownface({
       dataset: metadata,
     })
 

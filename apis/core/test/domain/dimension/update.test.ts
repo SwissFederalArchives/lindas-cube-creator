@@ -1,14 +1,14 @@
 import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import sinon from 'sinon'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { prov, rdf, schema, sh, qudt, time } from '@tpluscode/rdf-ns-builders'
 import { cc, meta } from '@cube-creator/core/namespace'
 import { ex } from '@cube-creator/testing/lib/namespace'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import { update } from '../../../lib/domain/dimension/update'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import '../../../lib/domain'
@@ -215,7 +215,7 @@ describe('domain/dimension/update', function () {
 
   it('replaces child blank nodes recursively', async () => {
     // given
-    const dimensionMetadata = @lindas/clownface({ dataset: $rdf.dataset() })
+    const dimensionMetadata =.clownface({ dataset: $rdf.dataset() })
       .namedNode('dimension')
       .addOut(schema.about, ex.pollutantDimension)
       .addOut(meta.dataKind, dataKind => {

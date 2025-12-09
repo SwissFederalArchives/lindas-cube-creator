@@ -2,7 +2,7 @@ import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import $rdf from 'rdf-ext'
 import { csvw, hydra, rdf, schema, xsd, prov } from '@tpluscode/rdf-ns-builders/strict'
 import { cc } from '@cube-creator/core/namespace'
@@ -10,7 +10,7 @@ import DatasetExt from 'rdf-ext/lib/Dataset'
 import { ColumnMapping } from '@cube-creator/model'
 import * as Organization from '@cube-creator/model/Organization'
 import * as Project from '@cube-creator/model/Project'
-import { namedNode } from '@cube-creator/testing/@lindas/clownface'
+import { namedNode } from '@cube-creator/testing.clownface'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import * as DimensionMetadataQueries from '../../../lib/domain/queries/dimension-metadata'
 import type * as TableQueries from '../../../lib/domain/queries/table'
@@ -44,10 +44,10 @@ describe('domain/column-mapping/delete', () => {
       cubeIdentifier: 'test-cube',
     })
 
-    const csvMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    const csvMapping =.clownface({ dataset: $rdf.dataset() })
       .namedNode('csv-mapping')
       .addOut(rdf.type, cc.CsvMapping)
-    const csvSource = @lindas/clownface({ dataset: $rdf.dataset() })
+    const csvSource =.clownface({ dataset: $rdf.dataset() })
       .namedNode('foo')
       .addOut(rdf.type, cc.CSVSource)
       .addOut(csvw.column, $rdf.namedNode('my-column'), (column) => {
@@ -57,7 +57,7 @@ describe('domain/column-mapping/delete', () => {
         column.addOut(schema.name, $rdf.literal('My Column 2'))
       })
 
-    columnMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    columnMapping =.clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode('columnMapping'))
       .addOut(rdf.type, cc.ColumnMapping)
       .addOut(rdf.type, hydra.Resource)
@@ -67,14 +67,14 @@ describe('domain/column-mapping/delete', () => {
       .addOut(cc.language, $rdf.literal('fr'))
       .addOut(cc.defaultValue, $rdf.literal('test'))
 
-    const otherColumnMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    const otherColumnMapping =.clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode('otherColumnMapping'))
       .addOut(rdf.type, cc.ColumnMapping)
       .addOut(rdf.type, hydra.Resource)
       .addOut(cc.sourceColumn, $rdf.namedNode('my-column2'))
       .addOut(cc.targetProperty, $rdf.namedNode('other'))
 
-    const table = @lindas/clownface({ dataset: $rdf.dataset() })
+    const table =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myTable')
       .addOut(rdf.type, cc.Table)
       .addOut(rdf.type, cc.ObservationTable)
@@ -83,7 +83,7 @@ describe('domain/column-mapping/delete', () => {
       .addOut(cc.columnMapping, columnMapping)
       .addOut(cc.columnMapping, otherColumnMapping)
 
-    columnMappingObservation = @lindas/clownface({ dataset: $rdf.dataset() })
+    columnMappingObservation =.clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode('columnMappingObservation'))
       .addOut(rdf.type, cc.ColumnMapping)
       .addOut(rdf.type, hydra.Resource)
@@ -91,7 +91,7 @@ describe('domain/column-mapping/delete', () => {
       .addOut(cc.targetProperty, $rdf.namedNode('test'))
       .addOut(cc.datatype, xsd.integer)
 
-    observationTable = @lindas/clownface({ dataset: $rdf.dataset() })
+    observationTable =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myObservationTable')
       .addOut(rdf.type, cc.Table)
       .addOut(rdf.type, cc.ObservationTable)
@@ -100,11 +100,11 @@ describe('domain/column-mapping/delete', () => {
       .addOut(cc.columnMapping, columnMappingObservation)
       .addOut(cc.columnMapping, columnMapping)
 
-    dimensionMapping = @lindas/clownface({ dataset: $rdf.dataset() })
+    dimensionMapping =.clownface({ dataset: $rdf.dataset() })
       .namedNode('myDimensionMapping')
       .addOut(rdf.type, prov.Dictionary)
 
-    dimensionMetadataCollection = @lindas/clownface({ dataset: $rdf.dataset() })
+    dimensionMetadataCollection =.clownface({ dataset: $rdf.dataset() })
       .namedNode('dimensionMetadataCollection')
       .addOut(rdf.type, cc.DimensionMetadataCollection)
       .addOut(schema.hasPart, $rdf.namedNode('myDimension'), dim => {

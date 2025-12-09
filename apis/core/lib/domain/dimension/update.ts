@@ -1,5 +1,5 @@
 import type { NamedNode, Quad, Term } from '@rdfjs/types'
-import @lindas/clownface, { GraphPointer } from '@lindas/clownface'
+import.clownface, { GraphPointer } from .clownface'
 import TermSet from '@rdfjs/term-set'
 import $rdf from 'rdf-ext'
 import { DimensionMetadataCollection, Project } from '@cube-creator/model'
@@ -66,7 +66,7 @@ export async function update({
   }
 
   const dataset = $rdf.dataset([...extractSubgraph(metadata.pointer.node(dimensionMetadata.term))])
-  return @lindas/clownface({ dataset }).node(dimensionMetadata.term)
+  return.clownface({ dataset }).node(dimensionMetadata.term)
 }
 
 interface ClearDimensionChangedWarning {

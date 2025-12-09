@@ -7,7 +7,7 @@ import StreamClient from 'sparql-http-client'
 import $rdf from 'rdf-ext'
 import { sparql, CONSTRUCT } from '@tpluscode/sparql-builder'
 import * as ns from '@cube-creator/core/namespace'
-import @lindas/clownface from '@lindas/clownface'
+import.clownface from .clownface'
 import { create } from '@cube-creator/model/Dataset'
 import * as Cube from '@cube-creator/model/Cube'
 import through2 from 'through2'
@@ -86,7 +86,7 @@ function preserveExistingValues(dataset: DatasetCore) {
 }
 
 function prepareNewCubeResource(cubeResource: Cube.Cube, datasetResource: NamedNode) {
-  const pointer = @lindas/clownface({ dataset: $rdf.dataset() }).namedNode(datasetResource)
+  const pointer =.clownface({ dataset: $rdf.dataset() }).namedNode(datasetResource)
   create(pointer, {
     hasPart: [Cube.create(pointer.node(cubeResource.id), {
       creator: cubeResource.creator,
