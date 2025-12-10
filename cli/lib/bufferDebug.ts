@@ -1,5 +1,5 @@
 import stream from 'readable-stream'
-import type Pipeline from 'barnard59-core/lib/Pipeline'
+import type Pipeline from '@lindas/barnard59-core/lib/Pipeline'
 import { metrics } from '@opentelemetry/api'
 
 const { finished } = stream as any

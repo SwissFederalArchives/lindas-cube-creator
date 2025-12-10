@@ -1,6 +1,6 @@
 import type { Literal, NamedNode, Quad } from '@rdfjs/types'
 import { turtle } from '@tpluscode/rdf-string'
-import type { Context } from 'barnard59-core'
+import type { Context } from '@lindas/barnard59-core'
 import { validateQuad } from 'rdf-validate-datatype'
 import TermMap from '@rdfjs/term-map'
 import { xsd } from '@tpluscode/rdf-ns-builders'

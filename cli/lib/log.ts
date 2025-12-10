@@ -1,5 +1,5 @@
 import winston from 'winston'
-import { OnViolation } from 'barnard59-shacl/validate'
+import { OnViolation } from '@lindas/barnard59-shacl/validate'
 import { fromPointer } from '@rdfine/shacl/lib/ValidationReport'
 import { sh } from '@tpluscode/rdf-ns-builders'
 

@@ -1,5 +1,5 @@
-import type Pipeline from 'barnard59-core/lib/Pipeline'
-import type { Context } from 'barnard59-core'
+import type Pipeline from '@lindas/barnard59-core/lib/Pipeline'
+import type { Context } from '@lindas/barnard59-core'
 
 export const asStep = (pipeline: Pipeline) => pipeline
 

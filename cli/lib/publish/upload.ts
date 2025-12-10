@@ -1,5 +1,5 @@
 import { spawnSync } from 'child_process'
-import type { VariableMap } from 'barnard59-core'
+import type { VariableMap } from '@lindas/barnard59-core'
 import { tracer } from '../otel/tracer'
 import { logger } from '../log'
 

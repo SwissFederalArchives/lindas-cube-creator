@@ -4,7 +4,7 @@ import $rdf from 'rdf-ext'
 import { readable } from 'duplex-to'
 import { CsvSource } from '@cube-creator/model'
 import fetch from 'node-fetch'
-import type { Context } from 'barnard59-core'
+import type { Context } from '@lindas/barnard59-core'
 
 export function openFromCsvw(this: Context) {
   const csvStream = new PassThrough()

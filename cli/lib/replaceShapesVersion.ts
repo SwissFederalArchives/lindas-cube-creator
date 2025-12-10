@@ -1,5 +1,5 @@
 import type { Quad } from '@rdfjs/types'
-import { Context } from 'barnard59-core'
+import { Context } from '@lindas/barnard59-core'
 
 export default function replaceShapesVersion(this: Context, version = 'v0.2.2') {
   const prefix = 'https://cube.link/latest/'

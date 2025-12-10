@@ -1,6 +1,6 @@
 import { Stream } from 'stream'
 import { spawnSync } from 'child_process'
-import type { Context } from 'barnard59-core'
+import type { Context } from '@lindas/barnard59-core'
 import { CONSTRUCT, sparql } from '@tpluscode/sparql-builder'
 import { csvw } from '@tpluscode/rdf-ns-builders'
 import { cc, cube } from '@cube-creator/core/namespace'

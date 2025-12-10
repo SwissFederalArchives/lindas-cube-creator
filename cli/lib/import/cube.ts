@@ -1,5 +1,5 @@
 import type { NamedNode } from '@rdfjs/types'
-import type { Context } from 'barnard59-core'
+import type { Context } from '@lindas/barnard59-core'
 import StreamClient from 'sparql-http-client'
 import { CONSTRUCT } from '@tpluscode/sparql-builder'
 import * as ns from '@cube-creator/core/namespace'

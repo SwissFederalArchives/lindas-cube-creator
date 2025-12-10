@@ -4,7 +4,7 @@ import { dcat, dcterms, rdf, schema, sh, _void, foaf, xsd } from '@tpluscode/rdf
 import { cc, cube } from '@cube-creator/core/namespace'
 import { Dataset, Project, PublishJob } from '@cube-creator/model'
 import { HydraClient } from 'alcaeus/alcaeus'
-import type { Context } from 'barnard59-core'
+import type { Context } from '@lindas/barnard59-core'
 import { Published } from '@cube-creator/model/Cube'
 import { CONSTRUCT, sparql } from '@tpluscode/sparql-builder'
 import StreamClient from 'sparql-http-client/StreamClient'
