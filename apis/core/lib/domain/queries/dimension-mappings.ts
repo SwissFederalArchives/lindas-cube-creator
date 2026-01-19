@@ -153,17 +153,17 @@ async function getSharedDimensionTerms({ dimension, predicate, validThrough }: G
 
   const bindings: Array<{ term: Term; identifier: Literal }> = await SELECT`?term ?identifier`
     .WHERE`
-      {
-        ?term ${schema.inDefinedTermSet} ${dimension} ;
-              ${predicate} ?identifier .
+        {
+          ?term ${schema.inDefinedTermSet} ${dimension} ;
+                ${predicate} ?identifier .
 
-        FILTER (!isblank(?identifier))
-      } union {
-        ?term ${schema.inDefinedTermSet} ${dimension} ;
-              ${predicate}/${schema.value} ?identifier .
-      }
+          FILTER (!isblank(?identifier))
+        } union {
+          ?term ${schema.inDefinedTermSet} ${dimension} ;
+                ${predicate}/${schema.value} ?identifier .
+        }
 
-      ${validThroughFilter}
+        ${validThroughFilter}
     `
     .execute(publicClient.query) as any
 

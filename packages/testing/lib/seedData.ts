@@ -11,6 +11,8 @@ import RdfPxParser from 'rdf-parser-px'
 import TripleToQuadTransform from 'rdf-transform-triple-to-quad'
 import { DELETE } from '@tpluscode/sparql-builder'
 import { VALUES } from '@tpluscode/sparql-builder/expressions'
+import { customFetch } from '@cube-creator/core/customFetch'
+import { ex } from './namespace'
 import { ccClients, mdClients } from './index'
 
 async function removeTestGraphs(client: ParsingClient, dataset: DatasetCore) {
@@ -24,7 +26,8 @@ async function removeRootResources(client: ParsingClient, dataset: DatasetCore) 
   const rootResources = [...dataset.match(null, rdf.type, _void.rootResource)]
     .map(quad => ({ root: quad.subject }))
   if (rootResources.length) {
-    await DELETE`GRAPH ?g { ?s ?p ?o }`
+    // Use a BASE so relative IRIs in fixtures are resolved consistently across SPARQL engines.
+    const deleteQuery = DELETE`GRAPH ?g { ?s ?p ?o }`
       .WHERE`
         GRAPH ?g {
           ${VALUES(...rootResources)}
@@ -35,7 +38,10 @@ async function removeRootResources(client: ParsingClient, dataset: DatasetCore) 
           FILTER (?s = ?root || isblank(?s))
         }
       `
-      .execute(client.query)
+      .build()
+
+    const queryWithBase = `BASE <${ex.DUMMY.value}>\n${deleteQuery}`
+    await client.query.update(queryWithBase)
   }
 }
 
@@ -68,6 +74,8 @@ export const insertPxCube = () => {
   const client = new StreamClient({
     endpointUrl: process.env.PX_CUBE_QUERY_ENDPOINT!,
     storeUrl: process.env.PX_CUBE_GRAPH_ENDPOINT!,
+    // Ensure gzip/deflate handling and proper Headers support in tests.
+    fetch: customFetch,
   })
 
   const pxStream = fs.createReadStream(path.resolve(__dirname, '../../../fuseki/px-x-0703010000_103.px'))
