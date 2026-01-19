@@ -144,7 +144,7 @@ index 5aa6bfc..1538933 100644
  }
  
 diff --git a/node_modules/sparql-http-client/StreamQuery.js b/node_modules/sparql-http-client/StreamQuery.js
-index 163b325..bbbe20d 100644
+index 163b325..9e8c112 100644
 --- a/node_modules/sparql-http-client/StreamQuery.js
 +++ b/node_modules/sparql-http-client/StreamQuery.js
 @@ -27,8 +27,8 @@ class StreamQuery extends RawQuery {
@@ -186,3 +186,48 @@ index 163b325..bbbe20d 100644
  
      await checkResponse(res)
  
+@@ -84,8 +84,8 @@ class StreamQuery extends RawQuery {
+    * @param {'get'|'postUrlencoded'|'postDirect'} [init.operation='postUrlencoded']
+    * @return {Promise<void>}
+    */
+-  async update (query, { headers, operation } = {}) {
+-    const res = await super.update(query, { headers, operation })
++  async update (query, { headers, operation, ...options } = {}) {
++    const res = await super.update(query, { headers, operation, ...options })
+ 
+     await checkResponse(res)
+   }
+diff --git a/node_modules/sparql-http-client/StreamStore.js b/node_modules/sparql-http-client/StreamStore.js
+index ea509a6..d51c4ab 100644
+--- a/node_modules/sparql-http-client/StreamStore.js
++++ b/node_modules/sparql-http-client/StreamStore.js
+@@ -51,10 +51,13 @@ class StreamStore {
+   }
+ 
+   async read ({ method, graph }) {
+-    const url = new URL(this.endpoint.storeUrl)
++    let url = new URL(this.endpoint.storeUrl)
+ 
+     if (graph.termType !== 'DefaultGraph') {
+       url.searchParams.append('graph', graph.value)
++    } else {
++      // SPARQL 1.1 Graph Store Protocol requires ?default (no value) for default graph
++      url = new URL(url.toString() + (url.search ? '&' : '?') + 'default')
+     }
+ 
+     return this.endpoint.fetch(url, {
+@@ -96,10 +99,13 @@ class StreamStore {
+   }
+ 
+   writeRequest (method, graph, stream) {
+-    const url = new URL(this.endpoint.storeUrl)
++    let url = new URL(this.endpoint.storeUrl)
+ 
+     if (graph.termType !== 'DefaultGraph') {
+       url.searchParams.append('graph', graph.value)
++    } else {
++      // SPARQL 1.1 Graph Store Protocol requires ?default (no value) for default graph
++      url = new URL(url.toString() + (url.search ? '&' : '?') + 'default')
+     }
+ 
+     return this.endpoint.fetch(url, {

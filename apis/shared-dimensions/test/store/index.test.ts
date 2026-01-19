@@ -273,7 +273,10 @@ describe('@cube-creator/shared-dimensions-api/lib/store/index @SPARQL', function
       await store.delete(term)
 
       // then
-      await expect(ASK`${term} (<>|!<>)+ ?o`.execute(parsingClient.query)).to.eventually.be.false
+      // Check that no triples remain in the named graph
+      const query = ASK`${term} (<>|!<>)+ ?o`.FROM(graph).build()
+      const queryWithBase = `BASE <${ex.DUMMY.value}>\n${query}`
+      await expect(parsingClient.query.ask(queryWithBase)).to.eventually.be.false
     })
   })
 

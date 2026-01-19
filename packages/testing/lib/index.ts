@@ -1,5 +1,6 @@
 import StreamClient from 'sparql-http-client/StreamClient'
 import ParsingClient from 'sparql-http-client/ParsingClient'
+import { customFetch } from '@cube-creator/core/customFetch'
 
 const endpoints = (db: 'cube-creator' | 'shared-dimensions') => {
   if (db === 'cube-creator') {
@@ -17,12 +18,13 @@ const endpoints = (db: 'cube-creator' | 'shared-dimensions') => {
   }
 }
 
+// Use customFetch to ensure gzip/deflate handling and proper Headers support in tests.
 export const ccClients = {
-  parsingClient: new ParsingClient(endpoints('cube-creator')),
-  streamClient: new StreamClient(endpoints('cube-creator')),
+  parsingClient: new ParsingClient({ ...endpoints('cube-creator'), fetch: customFetch }),
+  streamClient: new StreamClient({ ...endpoints('cube-creator'), fetch: customFetch }),
 }
 
 export const mdClients = {
-  parsingClient: new ParsingClient(endpoints('shared-dimensions')),
-  streamClient: new StreamClient(endpoints('shared-dimensions')),
+  parsingClient: new ParsingClient({ ...endpoints('shared-dimensions'), fetch: customFetch }),
+  streamClient: new StreamClient({ ...endpoints('shared-dimensions'), fetch: customFetch }),
 }
