@@ -123,11 +123,7 @@ _:FilterShape
         ] ;
       sh:flags "i" ;
     ] ;
-  sh:property
-    [
-      sh:path rdf:type ;
-      sh:hasValue schema:DefinedTermSet, meta:SharedDimension ;
-    ] ;
+  sh:class schema:DefinedTermSet, meta:SharedDimension ;
   sh:expression
     [
       sh:deactivated
