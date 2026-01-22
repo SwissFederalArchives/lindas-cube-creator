@@ -10,6 +10,7 @@ export const entrypoint = turtle`
     ${cc.projects} <cube-projects> ;
     ${cc.sharedDimensions} <dimension/> ;
     ${dcat.endpointURL} <${env.PUBLIC_QUERY_ENDPOINT}> ;
+    ${cc.storeEngine} "${env.PUBLIC_STORE_ENGINE}" ;
 }
 
 <observations> {

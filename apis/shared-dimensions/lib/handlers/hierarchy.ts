@@ -3,7 +3,7 @@ import { dcterms, schema, sd } from '@tpluscode/rdf-ns-builders'
 import { asyncMiddleware } from 'middleware-async'
 import $rdf from 'rdf-ext'
 import env from '@cube-creator/core/env'
-import { md, meta } from '@cube-creator/core/namespace'
+import { cc, md, meta } from '@cube-creator/core/namespace'
 import onetime from 'onetime'
 import { sh } from '@tpluscode/rdf-ns-builders/strict'
 import { isGraphPointer, isNamedNode } from 'is-graph-pointer'
@@ -65,10 +65,20 @@ export const getExternal = asyncMiddleware(async (req, res) => {
 })
 
 function ensureEndpoint(hierarchy: GraphPointer) {
-  if (!hierarchy.out(dcterms.source).terms.length) {
+  const sources = hierarchy.out(dcterms.source)
+  if (!sources.terms.length) {
     hierarchy.addOut(dcterms.source, source => {
       source
         .addOut(sd.endpoint, $rdf.namedNode(env.PUBLIC_QUERY_ENDPOINT))
+        .addOut(cc.storeEngine, $rdf.literal(env.PUBLIC_STORE_ENGINE))
     })
+  }
+  for (const source of hierarchy.out(dcterms.source).toArray()) {
+    if (!source.out(sd.endpoint).terms.length) {
+      source.addOut(sd.endpoint, $rdf.namedNode(env.PUBLIC_QUERY_ENDPOINT))
+    }
+    if (!source.out(cc.storeEngine).terms.length) {
+      source.addOut(cc.storeEngine, $rdf.literal(env.PUBLIC_STORE_ENGINE))
+    }
   }
 }

@@ -26,6 +26,7 @@ services:
       PIPELINE_URI: ${PIPELINE_URI:-http://localhost:5000}
       # Public Endpoints
       PUBLIC_QUERY_ENDPOINT: ${PUBLIC_QUERY_ENDPOINT:-http://fuseki:3030/cube-creator/query}
+      PUBLIC_STORE_ENGINE: ${PUBLIC_STORE_ENGINE:-fuseki}
       TRIFID_UI: ${TRIFID_UI:-https://lindas.admin.ch/sparql}
       VISUALIZE_UI: ${VISUALIZE_UI:-https://visualize.admin.ch}
       # CORS

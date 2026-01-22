@@ -15,6 +15,7 @@ import type { Literal, NamedNode, Term } from '@rdfjs/types'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import TermWithLanguage from '@/components/TermWithLanguage.vue'
 import { mapState } from 'vuex'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 
 export default defineComponent({
   name: 'ExternalTerm',
@@ -55,6 +56,7 @@ export default defineComponent({
   computed: {
     ...mapState('api', [
       'publicQueryEndpoint',
+      'publicQueryEndpointEngine',
     ]),
     ...mapState('project', {
       project: 'project',
@@ -122,7 +124,7 @@ export default defineComponent({
 
       const endpoint = this.publicQueryEndpoint as string
       const sparqlUrl = new URL(endpoint)
-      const describe = DESCRIBE`${this.node}`.build()
+      const describe = applyDescribeEngine(DESCRIBE`${this.node}`, this.publicQueryEndpointEngine).build()
       sparqlUrl.searchParams.append('query', describe)
 
       return this.__fetch(sparqlUrl.toString())

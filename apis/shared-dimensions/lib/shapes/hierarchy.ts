@@ -3,7 +3,7 @@ import { NodeShape, fromPointer as nodeShape } from '@rdfine/shacl/lib/NodeShape
 import { PropertyShape } from '@rdfine/shacl'
 import { fromPointer as iriTemplate } from '@rdfine/hydra/lib/IriTemplate'
 import { dash, dcterms, foaf, hydra, rdf, schema, sd, sh, xsd } from '@tpluscode/rdf-ns-builders/strict'
-import { editor, md, meta } from '@cube-creator/core/namespace'
+import { cc, editor, md, meta } from '@cube-creator/core/namespace'
 import { AnyPointer } from 'clownface'
 import env from '@cube-creator/core/env'
 
@@ -12,6 +12,7 @@ export default function ({ rdfTypeProperty = false }: { rdfTypeProperty?: boolea
     // const sharedDimensionCollection = graph.namedNode('/dimension/_term-sets')
     const publicQueryEndpoint = graph.blankNode()
       .addOut(sd.endpoint, graph.namedNode(env.PUBLIC_QUERY_ENDPOINT))
+      .addOut(cc.storeEngine, env.PUBLIC_STORE_ENGINE)
       .addOut(foaf.page, env.TRIFID_UI)
 
     const nextInHierarchyShapeId = graph.blankNode()

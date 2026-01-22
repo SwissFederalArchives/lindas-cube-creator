@@ -10,6 +10,7 @@ import { DomainError } from '@cube-creator/api-errors'
 import env from '@cube-creator/core/env'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import { isCsvProject } from '@cube-creator/model/Project'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 import * as id from '../identifiers'
 import { ResourceStore } from '../../ResourceStore'
 import * as TableQueries from '../queries/table'
@@ -158,7 +159,7 @@ export function prepareWorkExamples(cubeId: NamedNode, job: Job.PublishJob, data
 }
 
 function lindasWebQueryLink(cube: NamedNode, version: number, cubeGraph: NamedNode) {
-  const describe = DESCRIBE`?cube`
+  const describe = applyDescribeEngine(DESCRIBE`?cube`, env.maybe.STORE_ENGINE)
     .FROM(cubeGraph)
     .WHERE`
       ${cube} ${schema.hasPart} ?cube .
