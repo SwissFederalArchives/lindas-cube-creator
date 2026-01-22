@@ -70,7 +70,7 @@ function ensureEndpoint(hierarchy: GraphPointer) {
     hierarchy.addOut(dcterms.source, source => {
       source
         .addOut(sd.endpoint, $rdf.namedNode(env.PUBLIC_QUERY_ENDPOINT))
-        .addOut(cc.storeEngine, env.PUBLIC_STORE_ENGINE)
+        .addOut(cc.storeEngine, $rdf.literal(env.PUBLIC_STORE_ENGINE))
     })
   }
   for (const source of hierarchy.out(dcterms.source).toArray()) {
