@@ -25,6 +25,7 @@ const customElements = [
 
 module.exports = {
   publicPath,
+  lintOnSave: false,
   devServer: {
     allowedHosts: 'all',
     ...websocketConfig,
@@ -38,6 +39,7 @@ module.exports = {
       crypto: false,
       stream: require.resolve('stream-browserify'),
       util: require.resolve('util'),
+      querystring: require.resolve('querystring-es3'),
     }
 
     const shoelaceAssets = process.env.NODE_ENV === 'production'

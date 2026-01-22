@@ -1,5 +1,5 @@
 import type { NamedNode, Term } from '@rdfjs/types'
-import { GraphPointer } from .clownface'
+import { GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import { parsingClient } from './sparql'
 import env from './env'

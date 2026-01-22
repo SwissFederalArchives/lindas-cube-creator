@@ -3,7 +3,7 @@ import { beforeEach, describe, it } from 'mocha'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
 import { fromPointer } from '@cube-creator/model/Table'
-import { namedNode } from '@cube-creator/testing.clownface'
+import { namedNode } from '@cube-creator/testing/clownface'
 import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { getTableReferences } from '../../../lib/domain/queries/table'
 

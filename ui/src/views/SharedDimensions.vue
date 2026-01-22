@@ -130,7 +130,7 @@ export default defineComponent({
     }),
   },
 
-  async beforeRouteUpdate (to) {
+  async beforeRouteUpdate (to: { query: Record<string, unknown> }) {
     await this.$store.dispatch('sharedDimensions/fetchCollection', to.query)
     this.searchParams = this.collection.searchParams
     this.pageSize = this.searchParams.out(hydra.limit).value

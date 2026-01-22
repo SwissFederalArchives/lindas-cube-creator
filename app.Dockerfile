@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:18.19.1-alpine3.19 AS builder
+FROM node:20-alpine3.19 AS builder
 
 # Do not install Cypress
 ENV CYPRESS_INSTALL_BINARY=0

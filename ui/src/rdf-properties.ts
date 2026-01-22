@@ -1,16 +1,20 @@
 import $rdf from '@rdf-esm/dataset'
+import dataModel from '@rdf-esm/data-model'
 import type { Quad } from '@rdfjs/types'
 import { shrink as _shrink } from '@lindas/rdf-vocabularies/shrink'
 import { expand as _expand } from '@lindas/rdf-vocabularies/expand'
 import prefixes from '@lindas/rdf-vocabularies/prefixes'
 import { rdf } from '@tpluscode/rdf-ns-builders'
 
+// Create factory wrapper for vocabulary packages
+const rdfEnv = { factory: dataModel } as any
+
 export async function loadCommonProperties (): Promise<string[]> {
   const vocabs = await import('./vocabularies')
 
   return Object.entries(vocabs).flatMap(([prefix, factory]) => {
-    const dataset = $rdf.dataset(factory($rdf))
-    const baseIRI = prefixes[prefix]
+    const dataset = $rdf.dataset((factory as any)(rdfEnv))
+    const baseIRI = (prefixes as Record<string, string>)[prefix]
     const graph = $rdf.namedNode(baseIRI)
     const properties = [...dataset.match(null, rdf.type, rdf.Property, graph)]
 

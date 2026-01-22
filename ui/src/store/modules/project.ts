@@ -352,6 +352,7 @@ const mutations: MutationTree<ProjectState> = {
 
     const serializedColumnMapping = serializeColumnMapping(columnMapping)
     const index = storedTable.columnMappings.findIndex(({ id }) => id.equals(columnMapping.id))
+    if (index === -1) throw new Error(`Column mapping not found: ${columnMapping.id.value}`)
     storedTable.columnMappings[index] = serializedColumnMapping
   },
 

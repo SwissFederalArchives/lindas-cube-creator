@@ -38,7 +38,7 @@ import ExternalTerm from '@/components/ExternalTerm.vue'
 import HierarchyTree from '@/components/HierarchyTree.vue'
 import LoadingBlock from '@/components/LoadingBlock.vue'
 import ExternalTermLink from '@/components/ExternalTermLink.vue'
-import * as hierarchy from '@zazuko/cube-hierarchy-query/resources'
+import * as hierarchy from '@lindas/cube-hierarchy-query/resources'
 import { NextInHierarchy } from '@/store/types'
 import Remote, { RemoteData } from '@/remote'
 import StreamClient from 'sparql-http-client'
@@ -77,7 +77,7 @@ export default defineComponent({
 
     const loadPage = async () => {
       try {
-        const page = await hierarchy.children(
+        const page = await (hierarchy.children as any)(
           nextLevel.value?.pointer,
           root.value.term,
           {
@@ -88,7 +88,7 @@ export default defineComponent({
         const loadedChildren = page?.children || []
 
         mayHaveMore.value = loadedChildren.length >= pageSize
-        children.value = Remote.loaded((children.value?.data ?? []).concat(loadedChildren))
+        children.value = Remote.loaded((children.value?.data ?? []).concat(loadedChildren) as any)
       } catch (e: any) {
         children.value = Remote.error(e.toString())
       }

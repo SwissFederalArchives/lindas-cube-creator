@@ -2,7 +2,7 @@ import { asyncMiddleware } from 'middleware-async'
 import { md } from '@cube-creator/core/namespace'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import { hydra } from '@tpluscode/rdf-ns-builders'
-import.clownface from .clownface'
+import clownface from 'clownface'
 import httpError from 'http-errors'
 import { parsingClient } from '../sparql'
 import { getHierarchies, create } from '../domain/hierarchies'
@@ -16,7 +16,7 @@ export const get = asyncMiddleware(async (req, res, next) => {
     return next(new httpError.BadRequest())
   }
 
-  const query =.clownface({ dataset: await req.dataset() })
+  const query = clownface({ dataset: await req.dataset() })
   const pageSize = Number(query.out(hydra.limit).value || 10)
   const page = Number(query.out(hydra.pageIndex).value || 1)
   const offset = (page - 1) * pageSize

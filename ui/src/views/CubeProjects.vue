@@ -101,7 +101,7 @@ export default defineComponent({
     },
   },
 
-  async beforeRouteUpdate (to) {
+  async beforeRouteUpdate (to: { query: Record<string, unknown> }) {
     await this.$store.dispatch('projects/fetchCollection', to.query)
     this.searchParams = this.projectsCollection.searchParams
   },

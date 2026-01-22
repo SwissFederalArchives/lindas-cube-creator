@@ -8,7 +8,7 @@ import {
 import type { Organization } from '@rdfine/schema'
 import { schema, xsd } from '@tpluscode/rdf-ns-builders'
 import $rdf from 'rdf-ext'
-import { GraphPointer } from .clownface'
+import { GraphPointer } from 'clownface'
 import { cc } from '@cube-creator/core/namespace'
 import { ResourceStore } from '../../ResourceStore'
 import { getDimensionMetaDataCollection } from '../queries/dimension-metadata'

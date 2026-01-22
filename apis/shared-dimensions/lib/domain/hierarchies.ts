@@ -1,7 +1,7 @@
 import type { NamedNode, Quad } from '@rdfjs/types'
 import { CONSTRUCT, SELECT } from '@tpluscode/sparql-builder'
 import { md, meta } from '@cube-creator/core/namespace'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import { hydra, rdf, schema } from '@tpluscode/rdf-ns-builders'
 import httpError from 'http-errors'
 import $rdf from 'rdf-ext'
@@ -76,7 +76,7 @@ export async function create({ resource, store }: CreateHierarchy) {
   }
 
   const dataset = $rdf.dataset([...resource.dataset].map(replace(resource.term, hierarchyId)))
-  const hierarchy =.clownface({ dataset })
+  const hierarchy = clownface({ dataset })
     .namedNode(hierarchyId)
     .addOut(rdf.type, [hydra.Resource, meta.Hierarchy, md.Hierarchy])
 

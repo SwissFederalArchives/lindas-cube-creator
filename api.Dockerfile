@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:18.19.1-alpine3.19 AS builder
+FROM node:20-alpine3.19 AS builder
 
 WORKDIR /app
 ADD package.json yarn.lock ./
@@ -25,9 +25,9 @@ RUN rm -rf ./ui
 RUN rm -rf ./cli
 RUN rm -rf ./e2e-ui
 
-RUN yarn tsc --outDir dist --module CommonJS
+RUN node --max-old-space-size=4096 --stack-size=8192 ./node_modules/.bin/tsc --outDir dist --module CommonJS
 
-FROM node:18.19.1-alpine3.19
+FROM node:20-alpine3.19
 
 WORKDIR /app
 

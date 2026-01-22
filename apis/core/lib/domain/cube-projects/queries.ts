@@ -5,7 +5,7 @@ import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
 import { DimensionMetadataCollection, Project } from '@cube-creator/model'
 import { sparql, SparqlTemplateResult } from '@tpluscode/rdf-string'
-import { GraphPointer } from .clownface'
+import { GraphPointer } from 'clownface'
 import { parsingClient } from '../../query-client'
 
 type FindProject = {

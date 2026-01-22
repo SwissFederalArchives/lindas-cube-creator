@@ -10,7 +10,7 @@
     <o-tab-item label="URL" :value="MediaURL">
       <form @submit.prevent="submitUrl">
         <o-field label="URL">
-          <o-input :model-value="fileUrl" type="url" required />
+          <o-input v-model="fileUrl" type="url" required />
         </o-field>
         <button-loading native-type="submit" variant="primary" :loading="isLoading">
           Upload

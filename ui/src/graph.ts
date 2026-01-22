@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import type { DatasetCore, NamedNode, Quad, Quad_Graph, Quad_Predicate, Term } from '@rdfjs/types'
 import TermSet from '@rdfjs/term-set'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 
 function quadsAbout (dataset: DatasetCore, graph: Quad_Graph | undefined, excludeProps: Quad_Predicate[] = []) {
@@ -33,5 +33,5 @@ export function conciseBoundedDescription (pointer: GraphPointer, exclude: Named
   const graph = pointer._context[0].graph
   const dataset = $rdf.dataset().addAll([...quadsAbout(pointer.dataset, graph, exclude)(pointer.term)])
 
-  return.clownface({ dataset, term: pointer.term, graph })
+  return clownface({ dataset, term: pointer.term, graph })
 }

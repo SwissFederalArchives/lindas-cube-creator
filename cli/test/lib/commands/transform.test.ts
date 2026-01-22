@@ -2,7 +2,7 @@ import env from '@cube-creator/core/env'
 import { before, describe, it } from 'mocha'
 import { expect } from 'chai'
 import $rdf from 'rdf-ext'
-import.clownface from .clownface'
+import clownface from 'clownface'
 import { ASK, DESCRIBE, SELECT } from '@tpluscode/sparql-builder'
 import namespace from '@rdfjs/namespace'
 import { Hydra } from 'alcaeus/node'
@@ -77,7 +77,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
       const query = DESCRIBE`${cubeNs('observation/so2-blBAS-2000-annualmean')}`.FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
-      const observation =.clownface({ dataset }).node(cubeNs('observation/so2-blBAS-2000-annualmean'))
+      const observation = clownface({ dataset }).node(cubeNs('observation/so2-blBAS-2000-annualmean'))
 
       expect(observation).to.matchShape({
         property: [{
@@ -143,7 +143,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
       const query = DESCRIBE`${cubeNs('station/blBAS')}`.FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
-      const station =.clownface({ dataset }).node(cubeNs('station/blBAS'))
+      const station = clownface({ dataset }).node(cubeNs('station/blBAS'))
 
       expect(station).to.matchShape({
         property: [{
@@ -265,7 +265,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
         `
         .execute(ccClients.streamClient.query, { base: cubeBase }))
 
-      const propShape =.clownface({ dataset }).has(sh.path)
+      const propShape = clownface({ dataset }).has(sh.path)
 
       expect(propShape.has(sh.in).terms).to.have.length(0)
       expect(propShape.has(sh.minInclusive).terms).to.have.length(1)

@@ -1,7 +1,7 @@
 import type { NamedNode } from '@rdfjs/types'
 import { HydraBox } from 'hydra-box'
 import express from 'express'
-import cf, { GraphPointer } from .clownface'
+import cf, { GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import rdfHandler from '@rdfjs/express-handler'
 import { ex } from './lib/namespace'

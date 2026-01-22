@@ -3,7 +3,7 @@ import { dash, hydra, rdf, rdfs, schema, sh, xsd } from '@tpluscode/rdf-ns-build
 import { iso6391, md } from '@cube-creator/core/namespace'
 import { CONSTRUCT } from '@tpluscode/sparql-builder'
 import $rdf from 'rdf-ext'
-import.clownface, { AnyPointer, GraphPointer } from .clownface'
+import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import { toRdf } from 'rdf-literal'
 import env from '../env'
 import { parsingClient } from '../sparql'
@@ -114,7 +114,7 @@ export async function loadDynamicTermProperties(targetClass: string | unknown, s
     dataset.addAll(await dynamicPropertiesQuery(rewriteTerm($rdf.namedNode(targetClass)), shape.term))
   }
 
-  const pointer =.clownface({ dataset })
+  const pointer = clownface({ dataset })
   buildShaclLists(pointer)
 
   let order = 100

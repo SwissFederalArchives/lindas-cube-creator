@@ -2,13 +2,13 @@ import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { dcat, dcterms, hydra, rdf, schema, sh, vcard, _void, xsd } from '@tpluscode/rdf-ns-builders'
 import { cc, cube, lindasSchema } from '@cube-creator/core/namespace'
 import { ex } from '@cube-creator/testing/lib/namespace'
-import { namedNode } from '@cube-creator/testing.clownface'
+import { namedNode } from '@cube-creator/testing/clownface'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import { update } from '../../../lib/domain/dataset/update'
 
@@ -172,7 +172,7 @@ describe('domain/dataset/update', () => {
 
   it('populates schema contact point from dcat contact point', async () => {
     // given
-    const updatedResource =.clownface({ dataset: $rdf.dataset(), term: $rdf.namedNode('dataset') })
+    const updatedResource = clownface({ dataset: $rdf.dataset(), term: $rdf.namedNode('dataset') })
       .addOut(dcterms.title, 'title')
       .addOut(dcat.contactPoint, org => {
         org

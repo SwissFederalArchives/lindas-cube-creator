@@ -1,5 +1,5 @@
 import asyncMiddleware from 'middleware-async'
-import.clownface from .clownface'
+import clownface from 'clownface'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import { loadLinkedResources } from '@hydrofoil/labyrinth/lib/query/eagerLinks'
 import $rdf from 'rdf-ext'
@@ -17,7 +17,7 @@ export const put = protectedResource(
     await req.resourceStore().save()
 
     // Include resources defined with `query:include`
-    const types =.clownface({
+    const types = clownface({
       dataset: req.hydra.api.dataset,
       term: [...req.hydra.resource.types],
     })

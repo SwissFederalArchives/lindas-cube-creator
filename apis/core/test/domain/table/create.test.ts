@@ -2,13 +2,13 @@ import type { NamedNode } from '@rdfjs/types'
 import { describe, it, beforeEach } from 'mocha'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { csvw, dtype, hydra, rdf, schema, sh } from '@tpluscode/rdf-ns-builders'
 import { cc } from '@cube-creator/core/namespace'
 import * as Organization from '@cube-creator/model/Organization'
-import { namedNode } from '@cube-creator/testing.clownface'
+import { namedNode } from '@cube-creator/testing/clownface'
 import * as Project from '@cube-creator/model/Project'
 import { DomainError } from '@cube-creator/api-errors'
 import { createTable } from '../../../lib/domain/table/create'
@@ -35,17 +35,17 @@ describe('domain/table/create', () => {
       maintainer: organization,
       cubeIdentifier: 'test-cube',
     })
-    const csvMapping =.clownface({ dataset: $rdf.dataset() })
+    const csvMapping = clownface({ dataset: $rdf.dataset() })
       .namedNode('myCsvMapping')
       .addOut(rdf.type, cc.CsvMapping)
       .addOut(cc.tables, $rdf.namedNode('tables'))
-    tableCollection =.clownface({ dataset: $rdf.dataset(), term: $rdf.namedNode('tables') })
+    tableCollection = clownface({ dataset: $rdf.dataset(), term: $rdf.namedNode('tables') })
       .addOut(rdf.type, cc.Table)
       .addOut(cc.csvMapping, csvMapping)
-    csvSource =.clownface({ dataset: $rdf.dataset() })
+    csvSource = clownface({ dataset: $rdf.dataset() })
       .namedNode('foo')
       .addOut(rdf.type, cc.CSVSource)
-    dimensionMetadata =.clownface({ dataset: $rdf.dataset() })
+    dimensionMetadata = clownface({ dataset: $rdf.dataset() })
       .namedNode('myDimensionMetadata')
       .addOut(rdf.type, cc.DimensionMetadataCollection)
     store = new TestResourceStore([
@@ -69,7 +69,7 @@ describe('domain/table/create', () => {
 
   it('creates identifier by slugifying schema:name', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#aaa')
@@ -87,7 +87,7 @@ describe('domain/table/create', () => {
 
   it('creates correctly shaped cc:Table', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -122,7 +122,7 @@ describe('domain/table/create', () => {
 
   it('creates cc:ObservationTable if flagged', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(cc.isObservationTable, true)
       .addOut(schema.name, 'the name')
@@ -145,7 +145,7 @@ describe('domain/table/create', () => {
 
   it('does not allow multiple Cube Tables', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(cc.isObservationTable, true)
       .addOut(schema.name, 'the name')
@@ -166,7 +166,7 @@ describe('domain/table/create', () => {
 
   it('creates a ColumnMapping resources for selected source columns', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -201,7 +201,7 @@ describe('domain/table/create', () => {
 
   it('allows concept table columns to have same name', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -220,7 +220,7 @@ describe('domain/table/create', () => {
 
   it('does not allow cube table columns to have same name', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -240,7 +240,7 @@ describe('domain/table/create', () => {
 
   it('does not allow cube table columns to have same name, generated from CSV columns with special characters', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -260,7 +260,7 @@ describe('domain/table/create', () => {
 
   it('turns column names into URL-safe slugs', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#ababab')
@@ -285,7 +285,7 @@ describe('domain/table/create', () => {
   })
 
   it('generates template if missing', async () => {
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#aaa')
@@ -305,7 +305,7 @@ describe('domain/table/create', () => {
 
   it('no dimension metadata when not observation table', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(schema.color, '#aaa')
@@ -329,7 +329,7 @@ describe('domain/table/create', () => {
 
   it('creates Dimension Metadata for observation table columns ', async () => {
     // given
-    const resource =.clownface({ dataset: $rdf.dataset() })
+    const resource = clownface({ dataset: $rdf.dataset() })
       .node($rdf.namedNode(''))
       .addOut(schema.name, 'the name')
       .addOut(cc.isObservationTable, true)

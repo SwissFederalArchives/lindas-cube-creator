@@ -4,17 +4,21 @@ import { instancesSelect } from '@hydrofoil/shaperone-wc-shoelace/components.js'
 import * as ns from '@cube-creator/core/namespace'
 import { dash, rdfs, schema, xsd } from '@tpluscode/rdf-ns-builders/strict'
 import $rdf from 'rdf-ext'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import { FocusNode } from '@hydrofoil/shaperone-core'
 import { createCustomElement } from '../custom-element'
 import '@rdfine/dash/extensions/sh/PropertyShape'
 import type { Literal } from '@rdfjs/types'
-import * as hierarchyIntrospectionQueries from '@lindas/cube-hierarchy-query/introspect'
-import * as hierarchyResourceQueries from '@lindas/cube-hierarchy-query/resources'
+import * as _hierarchyIntrospectionQueries from '@lindas/cube-hierarchy-query/introspect'
+import * as _hierarchyResourceQueries from '@lindas/cube-hierarchy-query/resources'
 import { loader } from './hierarchy/index'
 import { SingleEditorRenderParams } from '@hydrofoil/shaperone-core/models/components/index'
 import { InstancesSelect } from '@hydrofoil/shaperone-core/lib/components/instancesSelect'
 import StreamClient from 'sparql-http-client'
+
+// Type assertions to handle version conflicts in nested dependencies
+const hierarchyIntrospectionQueries = _hierarchyIntrospectionQueries as any
+const hierarchyResourceQueries = _hierarchyResourceQueries as any
 
 export const textField: Lazy<SingleEditorComponent> = {
   editor: dash.TextFieldEditor,
@@ -276,10 +280,10 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
       moreExamples.hash = params.toString()
     }
 
-    const stream = await query.execute(client.query)
+    const stream = await query.execute(client.query as any)
     const dataset = await $rdf.dataset().import(stream)
     updateComponentState({
-      example:.clownface({ dataset }).in().toArray().shift(),
+      example: clownface({ dataset }).in().toArray().shift(),
       moreExamples: moreExamples?.toString()
     })
   },

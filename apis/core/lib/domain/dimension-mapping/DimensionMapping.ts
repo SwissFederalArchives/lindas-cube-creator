@@ -6,7 +6,7 @@ import { cc, md } from '@cube-creator/core/namespace'
 import TermMap from '@rdfjs/term-map'
 import $rdf from 'rdf-ext'
 import TermSet from '@rdfjs/term-set'
-import { GraphPointer } from .clownface'
+import { GraphPointer } from 'clownface'
 
 interface DictionaryEx {
   about: NamedNode

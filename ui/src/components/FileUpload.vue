@@ -109,6 +109,6 @@ function toUploadedFile (file: UppyFile | undefined): UploadedFile {
 
   if (!('s3Multipart' in file)) throw new Error('Missing s3Multipart')
 
-  return file
+  return file as UploadedFile
 }
 </script>

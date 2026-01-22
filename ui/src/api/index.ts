@@ -18,9 +18,9 @@ import JobCollectionMixin from './mixins/JobCollection'
 import OperationMixin from './mixins/Operation'
 import SharedDimensionMixin from './mixins/SharedDimension'
 import * as Models from '@cube-creator/model'
-import { findNodes } from .clownface-shacl-path'
+import { findNodes } from 'clownface-shacl-path'
 import { FileLiteral } from '@/forms/FileLiteral'
-import { GraphPointer } from .clownface'
+import { GraphPointer } from 'clownface'
 import type { Term } from '@rdfjs/types'
 
 export const rootURL = window.APP_CONFIG.apiCoreBase
@@ -64,19 +64,22 @@ export const api = {
       pendingRequests.set(url, request)
     }
 
-    const response = await request
-    pendingRequests.delete(url)
+    try {
+      const response = await request
 
-    if (response.response?.xhr.status !== 200) {
-      throw await APIError.fromResponse(response)
+      if (response.response?.xhr.status !== 200) {
+        throw await APIError.fromResponse(response)
+      }
+
+      const resource = response.representation?.root
+      if (!resource) {
+        throw new Error('Response does not contain resource')
+      }
+
+      return resource
+    } finally {
+      pendingRequests.delete(url)
     }
-
-    const resource = response.representation?.root
-    if (!resource) {
-      throw new Error('Response does not contain resource')
-    }
-
-    return resource
   },
 
   async fetchOperationShape (operation: RuntimeOperation, { targetClass }: { targetClass?: Term } = {}): Promise<Shape | null> {

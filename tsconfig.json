@@ -14,6 +14,7 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "typeRoots": ["./typings", "./node_modules/@types"],
+    "types": [],
     "allowJs": true,
     "resolveJsonModule": true,
     "skipLibCheck": true

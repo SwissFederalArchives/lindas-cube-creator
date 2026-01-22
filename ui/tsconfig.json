@@ -37,7 +37,8 @@
     "types/global.d.ts",
     "types/oruga.d.ts",
     "types/vue-color.d.ts",
-    "types/vue-select.d.ts"
+    "types/vue-select.d.ts",
+    "types/vue-shims.d.ts"
   ],
   "include": [
     "src/**/*.ts",

@@ -4,7 +4,7 @@ import RdfResourceImpl, { Initializer, RdfResourceCore, ResourceIdentifier } fro
 import { Constructor, property } from '@tpluscode/rdfine'
 import { MediaObjectMixin as SchemaMediaObjectMixin } from '@rdfine/schema'
 import { schema } from '@tpluscode/rdf-ns-builders'
-import type { GraphPointer } from .clownface'
+import type { GraphPointer } from 'clownface'
 import { cc } from '@cube-creator/core/namespace'
 
 export interface MediaObjectEx {

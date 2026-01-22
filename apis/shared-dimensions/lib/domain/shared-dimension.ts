@@ -1,5 +1,5 @@
 import type { NamedNode, Quad, Stream, Term } from '@rdfjs/types'
-import.clownface, { GraphPointer, MultiPointer } from .clownface'
+import clownface, { GraphPointer, MultiPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import through2 from 'through2'
 import { dcterms, hydra, rdf, schema, sh } from '@tpluscode/rdf-ns-builders'
@@ -41,7 +41,7 @@ export async function create({ resource, store, contributor }: CreateSharedDimen
   }
 
   const dataset = $rdf.dataset([...resource.dataset].map(replace(resource.term, termSetId)))
-  const termSet =.clownface({ dataset })
+  const termSet = clownface({ dataset })
     .namedNode(termSetId)
     .addOut(rdf.type, [hydra.Resource, schema.DefinedTermSet, meta.SharedDimension, md.SharedDimension])
     .deleteOut(md.createAs)
@@ -70,7 +70,7 @@ export async function createTerm({ termSet, resource, store }: CreateTerm): Prom
   }
 
   const dataset = $rdf.dataset([...resource.dataset].map(replace(resource.term, termId)))
-  const term =.clownface({ dataset })
+  const term = clownface({ dataset })
     .namedNode(termId)
     .deleteOut(dcterms.identifier)
     .addOut(schema.inDefinedTermSet, termSet)

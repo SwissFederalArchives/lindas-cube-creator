@@ -1,33 +1,33 @@
-import.clownface from .clownface'
+import clownface from 'clownface'
 import $rdf from 'rdf-ext'
 import { rdf, sh } from '@tpluscode/rdf-ns-builders'
 import { shape } from '../lib/namespace'
 
-const SharedDimensionCreate =.clownface({ dataset: $rdf.dataset() })
+const SharedDimensionCreate = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/shared-dimension-create'))
   .addOut(rdf.type, sh.NodeShape)
 
-const SharedDimensionUpdate =.clownface({ dataset: $rdf.dataset() })
+const SharedDimensionUpdate = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/shared-dimension-update'))
   .addOut(rdf.type, sh.NodeShape)
 
-const SharedDimensionSearch =.clownface({ dataset: $rdf.dataset() })
+const SharedDimensionSearch = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/shared-dimension-search'))
   .addOut(rdf.type, sh.NodeShape)
 
-const SharedDimensionTermCreate =.clownface({ dataset: $rdf.dataset() })
+const SharedDimensionTermCreate = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/shared-dimension-term-create'))
   .addOut(rdf.type, sh.NodeShape)
 
-const SharedDimensionTermUpdate =.clownface({ dataset: $rdf.dataset() })
+const SharedDimensionTermUpdate = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/shared-dimension-term-update'))
   .addOut(rdf.type, sh.NodeShape)
 
-const Hierarchy =.clownface({ dataset: $rdf.dataset() })
+const Hierarchy = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/hierarchy'))
   .addOut(rdf.type, sh.NodeShape)
 
-const HierarchyCreate =.clownface({ dataset: $rdf.dataset() })
+const HierarchyCreate = clownface({ dataset: $rdf.dataset() })
   .namedNode(shape('shape/hierarchy-create'))
   .addOut(rdf.type, sh.NodeShape)
 

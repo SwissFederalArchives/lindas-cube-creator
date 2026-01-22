@@ -21,7 +21,7 @@ import { RdfResource, ResourceIdentifier } from '@tpluscode/rdfine/RdfResource'
 import { ProjectDetails, SharedDimensionTerm } from './types'
 import { clone } from '@/store/searchParams'
 import type { Collection } from '@rdfine/hydra'
-import type { GraphPointer } from .clownface'
+import type { GraphPointer } from 'clownface'
 
 export const displayLanguage = ['en', 'de', 'fr', '']
 

@@ -6,7 +6,7 @@ import { SingleEditorRenderParams } from '@hydrofoil/shaperone-core/models/compo
 import type { Term } from '@rdfjs/types'
 import { displayLanguage } from '@/store/serializers'
 import { editor } from '@cube-creator/core/namespace'
-import { toSparql } from .clownface-shacl-path'
+import { toSparql } from 'clownface-shacl-path'
 
 interface LabelViewerState {
   isLoading: boolean

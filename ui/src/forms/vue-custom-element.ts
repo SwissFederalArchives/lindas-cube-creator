@@ -150,7 +150,7 @@ export function defineCustomElement(
   config?: DefineCustomElementConfig,
   hydrate?: RootHydrateFunction
 ): VueElementConstructor {
-  const Comp = defineComponent(options as any)
+  const Comp = defineComponent(options as any) as unknown as InnerComponentDef
   class VueCustomElement extends VueElement {
     static def = Comp
     constructor(initialProps?: Record<string, any>) {

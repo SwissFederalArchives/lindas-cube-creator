@@ -33,27 +33,43 @@ export default defineComponent({
   },
   emits: ['close'],
 
-  data (): { width: string | null } {
+  data (): { width: string | null; mouseMoveHandler: ((e: MouseEvent) => void) | null; mouseUpHandler: (() => void) | null } {
     return {
       width: null,
+      mouseMoveHandler: null,
+      mouseUpHandler: null,
     }
   },
 
+  beforeUnmount () {
+    this.cleanupDragListeners()
+  },
+
   methods: {
+    cleanupDragListeners (): void {
+      if (this.mouseMoveHandler) {
+        window.removeEventListener('mousemove', this.mouseMoveHandler)
+        this.mouseMoveHandler = null
+      }
+      if (this.mouseUpHandler) {
+        window.removeEventListener('mouseup', this.mouseUpHandler)
+        this.mouseUpHandler = null
+      }
+    },
+
     onMouseDown (): void {
       const containerWidth = window.innerWidth
 
-      const onMouseMove = ({ pageX }: MouseEvent) => {
+      this.mouseMoveHandler = ({ pageX }: MouseEvent) => {
         this.width = `${containerWidth - pageX}px`
       }
 
-      const onMouseUp = () => {
-        window.removeEventListener('mousemove', onMouseMove)
-        window.removeEventListener('mouseup', onMouseUp)
+      this.mouseUpHandler = () => {
+        this.cleanupDragListeners()
       }
 
-      window.addEventListener('mousemove', onMouseMove)
-      window.addEventListener('mouseup', onMouseUp)
+      window.addEventListener('mousemove', this.mouseMoveHandler)
+      window.addEventListener('mouseup', this.mouseUpHandler)
     },
   },
 })

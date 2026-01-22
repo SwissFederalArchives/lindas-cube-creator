@@ -7,7 +7,7 @@ import { md, meta } from '@cube-creator/core/namespace'
 import onetime from 'onetime'
 import { sh } from '@tpluscode/rdf-ns-builders/strict'
 import { isGraphPointer, isNamedNode } from 'is-graph-pointer'
-import.clownface, { AnyPointer, GraphPointer } from .clownface'
+import clownface, { AnyPointer, GraphPointer } from 'clownface'
 import sharedDimensionsEnv from '../env'
 import { ShouldRewrite } from '../middleware/canonicalRewrite'
 import shapeToQuery from '../shapeToQuery'
@@ -43,7 +43,7 @@ export const getExternal = asyncMiddleware(async (req, res) => {
     throw new Error('Shape not found')
   }
 
-  const queryParams =.clownface({ dataset: await req.dataset!() })
+  const queryParams = clownface({ dataset: await req.dataset!() })
   const focusNode = queryParams.out(schema.identifier)
   if (!isNamedNode(focusNode)) {
     throw new Error('Missing or invalid id param')
@@ -55,7 +55,7 @@ export const getExternal = asyncMiddleware(async (req, res) => {
     focusNode: $rdf.namedNode(url),
   })
 
-  const hierarchy =.clownface({
+  const hierarchy = clownface({
     dataset: $rdf.dataset(await parsingClient.query.construct(query)),
   }).namedNode(url)
   ensureEndpoint(hierarchy)

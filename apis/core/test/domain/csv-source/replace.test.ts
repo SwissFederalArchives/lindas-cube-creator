@@ -8,7 +8,7 @@ import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { csvw, dtype, rdf, schema, sh, xsd } from '@tpluscode/rdf-ns-builders'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import { DomainError } from '@cube-creator/api-errors'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import { replaceFile } from '../../../lib/domain/csv-source/replace'
@@ -19,7 +19,7 @@ describe('domain/csv-sources/replace', () => {
   let getStorage: GetMediaStorage
   let csvSource: GraphPointer<NamedNode, DatasetExt>
   let csvMapping: GraphPointer<NamedNode, DatasetExt>
-  const data =.clownface({ dataset: $rdf.dataset() })
+  const data = clownface({ dataset: $rdf.dataset() })
     .namedNode('')
     .addOut(cc.sourceKind, cc.MediaLocal)
     .addOut(schema.name, $rdf.literal('source.csv'))
@@ -34,7 +34,7 @@ describe('domain/csv-sources/replace', () => {
     }
     getStorage = () => (storage)
 
-    csvMapping =.clownface({ dataset: $rdf.dataset() })
+    csvMapping = clownface({ dataset: $rdf.dataset() })
       .namedNode('csv-mapping')
       .addOut(rdf.type, cc.CsvMapping)
   })
@@ -44,7 +44,7 @@ describe('domain/csv-sources/replace', () => {
 
     beforeEach(async () => {
       // given
-      csvSource =.clownface({ dataset: $rdf.dataset() })
+      csvSource = clownface({ dataset: $rdf.dataset() })
         .namedNode('source')
         .addOut(rdf.type, cc.CSVSource)
         .addOut(schema.name, 'Name')
@@ -180,7 +180,7 @@ describe('domain/csv-sources/replace', () => {
 
     beforeEach(async () => {
       // given
-      csvSource =.clownface({ dataset: $rdf.dataset() })
+      csvSource = clownface({ dataset: $rdf.dataset() })
         .namedNode('source')
         .addOut(rdf.type, cc.CSVSource)
         .addOut(schema.name, 'Name')
@@ -309,7 +309,7 @@ describe('domain/csv-sources/replace', () => {
   describe('when columns are missing', () => {
     it('throws', () => {
       // given
-      csvSource =.clownface({ dataset: $rdf.dataset() })
+      csvSource = clownface({ dataset: $rdf.dataset() })
         .namedNode('source')
         .addOut(rdf.type, cc.CSVSource)
         .addOut(schema.name, 'Name')

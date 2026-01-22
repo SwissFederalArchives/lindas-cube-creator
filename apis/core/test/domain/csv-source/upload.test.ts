@@ -8,7 +8,7 @@ import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
 import { Conflict } from 'http-errors'
 import { csvw, dtype, hydra, rdf, schema, sh, xsd } from '@tpluscode/rdf-ns-builders'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import { createCSVSource } from '../../../lib/domain/csv-source/upload'
 import { TestResourceStore } from '../../support/TestResourceStore'
 import type * as CsvSourceQueries from '../../../lib/domain/queries/csv-source'
@@ -21,7 +21,7 @@ describe('domain/csv-sources/upload', () => {
   let csvSourceQueries: typeof CsvSourceQueries
   let sourceWithFilenameExists: sinon.SinonStub
   let fileStream: Readable
-  const data =.clownface({ dataset: $rdf.dataset() })
+  const data = clownface({ dataset: $rdf.dataset() })
     .namedNode('')
     .addOut(cc.sourceKind, cc.MediaLocal)
     .addOut(schema.name, $rdf.literal('source.csv'))
@@ -41,7 +41,7 @@ describe('domain/csv-sources/upload', () => {
     }
   })
 
-  const csvMapping =.clownface({ dataset: $rdf.dataset() })
+  const csvMapping = clownface({ dataset: $rdf.dataset() })
     .namedNode('csv-mapping')
     .addOut(rdf.type, cc.CsvMapping)
 

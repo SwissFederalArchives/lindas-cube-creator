@@ -1,6 +1,6 @@
 import asyncMiddleware from 'middleware-async'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import { schema } from '@tpluscode/rdf-ns-builders/strict'
 import cors from 'cors'
 import { serializers } from '@rdfjs-elements/formats-pretty'
@@ -18,7 +18,7 @@ import * as queries from '../domain/shared-dimension/queries'
 export const post = protectedResource(shaclValidate, asyncMiddleware(async (req, res) => {
   const term = await createTerm({
     resource: rewrite(await req.resource()),
-    termSet:.clownface({ dataset: await req.hydra.resource.dataset() }).node(req.hydra.term),
+    termSet: clownface({ dataset: await req.hydra.resource.dataset() }).node(req.hydra.term),
     store: store(),
   })
 
@@ -51,7 +51,7 @@ export const getExport = protectedResource(cors({ exposedHeaders: 'content-dispo
   if (!req.dataset) {
     return next(new error.BadRequest())
   }
-  const query =.clownface({ dataset: await req.dataset() })
+  const query = clownface({ dataset: await req.dataset() })
   const termSet: any = query
     .has(schema.inDefinedTermSet)
     .out(schema.inDefinedTermSet)

@@ -1,7 +1,7 @@
 import { html, PropertyValues } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { styleMap } from 'lit/directives/style-map.js'
-import.clownface, { GraphPointer } from .clownface'
+import clownface, { GraphPointer } from 'clownface'
 import './FormSubmitCancel'
 import './LoadingBlock'
 import './HydraOperationError'
@@ -95,7 +95,7 @@ export class HydraOperationForm extends HydraOperationFormBase {
   }
 
   onClear () {
-    this.value =.clownface({ dataset: $rdf.dataset() }).blankNode()
+    this.value = clownface({ dataset: $rdf.dataset() }).blankNode()
     if (this.submitWhenCleared) {
       this.onSubmit()
     }
@@ -123,7 +123,7 @@ function clone (resource: GraphPointer | undefined | null) {
     ...resource.dataset.match(null, null, null, graph)
   ])
 
-  return.clownface({
+  return clownface({
     dataset: clone,
     term: resource.term,
     graph,

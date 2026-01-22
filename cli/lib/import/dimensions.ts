@@ -1,7 +1,7 @@
 import type { DatasetCore, NamedNode, Term } from '@rdfjs/types'
 import type { Context } from '@lindas/barnard59-core'
 import ParsingClient from 'sparql-http-client/ParsingClient'
-import.clownface, { AnyContext, AnyPointer, GraphPointer } from .clownface'
+import clownface, { AnyContext, AnyPointer, GraphPointer } from 'clownface'
 import $rdf from 'rdf-ext'
 import { hydra, rdf, schema, sh } from '@tpluscode/rdf-ns-builders'
 import * as ns from '@cube-creator/core/namespace'
@@ -116,7 +116,7 @@ export default async function query(this: Context, { endpoint, cube, graph, meta
   }
   const existingCollection = representation.root.pointer.any()
 
-  const metadataCollection =.clownface({ dataset: $rdf.dataset() })
+  const metadataCollection = clownface({ dataset: $rdf.dataset() })
     .namedNode(metadataResource)
     .addOut(rdf.type, [ns.cc.DimensionMetadataCollection, hydra.Resource])
 
