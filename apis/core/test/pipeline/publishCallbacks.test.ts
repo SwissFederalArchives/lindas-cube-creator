@@ -14,6 +14,7 @@ describe('@cube-creator/core/lib/pipeline/publishCallback @SPARQL', () => {
   let fetch: typeof nodeFetch
 
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fetch = sinon.stub().resolves() as any
   })
 
@@ -29,9 +30,9 @@ describe('@cube-creator/core/lib/pipeline/publishCallback @SPARQL', () => {
       let res: Response
 
       before(() => {
-        res = <Response>{
+        res = {
           json: async () => ({ project_id: 'test', id: '111' }),
-        }
+        } as Response
       })
 
       it('sets pipeline URL to job', async () => {
@@ -58,6 +59,7 @@ describe('@cube-creator/core/lib/pipeline/publishCallback @SPARQL', () => {
         const job = blankNode()
           .addOut(cc.revision, 3)
           .addOut(cc.project, $rdf.namedNode('https://cube-creator.lndo.site/cube-project/ubd'))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(fetch as any).rejects()
 
         // when

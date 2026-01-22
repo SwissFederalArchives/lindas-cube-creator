@@ -26,8 +26,11 @@
   "dependencies": {
     "patch-package": "^6.5.0",
     "postinstall-postinstall": "^2.1.0",
-    "yarn-deduplicate": "^6.0.2",
-    "rdf-transform-graph-imports": "^0.2.3"
+    "querystring-es3": "^0.2.1",
+    "rdf-transform-graph-imports": "^0.2.3",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5",
+    "yarn-deduplicate": "^6.0.2"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.5",
