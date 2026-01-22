@@ -14,7 +14,7 @@ import { GraphPointer, MultiPointer } from 'clownface'
 import type { Literal, NamedNode, Term } from '@rdfjs/types'
 import { schema } from '@tpluscode/rdf-ns-builders'
 import TermWithLanguage from '@/components/TermWithLanguage.vue'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { applyDescribeEngine } from '@cube-creator/core/describe'
 
 export default defineComponent({
@@ -54,7 +54,7 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState('api', [
+    ...mapGetters('api', [
       'publicQueryEndpoint',
       'publicQueryEndpointEngine',
     ]),
