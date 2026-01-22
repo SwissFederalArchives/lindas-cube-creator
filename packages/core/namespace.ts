@@ -80,6 +80,7 @@ type CubeCreatorProperty =
   'CubeProject/sourceCube' |
   'CubeProject/sourceEndpoint' |
   'CubeProject/sourceGraph' |
+  'storeEngine' |
   'export' |
   'projectDetails' |
   'validationReport' |

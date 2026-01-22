@@ -15,6 +15,7 @@
         :roots="children.data || []"
         :next-level="nextLevel.nextInHierarchy"
         :endpoint-url="endpointUrl"
+        :endpoint-engine="endpointEngine"
       />
       <o-button v-if="children.isLoaded && mayHaveMore" @click="loadMore" variant="white">
         ... Load more
@@ -43,6 +44,7 @@ import { NextInHierarchy } from '@/store/types'
 import Remote, { RemoteData } from '@/remote'
 import StreamClient from 'sparql-http-client'
 import $rdf from 'rdf-ext'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 
 export default defineComponent({
   name: 'HiearchyTreeLevel',
@@ -60,10 +62,14 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    endpointEngine: {
+      type: String,
+      default: null,
+    },
   },
 
   setup (props) {
-    const { endpointUrl, nextLevel, root } = toRefs(props)
+    const { endpointUrl, endpointEngine, nextLevel, root } = toRefs(props)
     const client = new StreamClient({
       endpointUrl: endpointUrl.value
     })
@@ -77,14 +83,25 @@ export default defineComponent({
 
     const loadPage = async () => {
       try {
-        const page = await hierarchy.children(
+        const rawQuery = hierarchy.children(
           nextLevel.value?.pointer,
           root.value.term,
           {
             limit: pageSize,
             offset: offset.value,
           }
-        )?.execute(client, $rdf)
+        )
+        const query: any = rawQuery
+          ? applyDescribeEngine(rawQuery, endpointEngine.value)
+          : rawQuery
+
+        if (query?.query?.build) {
+          console.log('[describe] engine=%s query=%s', endpointEngine.value, query.query.build())
+        } else {
+          console.log('[describe] engine=%s query=unavailable', endpointEngine.value)
+        }
+
+        const page = await query?.execute(client, $rdf)
         const loadedChildren = page?.children || []
 
         mayHaveMore.value = loadedChildren.length >= pageSize

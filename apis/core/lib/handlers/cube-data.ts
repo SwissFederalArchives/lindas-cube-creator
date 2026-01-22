@@ -2,6 +2,7 @@ import error from 'http-errors'
 import { protectedResource } from '@hydrofoil/labyrinth/resource'
 import asyncMiddleware from 'middleware-async'
 import $rdf from 'rdf-ext'
+import env from '@cube-creator/core/env'
 import { describeResource } from '../domain/queries/cube-data'
 import { parsingClient, publicClient } from '../query-client'
 
@@ -20,9 +21,9 @@ export const get = protectedResource(asyncMiddleware(async (req, res, next) => {
 
   let params
   if (req.query.sharedTerm === 'true') {
-    params = { resourceId, client: publicClient }
+    params = { resourceId, client: publicClient, engine: env.maybe.PUBLIC_STORE_ENGINE }
   } else {
-    params = { graph, resourceId, client: parsingClient }
+    params = { graph, resourceId, client: parsingClient, engine: env.maybe.STORE_ENGINE }
   }
 
   const quads = await describeResource(params)

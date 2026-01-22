@@ -15,6 +15,7 @@ import { loader } from './hierarchy/index'
 import { SingleEditorRenderParams } from '@hydrofoil/shaperone-core/models/components/index'
 import { InstancesSelect } from '@hydrofoil/shaperone-core/lib/components/instancesSelect'
 import StreamClient from 'sparql-http-client'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 
 export const textField: Lazy<SingleEditorComponent> = {
   editor: dash.TextFieldEditor,
@@ -246,6 +247,7 @@ interface HierarchyPathComponentState extends InstancesSelect {
   client?: StreamClient
   queryUi?: string
   example?: GraphPointer
+  endpointEngine?: string
 }
 
 interface HierarchyPathEditor extends SingleEditorComponent<HierarchyPathComponentState> {
@@ -264,7 +266,7 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
   async loadExample ({ value, focusNode, updateComponentState }) {
     const client = value.componentState.client
     const queryUi = value.componentState.queryUi
-    const query = hierarchyResourceQueries.example(focusNode)
+    let query: any = hierarchyResourceQueries.example(focusNode)
     if (!client || !query) return
 
     let moreExamples: URL | undefined
@@ -274,6 +276,14 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
         query: hierarchyResourceQueries.example(focusNode)?.build() || ''
       })
       moreExamples.hash = params.toString()
+    }
+
+    query = applyDescribeEngine(query, value.componentState.endpointEngine)
+
+    if (query?.build) {
+      console.log('[describe] engine=%s query=%s', value.componentState.endpointEngine, query.build())
+    } else {
+      console.log('[describe] engine=%s query=unavailable', value.componentState.endpointEngine)
     }
 
     const stream = await query.execute(client.query)
