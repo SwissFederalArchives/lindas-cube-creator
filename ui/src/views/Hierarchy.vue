@@ -55,7 +55,7 @@ import HydraOperationButton from '@/components/HydraOperationButton.vue'
 import HierarchyTree from '@/components/HierarchyTree.vue'
 import LoadingBlock from '@/components/LoadingBlock.vue'
 import PageContent from '@/components/PageContent.vue'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { BaseTree } from '@he-tree/vue3'
 import { Hierarchy, NextInHierarchy } from '@/store/types'
 import { cc } from '@cube-creator/core/namespace'
@@ -88,9 +88,9 @@ export default defineComponent({
     ...mapState('hierarchy', {
       hierarchy: 'hierarchy',
     }),
-    ...mapState('api', {
-      publicQueryEndpointEngine: 'publicQueryEndpointEngine',
-    }),
+    ...mapGetters('api', [
+      'publicQueryEndpointEngine',
+    ]),
 
     endpointUrl (): string {
       return this.hierarchy.pointer.out(dcterms.source).out(sd.endpoint).value
