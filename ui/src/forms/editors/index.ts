@@ -280,12 +280,6 @@ export const hierarchyPath: Lazy<HierarchyPathEditor> = {
 
     query = applyDescribeEngine(query, value.componentState.endpointEngine)
 
-    if (query?.build) {
-      console.log('[describe] engine=%s query=%s', value.componentState.endpointEngine, query.build())
-    } else {
-      console.log('[describe] engine=%s query=unavailable', value.componentState.endpointEngine)
-    }
-
     const stream = await query.execute(client.query)
     const dataset = await $rdf.dataset().import(stream)
     updateComponentState({
