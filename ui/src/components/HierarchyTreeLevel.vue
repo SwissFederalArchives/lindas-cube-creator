@@ -95,12 +95,6 @@ export default defineComponent({
           ? applyDescribeEngine(rawQuery, endpointEngine.value)
           : rawQuery
 
-        if (query?.query?.build) {
-          console.log('[describe] engine=%s query=%s', endpointEngine.value, query.query.build())
-        } else {
-          console.log('[describe] engine=%s query=unavailable', endpointEngine.value)
-        }
-
         const page = await query?.execute(client, $rdf)
         const loadedChildren = page?.children || []
 
