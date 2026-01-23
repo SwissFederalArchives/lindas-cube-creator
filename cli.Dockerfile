@@ -41,6 +41,7 @@ COPY --from=builder /app/dist/cli ./cli/
 COPY --from=builder /app/dist/packages/ ./packages/
 
 EXPOSE 8080
+RUN apk add --no-cache git curl
 USER node
 
 # build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)`
