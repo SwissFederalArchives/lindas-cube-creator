@@ -45,6 +45,8 @@ app.use(companion.app({
     awsClientOptions: {
       endpoint: env.AWS_S3_ENDPOINT,
       s3ForcePathStyle: true,
+      signatureVersion: 'v4',
+      region: env.maybe.AWS_REGION,
     },
     key: env.AWS_ACCESS_KEY_ID,
     secret: env.AWS_SECRET_ACCESS_KEY,
