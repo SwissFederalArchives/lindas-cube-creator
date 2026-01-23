@@ -10,6 +10,13 @@ import { as, hydra } from '@tpluscode/rdf-ns-builders'
 import { IN, VALUES } from '@tpluscode/sparql-builder/expressions'
 import clownface from 'clownface'
 import express from 'express'
+import rdfEnv from '@zazuko/env-node'
+
+interface LoaderOptions {
+  endpointUrl: string
+  user?: string
+  password?: string
+}
 
 interface CreateResourceGetters {
   (term: NamedNode): Pick<Resource, 'dataset' | 'quadStream'>
@@ -23,6 +30,10 @@ interface CreateResourceGetters {
 const excludedProperties = [as.object]
 
 export default class Loader extends SparqlQueryLoader {
+  constructor(options: LoaderOptions) {
+    super(rdfEnv as any, options)
+  }
+
   async forPropertyOperation(...args: any[]): Promise<PropertyResource[]> {
     const [term, req] = args as [NamedNode, express.Request]
 

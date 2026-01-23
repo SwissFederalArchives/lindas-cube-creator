@@ -24,7 +24,8 @@
     "apis",
     "cli",
     "e2e-ui",
-    "mocha-setup.js" 
+    "typings",
+    "mocha-setup.js"
   ],
   "exclude": [
     "node_modules"

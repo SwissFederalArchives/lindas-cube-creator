@@ -18,7 +18,7 @@ const createMiddleware = ({ parseResource }: CreateMiddleware = {}) => shaclMidd
     if (req.method === 'PUT') {
       // needs to override the target node to validate because
       // the SHACL middleware runs before camouflage-rewrite
-      return $rdf.namedNode(req.absoluteUrl().replace(env.MANAGED_DIMENSIONS_BASE, env.MANAGED_DIMENSIONS_API_BASE))
+      return $rdf.namedNode(req.absoluteUrl().toString().replace(env.MANAGED_DIMENSIONS_BASE, env.MANAGED_DIMENSIONS_API_BASE))
     }
 
     // however, I don't understand why only when updating existing resources

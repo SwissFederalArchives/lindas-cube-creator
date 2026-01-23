@@ -36,7 +36,7 @@ export const get = asyncMiddleware(async (req, res, next) => {
   }
 
   const collection = getCollection({
-    view: $rdf.namedNode(req.absoluteUrl()),
+    view: $rdf.namedNode(req.absoluteUrl().toString()),
     data: await getSharedDimensions(streamClient, queryParams),
     collectionType: ns.md.SharedDimensions,
     memberType: schema.DefinedTermSet,

@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "noImplicitAny": false,
+    "strict": false,
+    "strictNullChecks": false,
+    "noImplicitThis": false,
+    "noImplicitReturns": false
+  },
+  "include": [
+    "packages",
+    "apis",
+    "typings/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/test/**",
+    "e2e-ui",
+    "ui",
+    "cli"
+  ]
+}

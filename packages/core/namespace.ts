@@ -1,10 +1,12 @@
-import prefixes from '@lindas/rdf-vocabularies/prefixes'
 import namespace from '@rdf-esm/namespace'
 import '@lindas/vocabulary-extras/register'
 
 export { cube } from '@lindas/vocabulary-extras/builders'
 export { meta, relation } from '@lindas/vocabulary-extras/builders/loose' // TODO: do not use loose builders
 export { shape } from './namespaces/shapes'
+
+// Inline the view prefix to avoid ESM-only dependency on @lindas/rdf-vocabularies
+const viewPrefix = 'https://cube.link/view/'
 
 type CubeCreatorClass =
   'CubeProject' |
@@ -120,10 +122,8 @@ type SharedDimensionsTerms =
   'MembersQueryShape' |
   'CountQueryShape'
 
-prefixes.view = 'https://cube.link/view/'
-
 export const query = namespace('http://hypermedia.app/query#')
-export const view = namespace(prefixes.view)
+export const view = namespace(viewPrefix)
 export const hydraBox = namespace('http://hydra-box.org/schema/')
 export const cc = namespace<CubeCreatorTerms>('https://cube-creator.zazuko.com/vocab#')
 export const md = namespace<SharedDimensionsTerms>('https://cube-creator.zazuko.com/shared-dimensions/vocab#')

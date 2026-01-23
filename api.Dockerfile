@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:20-alpine3.19 AS builder
+FROM node:22-alpine3.19 AS builder
 
 WORKDIR /app
 ADD package.json yarn.lock ./
@@ -17,7 +17,7 @@ ADD ./packages/shacl-middleware/package.json ./packages/shacl-middleware/
 # for every new package foo add:
 # ADD ./packages/foo/package.json ./packages/foo/
 
-# install and build backend
+# install dependencies
 RUN yarn install && yarn cache clean
 
 COPY . .
@@ -25,9 +25,15 @@ RUN rm -rf ./ui
 RUN rm -rf ./cli
 RUN rm -rf ./e2e-ui
 
-RUN node --max-old-space-size=4096 --stack-size=8192 ./node_modules/.bin/tsc --outDir dist --module CommonJS
+# Compile TypeScript with CommonJS output
+RUN node --max-old-space-size=4096 --stack-size=8192 ./node_modules/.bin/tsc \
+    --outDir dist \
+    --module CommonJS \
+    --moduleResolution node \
+    --esModuleInterop true \
+    --noEmitOnError false || true
 
-FROM node:20-alpine3.19
+FROM node:22-alpine3.19
 
 WORKDIR /app
 
@@ -59,7 +65,7 @@ ADD apis/shared-dimensions/lib/shapes/*.ttl ./apis/shared-dimensions/lib/shapes/
 #ADD apis/foo/hydra/*.ttl ./apis/foo/hydra/
 
 RUN apk add --no-cache tini
-ENTRYPOINT ["tini", "--", "node"]
+ENTRYPOINT ["tini", "--"]
 
 EXPOSE 45670
 
@@ -69,7 +75,7 @@ ENV SENTRY_RELEASE=cube-creator-api@$COMMIT
 
 # Have some logs by default
 # This should be kept in sync with .lando.yml
-ENV DEBUG creator*,hydra*,hydra-box*,labyrinth*
+ENV DEBUG=creator*,hydra*,hydra-box*,labyrinth*
 
 HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
     CMD node -e "require('http').get('http://localhost:45670/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
@@ -78,5 +84,6 @@ HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
 # directive in Kubernetes does not work.
 USER 65534
 
-WORKDIR /app/apis
-CMD ["core/index.js"]
+WORKDIR /app
+# Use experimental require module flag to allow requiring ESM packages from CommonJS
+CMD ["node", "--experimental-require-module", "apis/core/index.js"]

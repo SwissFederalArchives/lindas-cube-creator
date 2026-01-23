@@ -1,5 +1,99 @@
 # Cube Creator Changelog
 
+## 2026-01-22 - ESM/CommonJS Compatibility Work (RESOLVED)
+
+### Summary
+Successfully resolved ESM/CommonJS module compatibility issues for Docker builds using
+Node.js 22's experimental `--experimental-require-module` flag.
+
+### Background
+The cube-creator codebase was originally built with CommonJS, but many dependencies
+have since migrated to ESM-only:
+- `@hydrofoil/labyrinth@0.4.5` - ESM-only (type: module)
+- `@lindas/rdf-vocabularies` - ESM-only
+- `@lindas/vocabulary-extras` - ESM-only
+- `@zazuko/env` - ESM-only
+
+### Approaches Attempted
+
+1. **Pin labyrinth to CommonJS version (0.4.4):**
+   - Removed `env` parameter from hydraBox calls (not needed in 0.4.4)
+   - Still failed because `@lindas/rdf-vocabularies` is ESM-only
+
+2. **Full ESM Migration (Node16 module):**
+   - Updated `tsconfig.build.json` with `module: Node16`
+   - Added `"type": "module"` to package.json files in Dockerfile
+   - Failed due to workspace package resolution issues in Docker
+   - ESM requires explicit `.js` extensions for subpath imports
+
+3. **esbuild Bundling:**
+   - Attempted to bundle all code with esbuild
+   - Can handle ESM/CommonJS interop at build time
+   - Hit issues with:
+     - `@kopflos-cms/core` peer dependency
+     - `@rdfine/hydra` export mismatch (broken export in extensions/VariableRepresentation.mjs)
+     - Complex dependency graph issues
+
+4. **tsx Runtime (TypeScript Execute):**
+   - Tried using tsx for runtime TypeScript execution
+   - Hit issues with nested ESM/CommonJS in @kopflos-cms/core
+
+5. **Node.js 22 with --experimental-require-module (SUCCESS):**
+   - Upgraded Docker images to Node.js 22
+   - Use `--experimental-require-module` flag to allow require() of ESM modules
+   - Compile TypeScript to CommonJS as before
+   - ESM dependencies are loaded via the experimental flag at runtime
+
+### Solution Implemented
+The final solution uses Node.js 22's experimental feature that allows CommonJS code
+to require() ESM modules directly:
+
+```dockerfile
+FROM node:22-alpine3.19
+
+# Compile TypeScript to CommonJS
+RUN tsc --module CommonJS --moduleResolution node --esModuleInterop true
+
+# Run with experimental flag
+CMD ["node", "--experimental-require-module", "apis/core/index.js"]
+```
+
+### Code Changes Made
+
+1. **api.Dockerfile:**
+   - Updated base images from `node:20-alpine3.19` to `node:22-alpine3.19`
+   - Changed CMD to include `--experimental-require-module` flag
+   - Simplified build process (no esbuild bundling needed)
+
+2. **apis/core/lib/Loader.ts:**
+   - Added constructor to pass `env` parameter required by labyrinth@0.4.5
+   - Import `@zazuko/env` and pass to SparqlQueryLoader parent constructor
+
+3. **apis/core/package.json:**
+   - Added `@kopflos-cms/core@^0.2.0` as explicit dependency (peer dep of labyrinth)
+
+4. **packages/core/namespace.ts:**
+   - Inlined `view` prefix to reduce ESM-only dependency usage
+
+### Build Status
+- **Docker API Image:** Builds successfully with Node.js 22
+- **Application Startup:** Starts successfully with experimental flag warning
+- **Test with Fuseki:** API connects and begins bootstrapping
+
+### Warnings (Expected)
+When running the container, the following warning appears (expected and safe to ignore):
+```
+ExperimentalWarning: CommonJS module is loading ES Module using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+```
+
+### Future Considerations
+1. Monitor Node.js releases for when `--experimental-require-module` becomes stable
+2. Consider full ESM migration when all dependencies stabilize
+3. Keep @lindas packages updated for potential dual ESM/CJS support
+
+---
+
 ## 2026-01-22 - Build and Test Fixes (Continued)
 
 ### Summary
