@@ -160,9 +160,10 @@ jobs:
           COMPONENT="${{ matrix.component }}"
           VERSION="${{ steps.version.outputs.version }}"
           IMAGE="${{ env.IMAGE_PREFIX }}-${COMPONENT}"
+          TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
 
           if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            TAGS="${IMAGE}:test-${VERSION},${IMAGE}:test-latest"
+            TAGS="${IMAGE}:test-${VERSION},${IMAGE}:test-latest,${IMAGE}:test-${TIMESTAMP}"
             ENV="test"
           elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
             VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
