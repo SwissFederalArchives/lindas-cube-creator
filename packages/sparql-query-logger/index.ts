@@ -1,1 +1,1 @@
-export { QueryLogger, QueryLoggerConfig, QueryExecutionResult } from './QueryLogger'
+export { QueryLogger, QueryLoggerConfig, QueryExecutionResult, LogFunction } from './QueryLogger'

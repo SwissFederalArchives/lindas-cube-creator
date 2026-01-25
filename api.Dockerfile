@@ -71,7 +71,7 @@ ENV SENTRY_RELEASE=cube-creator-api@$COMMIT
 
 # Have some logs by default
 # This should be kept in sync with .lando.yml
-ENV DEBUG creator*,hydra*,hydra-box*,labyrinth*
+ENV DEBUG creator*,hydra*,hydra-box*,labyrinth*,sparql*
 
 HEALTHCHECK --timeout=5s --interval=30s --retries=3 \
     CMD node -e "require('http').get('http://localhost:45670/api/', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"

@@ -3,15 +3,18 @@ import ParsingClient from 'sparql-http-client/ParsingClient'
 import { customFetch } from '@cube-creator/core/customFetch'
 import env from '@cube-creator/core/env'
 import { QueryLogger } from '@cube-creator/sparql-query-logger'
+import debug from 'debug'
 
 const queryLogEnabled = process.env.SPARQL_QUERY_LOG_ENABLED === 'true'
 const cubeCreatorQueryLogger = new QueryLogger({
   enabled: queryLogEnabled,
   endpointName: 'cube-creator',
+  log: debug('sparql-cube-creator'),
 })
 const publicQueryLogger = new QueryLogger({
   enabled: queryLogEnabled,
   endpointName: 'cube-creator-public',
+  log: debug('sparql-public-endpoint'),
 })
 
 const clientConfig = {
