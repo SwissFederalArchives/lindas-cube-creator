@@ -12,7 +12,6 @@ import TripleToQuadTransform from 'rdf-transform-triple-to-quad'
 import { DELETE } from '@tpluscode/sparql-builder'
 import { VALUES } from '@tpluscode/sparql-builder/expressions'
 import { customFetch } from '@cube-creator/core/customFetch'
-import { ex } from './namespace'
 import { ccClients, mdClients } from './index'
 
 async function removeTestGraphs(client: ParsingClient, dataset: DatasetCore) {
@@ -26,22 +25,18 @@ async function removeRootResources(client: ParsingClient, dataset: DatasetCore) 
   const rootResources = [...dataset.match(null, rdf.type, _void.rootResource)]
     .map(quad => ({ root: quad.subject }))
   if (rootResources.length) {
-    // Use a BASE so relative IRIs in fixtures are resolved consistently across SPARQL engines.
-    const deleteQuery = DELETE`GRAPH ?g { ?s ?p ?o }`
+    await DELETE`GRAPH ?g { ?s ?p ?o }`
       .WHERE`
         GRAPH ?g {
           ${VALUES(...rootResources)}
 
-          ?root (<>|!<>)* ?s .
+          ?root (<urn:sparql:any>|!<urn:sparql:any>)* ?s .
 
           ?s ?p ?o .
           FILTER (?s = ?root || isblank(?s))
         }
       `
-      .build()
-
-    const queryWithBase = `BASE <${ex.DUMMY.value}>\n${deleteQuery}`
-    await client.query.update(queryWithBase)
+      .execute(client.query)
   }
 }
 

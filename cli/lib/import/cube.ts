@@ -44,7 +44,7 @@ export default async function query(this: Context, { endpoint, cube, graph }: Cu
       ${cube} a ${ns.cube.Cube} ;
               ${ns.cube.observationConstraint}/${sh.property} ?property .
 
-      ?property (<>|!<>)* ?propertyS .
+      ?property (<urn:sparql:any>|!<urn:sparql:any>)* ?propertyS .
       ?propertyS ?propertyP ?propertyO .
 
       filter(
@@ -59,7 +59,7 @@ export default async function query(this: Context, { endpoint, cube, graph }: Cu
               ${ns.cube.observationSet} ?set .
 
       ?set ${ns.cube.observation} ?observation .
-      ?observation (<>|!<>)* ?observationS .
+      ?observation (<urn:sparql:any>|!<urn:sparql:any>)* ?observationS .
       ?observationS ?observationP ?observationO .
     }
     `

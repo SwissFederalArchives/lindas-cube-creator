@@ -274,9 +274,7 @@ describe('@cube-creator/shared-dimensions-api/lib/store/index @SPARQL', function
 
       // then
       // Check that no triples remain in the named graph
-      const query = ASK`${term} (<>|!<>)+ ?o`.FROM(graph).build()
-      const queryWithBase = `BASE <${ex.DUMMY.value}>\n${query}`
-      await expect(parsingClient.query.ask(queryWithBase)).to.eventually.be.false
+      await expect(ASK`${term} (<urn:sparql:any>|!<urn:sparql:any>)+ ?o`.FROM(graph).execute(parsingClient.query)).to.eventually.be.false
     })
   })
 
