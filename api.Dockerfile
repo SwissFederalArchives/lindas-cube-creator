@@ -13,6 +13,7 @@ ADD ./packages/model/package.json ./packages/model/
 ADD ./packages/testing/package.json ./packages/testing/
 ADD ./packages/express-rdf-request/package.json ./packages/express-rdf-request/
 ADD ./packages/shacl-middleware/package.json ./packages/shacl-middleware/
+ADD ./packages/sparql-query-logger/package.json ./packages/sparql-query-logger/
 
 # for every new package foo add:
 # ADD ./packages/foo/package.json ./packages/foo/
@@ -41,6 +42,7 @@ ADD ./packages/model/package.json ./packages/model/
 ADD ./packages/testing/package.json ./packages/testing/
 ADD ./packages/express-rdf-request/package.json ./packages/express-rdf-request/
 ADD ./packages/shacl-middleware/package.json ./packages/shacl-middleware/
+ADD ./packages/sparql-query-logger/package.json ./packages/sparql-query-logger/
 
 # for every new package foo add
 #ADD ./packages/foo/package.json ./packages/foo/
