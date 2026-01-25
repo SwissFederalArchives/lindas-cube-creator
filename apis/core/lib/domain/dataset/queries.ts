@@ -7,6 +7,9 @@ import { ResultRow } from 'sparql-http-client/ResultParser'
 import { parsingClient } from '../../query-client'
 
 export function getCubesAndGraphs(dataset: Term, client: ParsingClient = parsingClient): Promise<ResultRow[]> {
+  // Debug malformed IRI issues in GraphDB queries.
+  // eslint-disable-next-line no-console
+  console.warn('[getCubesAndGraphs] termType=%s value=%s', dataset.termType, (dataset as any).value || '')
   return SELECT`?cube ?graph`
     .WHERE`
       graph ?project {

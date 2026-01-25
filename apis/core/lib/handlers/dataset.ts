@@ -39,6 +39,9 @@ export const get = protectedResource(asyncMiddleware(async (req, res) => {
 
   const ptr: { term: NamedNode; dataset: DatasetCore } = await req.hydra.resource.clownface()
   const dataset = clownface(ptr)
+  // Debug malformed IRI issues in GraphDB queries.
+  // eslint-disable-next-line no-console
+  console.warn('[dataset:get] termType=%s value=%s', dataset.term.termType, (dataset.term as any).value || '')
   const shapeStreams = [...await loadCubeShapes(req.hydra.resource.term, !includeInLists, clients)]
   const outStream = new PassThrough({
     objectMode: true,
