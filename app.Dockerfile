@@ -13,6 +13,7 @@ ADD ./ui/package.json ./ui/
 ADD ./packages/core/package.json ./packages/core/
 ADD ./packages/model/package.json ./packages/model/
 ADD ./packages/testing/package.json ./packages/testing/
+ADD ./packages/sparql-query-logger/package.json ./packages/sparql-query-logger/
 ADD ./typings ./
 
 # for every new package foo add:

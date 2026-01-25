@@ -10,6 +10,7 @@
     "@cube-creator/core": "1.0.0",
     "@cube-creator/express": "0.0.0",
     "@cube-creator/model": "0.2.1",
+    "@cube-creator/sparql-query-logger": "1.0.0",
     "@cube-creator/shared-dimensions-api": "3.3.0",
     "@hydrofoil/labyrinth": "^0.4.4",
     "@rdfine/csvw": "^0.6.3",

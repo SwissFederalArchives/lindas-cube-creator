@@ -11,6 +11,7 @@ services:
       API_CORE_BASE: ${API_CORE_BASE:-http://localhost:45670/}
       UI_BASE: ${UI_BASE:-http://localhost:8080/app/}
       # SPARQL Store Configuration
+      SPARQL_QUERY_LOG_ENABLED: false
       STORE_QUERY_ENDPOINT: ${STORE_QUERY_ENDPOINT:-http://fuseki:3030/cube-creator/query}
       STORE_UPDATE_ENDPOINT: ${STORE_UPDATE_ENDPOINT:-http://fuseki:3030/cube-creator/update}
       STORE_GRAPH_ENDPOINT: ${STORE_GRAPH_ENDPOINT:-http://fuseki:3030/cube-creator/data}
