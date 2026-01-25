@@ -1,9 +1,12 @@
 import type StreamClient from 'sparql-http-client/StreamClient'
 import type ParsingClient from 'sparql-http-client/ParsingClient'
 
+export type LogFunction = (...args: any[]) => void
+
 export interface QueryLoggerConfig {
   enabled: boolean
   endpointName: string
+  log?: LogFunction
 }
 
 export interface QueryExecutionResult {
@@ -22,9 +25,14 @@ export interface QueryExecutionResult {
 export class QueryLogger {
   private config: QueryLoggerConfig
   private queryCounter = 0
+  // eslint-disable-next-line no-console
+  private log: LogFunction = console.log
 
   constructor(config: QueryLoggerConfig) {
     this.config = config
+    if (config.log) {
+      this.log = config.log
+    }
   }
 
   private generateQueryId(): string {
@@ -42,16 +50,14 @@ export class QueryLogger {
       .slice(0, 200)
     const typeLabel = resultType ? ` ${resultType}` : ''
 
-    // eslint-disable-next-line no-console
-    console.log(`[sparql] start${typeLabel} ${this.config.endpointName} ${queryId} ${preview}`)
+    this.log(`start${typeLabel} ${this.config.endpointName} ${queryId} ${preview}`)
   }
 
   async logExecution(result: QueryExecutionResult): Promise<void> {
     if (!this.config.enabled) return
 
     const status = result.success ? 'ok' : 'error'
-    // eslint-disable-next-line no-console
-    console.log(`[sparql] end ${status} ${result.endpointName} ${result.queryId} ${result.durationMs}ms`)
+    this.log(`end ${status} ${result.endpointName} ${result.queryId} ${result.durationMs}ms`)
   }
 
   /**
