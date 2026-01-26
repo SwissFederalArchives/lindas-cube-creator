@@ -105,7 +105,7 @@ function cubeMetadata({ project, revision, timestamp }: QueryParams) {
         ${project.dataset.id} ${schema.hasPart}|${cc.dimensionMetadata} ?cubeMeta
     }
 
-    ?cubeMeta !<>* ?deepMetaS .
+    ?cubeMeta (<urn:sparql:any>|!<urn:sparql:any>)* ?deepMetaS .
     optional {
       ?deepMetaS ?deepMetaP ?deepMetaO .
     }
@@ -126,7 +126,7 @@ function propertyMetadata({ project }: QueryParams) {
     graph ?dimensionMetadata {
       ?dimensionMetadata ${schema.hasPart} ?dimension .
       ?dimension ${schema.about} ?path ; ?dimensionP ?dimensionO ;
-        !<>+ ?dimensionMetaDeepS .
+        (<urn:sparql:any>|!<urn:sparql:any>)+ ?dimensionMetaDeepS .
       optional {
         ?dimensionMetaDeepS ?dimensionMetaDeepP ?dimensionMetaDeepO .
       }
