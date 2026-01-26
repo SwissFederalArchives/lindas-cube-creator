@@ -80,3 +80,57 @@ multiPartResourceHandler.use(asyncMiddleware((req, res, next) => {
 
   next()
 }))
+
+export function resolveMultipartFile(files: Files, name: string): ((baseIri: string) => Stream & Readable) | undefined {
+  const variants = buildLookupVariants(name)
+  for (const variant of variants) {
+    if (files[variant]) {
+      return files[variant]
+    }
+  }
+
+  return undefined
+}
+
+function buildLookupVariants(name: string): string[] {
+  const variants = new Set<string>()
+  variants.add(name)
+
+  const utf8FromLatin1 = tryDecodeLatin1(name)
+  if (utf8FromLatin1) {
+    variants.add(utf8FromLatin1)
+  }
+
+  const latin1FromUtf8 = tryEncodeLatin1(name)
+  if (latin1FromUtf8) {
+    variants.add(latin1FromUtf8)
+  }
+
+  for (const value of Array.from(variants)) {
+    variants.add(value.normalize('NFC'))
+    variants.add(value.normalize('NFD'))
+  }
+
+  return Array.from(variants)
+}
+
+function tryDecodeLatin1(value: string): string | null {
+  if (!value.includes('Ã')) {
+    return null
+  }
+
+  try {
+    return Buffer.from(value, 'latin1').toString('utf8')
+  } catch {
+    return null
+  }
+}
+
+function tryEncodeLatin1(value: string): string | null {
+  try {
+    const encoded = Buffer.from(value, 'utf8').toString('latin1')
+    return encoded === value ? null : encoded
+  } catch {
+    return null
+  }
+}
