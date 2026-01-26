@@ -116,7 +116,7 @@ export default async function query(this: Context, { cube, graph, endpoint, ...r
 
   const metaCollection = prepareNewCubeResource(cubeResource, datasetResource)
 
-  const newMetadata = (await cubeMetaQuery.execute(client.query))
+  const newMetadata = (await cubeMetaQuery.execute(client.query, { operation: 'postDirect' }))
 
   return readable(merge(
     newMetadata.pipe(preserveExistingValues(metaCollection)),

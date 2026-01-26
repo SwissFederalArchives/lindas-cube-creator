@@ -67,7 +67,7 @@ export function expirePreviousVersions(this: Pick<Context, 'variables' | 'logger
       !bound(?expires)
     )
   `.FROM($rdf.namedNode(this.variables.get('target-graph')))
-    .execute(client.query)
+    .execute(client.query, { operation: 'postDirect' })
 }
 
 export async function injectRevision(this: Pick<Context, 'variables' | 'logger'>, jobUri?: string) {
