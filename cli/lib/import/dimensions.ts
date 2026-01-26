@@ -123,9 +123,9 @@ export default async function query(this: Context, { endpoint, cube, graph, meta
   const cubeQuery = createCubeQuery(cube, graph)
   const metadataQuery = createMetadataQuery(cube, graph)
 
-  const importedDimensionMetadata = await $rdf.dataset().import(await metadataQuery.execute(streamClient.query))
+  const importedDimensionMetadata = await $rdf.dataset().import(await metadataQuery.execute(streamClient.query, { operation: 'postDirect' }))
 
-  const dimensions = await cubeQuery.execute(client.query)
+  const dimensions = await cubeQuery.execute(client.query, { operation: 'postDirect' })
   for (let i = 1; i <= dimensions.length; i++) {
     const { dimension } = dimensions[i - 1]
 

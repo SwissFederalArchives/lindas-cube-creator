@@ -247,7 +247,7 @@ export async function loadCubeMetadata(this: Context, { jobUri, endpoint, user, 
     endpointUrl: endpoint,
     user,
     password,
-  }).query)
+  }).query, { operation: 'postDirect' })
 
   stream.on('end', span.end.bind(span)).on('error', span.end.bind(span))
 

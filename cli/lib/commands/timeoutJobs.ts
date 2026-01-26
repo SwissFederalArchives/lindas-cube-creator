@@ -47,7 +47,7 @@ export async function timeoutJobs({
         )
       }
     `
-    .execute(client.query)
+    .execute(client.query, { operation: 'postDirect' })
 
   const apiClient = Alcaeus.create({ datasetFactory: $rdf.dataset })
   apiClient.resources.factory.addMixin(...Object.values(Models))
