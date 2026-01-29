@@ -6,6 +6,6 @@ prefix code: <https://code.described.at/>
 ] .
 
 [
-    code:imports <https://cube.link/latest/shape/profile-visualize> ;
+    code:imports <./validation/profile-visualize> ;
     code:extension "ttl" ;
 ] .

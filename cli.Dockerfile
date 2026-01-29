@@ -28,6 +28,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 COPY ./cli/package.json ./cli/
 COPY ./cli/*.ttl ./cli/
+COPY ./cli/validation ./cli/validation/
 COPY ./cli/pipelines ./cli/pipelines/
 COPY ./packages/core/package.json ./packages/core/
 COPY ./packages/model/package.json ./packages/model/
