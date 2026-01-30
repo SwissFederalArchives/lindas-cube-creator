@@ -168,7 +168,7 @@ jobs:
           elif [[ "${{ github.ref }}" == "refs/heads/master-graphdb" ]]; then
             VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
             VERSION_MINOR=$(echo $VERSION | cut -d. -f1-2)
-            TAGS="${IMAGE}:graphdb-prod-${VERSION},${IMAGE}:v${VERSION},${IMAGE}:${VERSION},${IMAGE}:${VERSION_MINOR},${IMAGE}:${VERSION_MAJOR},${IMAGE}:latest"
+            TAGS="${IMAGE}:graphdb-prod-${VERSION},${IMAGE}:graphdb-v${VERSION},${IMAGE}:graphdb-${VERSION},${IMAGE}:graphdb-${VERSION_MINOR},${IMAGE}:graphdb-${VERSION_MAJOR},${IMAGE}:graphdb-latest"
             ENV="production"
           fi
 
