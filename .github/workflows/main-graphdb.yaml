@@ -119,7 +119,7 @@ jobs:
     name: Build & Publish Docker Images
     runs-on: ubuntu-latest
     needs: [integration-tests]
-    if: github.ref == 'refs/heads/develop-graphdb' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/develop-graphdb' || github.ref == 'refs/heads/master-graphdb') && github.event_name == 'push'
     timeout-minutes: 45
 
     permissions:
