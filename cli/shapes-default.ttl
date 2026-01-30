@@ -6,6 +6,5 @@ prefix code: <https://code.described.at/>
 ] .
 
 [
-    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/standalone-constraint-constraint> ;
-    code:extension "ttl" ;
+    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/standalone-constraint-constraint.ttl> ;
 ] .

@@ -6,11 +6,9 @@ prefix code: <https://code.described.at/>
 ] .
 
 [
-    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/profile-opendataswiss-lindas> ;
-    code:extension "ttl" ;
+    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/profile-opendataswiss-lindas.ttl> ;
 ] .
 
 [
-    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/profile-visualize> ;
-    code:extension "ttl" ;
+    code:imports <https://raw.githubusercontent.com/SwissFederalArchives/lindas-cube-link/main/validation/profile-visualize.ttl> ;
 ] .
