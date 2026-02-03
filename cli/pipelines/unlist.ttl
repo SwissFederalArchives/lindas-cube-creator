@@ -28,7 +28,13 @@
 
 <#StreamOutput>
   a      :Pipeline, :WritableObjectMode ;
-  :steps [ :stepList ( _:upload ) ] ;.
+  :steps [ :stepList ( <#forceGraph> _:upload ) ] ;.
+
+<#forceGraph>
+  a                  :Step ;
+  code:implementedBy [ a         code:EcmaScriptModule ;
+                       code:link <file:../lib/publish/forceGraph#default> ] ;
+  code:arguments     ( "target-graph"^^:VariableName ) .
 
 _:upload
   a                  :Step ;

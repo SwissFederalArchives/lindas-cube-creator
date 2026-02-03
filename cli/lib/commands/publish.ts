@@ -14,7 +14,8 @@ interface PublishRunOptions extends runner.RunOptions {
   to: 'filesystem' | 'graph-store'
   upload?: boolean
   publishStore?: {
-    endpoint: string
+    storeEndpoint?: string
+    queryEndpoint?: string
     user: string
     password: string
   }
@@ -36,8 +37,13 @@ export default runner.create<PublishRunOptions>({
     }
 
     variable.set('publish-job', job)
-    variable.set('publish-graph-store-endpoint', publishStore?.endpoint || process.env.PUBLISH_GRAPH_STORE_ENDPOINT)
-    variable.set('publish-graph-query-endpoint', publishStore?.endpoint || process.env.PUBLISH_GRAPH_QUERY_ENDPOINT)
+    const publishStoreEndpoint = publishStore?.storeEndpoint ||
+      process.env.PUBLISH_GRAPH_STORE_ENDPOINT
+    const publishQueryEndpoint = publishStore?.queryEndpoint ||
+      process.env.PUBLISH_GRAPH_QUERY_ENDPOINT
+
+    variable.set('publish-graph-store-endpoint', publishStoreEndpoint)
+    variable.set('publish-graph-query-endpoint', publishQueryEndpoint)
     variable.set('publish-graph-store-user', publishStore?.user || process.env.PUBLISH_GRAPH_STORE_USER)
     variable.set('publish-graph-store-password', publishStore?.password || process.env.PUBLISH_GRAPH_STORE_PASSWORD)
     variable.set('metadata', $rdf.dataset())

@@ -33,6 +33,20 @@ VUE_APP_X_PERMISSION=pipelines:read,pipelines:write
 
 If you have already started the application, make sure to run `lando rebuild -y` to apply the changes.
 
+### Publishing to Stardog
+
+Cube publishing uses separate store and query endpoints. For Stardog, both are the same repository URL.
+
+```dotenv
+PUBLISH_GRAPH_STORE_ENDPOINT=https://stardog-test.cluster.ldbar.ch/lindas
+PUBLISH_GRAPH_QUERY_ENDPOINT=https://stardog-test.cluster.ldbar.ch/lindas
+PUBLISH_GRAPH_STORE_USER=...
+PUBLISH_GRAPH_STORE_PASSWORD=...
+```
+
+If you pass `publishStore` in job configuration, use:
+`storeEndpoint` and `queryEndpoint` (both set to the same Stardog repository URL).
+
 ### Starting
 
 The easiest way it to start a local dockerized environment which will run the database, API and UI, and provide set up local HTTPS endpoints for them.
