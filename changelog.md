@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-02-03 - Add deploy/promote workflows
+
+### Added
+- **deploy-int.yaml**: Manual workflow to promote images to INT environment by retagging as `int-latest` with `int-previous` backup
+- **deploy-prod.yaml**: Manual workflow to promote images to PROD environment with `environment: production` protection gate
+- Both workflows support deploying individual components (app/api/cli) or all at once
+- Rollback workflow already existed for all environments
+
 ## 2026-01-30 - Bundle cube.link validation shapes locally
 
 ### Problem
