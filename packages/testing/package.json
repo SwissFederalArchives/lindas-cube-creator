@@ -1,6 +1,6 @@
 {
   "name": "@cube-creator/testing",
-  "version": "0.1.21",
+  "version": "4.2.0",
   "private": true,
   "dependencies": {
     "@cube-creator/core": "1.0.0",
