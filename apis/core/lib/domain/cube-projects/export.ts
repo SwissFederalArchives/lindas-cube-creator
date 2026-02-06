@@ -31,7 +31,8 @@ export async function getExportedProject({ resource, store, client = streamClien
         GRAPH ${project.id} {
           ${project.id} ${cc.cubeGraph} ?cubeData
         }
-        GRAPH ?g { ?s1 ?p1 ?o1 }
+
+        ?any <http://www.ontotext.com/graphs> ?g .
 
         FILTER ( ?g != ?cubeData )
         FILTER (
@@ -40,7 +41,7 @@ export async function getExportedProject({ resource, store, client = streamClien
 
         MINUS {
           # Exclude jobs
-          GRAPH ?g { ?s a ${cc.Job} }
+          GRAPH ?g { ?sj a ${cc.Job} }
         }
       }
     }
@@ -64,13 +65,8 @@ export async function getExportedProject({ resource, store, client = streamClien
         })
       }
     }
-    MINUS {
-      GRAPH ?g { ?s ?p ?o }
-      FILTER ( EXISTS {
-        GRAPH ?g {
-          ?s ${cc.sourceKind} ${cc.MediaLocal} .
-        }
-      })
+    FILTER NOT EXISTS {
+      GRAPH ?g { ?s ${cc.sourceKind} ${cc.MediaLocal} }
     }
 
     FILTER (
