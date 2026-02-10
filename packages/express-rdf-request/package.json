@@ -1,7 +1,7 @@
 {
   "name": "express-rdf-request",
   "private": true,
-  "version": "0.1.0",
+  "version": "4.2.0",
   "main": "index.js",
   "dependencies": {
     "@tpluscode/rdf-ns-builders": "^1.0.0",
