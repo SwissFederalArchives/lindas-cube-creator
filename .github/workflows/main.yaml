@@ -3,8 +3,8 @@ name: Main CI/CD Pipeline
 on:
   push:
     branches:
-      - develop
-      - master
+      - develop-graphdb
+      - master-graphdb
   pull_request:
 
 env:
@@ -119,7 +119,7 @@ jobs:
     name: Build & Publish Docker Images
     runs-on: ubuntu-latest
     needs: [integration-tests]
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/develop-graphdb' && github.event_name == 'push'
     timeout-minutes: 45
 
     permissions:
@@ -162,13 +162,13 @@ jobs:
           IMAGE="${{ env.IMAGE_PREFIX }}-${COMPONENT}"
           TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
 
-          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            TAGS="${IMAGE}:test-${VERSION},${IMAGE}:test-latest,${IMAGE}:test-${TIMESTAMP}"
+          if [[ "${{ github.ref }}" == "refs/heads/develop-graphdb" ]]; then
+            TAGS="${IMAGE}:graphdb-test-${VERSION},${IMAGE}:graphdb-test-latest,${IMAGE}:graphdb-test-${TIMESTAMP}"
             ENV="test"
-          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/master-graphdb" ]]; then
             VERSION_MAJOR=$(echo $VERSION | cut -d. -f1)
             VERSION_MINOR=$(echo $VERSION | cut -d. -f1-2)
-            TAGS="${IMAGE}:prod-${VERSION},${IMAGE}:v${VERSION},${IMAGE}:${VERSION},${IMAGE}:${VERSION_MINOR},${IMAGE}:${VERSION_MAJOR},${IMAGE}:latest"
+            TAGS="${IMAGE}:graphdb-prod-${VERSION},${IMAGE}:graphdb-v${VERSION},${IMAGE}:graphdb-${VERSION},${IMAGE}:graphdb-${VERSION_MINOR},${IMAGE}:graphdb-${VERSION_MAJOR},${IMAGE}:graphdb-latest"
             ENV="production"
           fi
 
@@ -256,7 +256,7 @@ jobs:
              [[ "${{ needs.unit-tests.result }}" == "success" ]] && \
              [[ "${{ needs.integration-tests.result }}" == "success" ]]; then
             echo "✅ **Pipeline Successful** - All tests passed!" >> $GITHUB_STEP_SUMMARY
-            if [[ "${{ github.ref }}" == "refs/heads/develop" ]] && [[ "${{ needs.build-and-publish.result }}" == "success" ]]; then
+            if [[ "${{ github.ref }}" == "refs/heads/develop-graphdb" ]] && [[ "${{ needs.build-and-publish.result }}" == "success" ]]; then
               echo "🚀 **Docker images published to GHCR**" >> $GITHUB_STEP_SUMMARY
             fi
           else

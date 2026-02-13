@@ -56,22 +56,22 @@ jobs:
 
             echo "Deploying ${component} to INT..."
 
-            # Save current int-latest as int-previous
-            if docker pull ${IMAGE}:int-latest 2>/dev/null; then
-              echo "Saving current int-latest as int-previous"
-              docker tag ${IMAGE}:int-latest ${IMAGE}:int-previous
-              docker push ${IMAGE}:int-previous
+            # Save current graphdb-int-latest as graphdb-int-previous
+            if docker pull ${IMAGE}:graphdb-int-latest 2>/dev/null; then
+              echo "Saving current graphdb-int-latest as graphdb-int-previous"
+              docker tag ${IMAGE}:graphdb-int-latest ${IMAGE}:graphdb-int-previous
+              docker push ${IMAGE}:graphdb-int-previous
             else
-              echo "No existing int-latest tag to save"
+              echo "No existing graphdb-int-latest tag to save"
             fi
 
-            # Pull source image and retag as int-latest
+            # Pull source image and retag as graphdb-int-latest
             echo "Pulling ${IMAGE}:${VERSION}"
             docker pull ${IMAGE}:${VERSION}
-            docker tag ${IMAGE}:${VERSION} ${IMAGE}:int-latest
-            docker push ${IMAGE}:int-latest
+            docker tag ${IMAGE}:${VERSION} ${IMAGE}:graphdb-int-latest
+            docker push ${IMAGE}:graphdb-int-latest
 
-            echo "Tagged ${component}:${VERSION} as int-latest"
+            echo "Tagged ${component}:${VERSION} as graphdb-int-latest"
           done
 
       - name: Summary
@@ -84,7 +84,7 @@ jobs:
           echo "| Component | Tag |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|-----|" >> $GITHUB_STEP_SUMMARY
           for component in ${{ steps.components.outputs.components }}; do
-            echo "| ${component} | \`int-latest\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| ${component} | \`graphdb-int-latest\` |" >> $GITHUB_STEP_SUMMARY
           done
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To rollback: Run **Rollback** workflow with environment=int" >> $GITHUB_STEP_SUMMARY
+          echo "To rollback: Run **Rollback** workflow with environment=graphdb-int" >> $GITHUB_STEP_SUMMARY

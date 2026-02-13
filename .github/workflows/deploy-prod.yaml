@@ -57,22 +57,22 @@ jobs:
 
             echo "Deploying ${component} to PROD..."
 
-            # Save current prod-latest as prod-previous
-            if docker pull ${IMAGE}:prod-latest 2>/dev/null; then
-              echo "Saving current prod-latest as prod-previous"
-              docker tag ${IMAGE}:prod-latest ${IMAGE}:prod-previous
-              docker push ${IMAGE}:prod-previous
+            # Save current graphdb-prod-latest as graphdb-prod-previous
+            if docker pull ${IMAGE}:graphdb-prod-latest 2>/dev/null; then
+              echo "Saving current graphdb-prod-latest as graphdb-prod-previous"
+              docker tag ${IMAGE}:graphdb-prod-latest ${IMAGE}:graphdb-prod-previous
+              docker push ${IMAGE}:graphdb-prod-previous
             else
-              echo "No existing prod-latest tag to save"
+              echo "No existing graphdb-prod-latest tag to save"
             fi
 
-            # Pull source image and retag as prod-latest
+            # Pull source image and retag as graphdb-prod-latest
             echo "Pulling ${IMAGE}:${VERSION}"
             docker pull ${IMAGE}:${VERSION}
-            docker tag ${IMAGE}:${VERSION} ${IMAGE}:prod-latest
-            docker push ${IMAGE}:prod-latest
+            docker tag ${IMAGE}:${VERSION} ${IMAGE}:graphdb-prod-latest
+            docker push ${IMAGE}:graphdb-prod-latest
 
-            echo "Tagged ${component}:${VERSION} as prod-latest"
+            echo "Tagged ${component}:${VERSION} as graphdb-prod-latest"
           done
 
       - name: Summary
@@ -85,7 +85,7 @@ jobs:
           echo "| Component | Tag |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|-----|" >> $GITHUB_STEP_SUMMARY
           for component in ${{ steps.components.outputs.components }}; do
-            echo "| ${component} | \`prod-latest\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| ${component} | \`graphdb-prod-latest\` |" >> $GITHUB_STEP_SUMMARY
           done
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To rollback: Run **Rollback** workflow with environment=prod" >> $GITHUB_STEP_SUMMARY
+          echo "To rollback: Run **Rollback** workflow with environment=graphdb-prod" >> $GITHUB_STEP_SUMMARY

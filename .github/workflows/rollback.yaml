@@ -55,18 +55,18 @@ jobs:
             echo "Rolling back ${component}..."
 
             # Check if previous tag exists
-            if docker manifest inspect ${IMAGE}:${ENV}-previous >/dev/null 2>&1; then
+            if docker manifest inspect ${IMAGE}:graphdb-${ENV}-previous >/dev/null 2>&1; then
               # Pull previous image
-              docker pull ${IMAGE}:${ENV}-previous
+              docker pull ${IMAGE}:graphdb-${ENV}-previous
 
               # Backup current latest as failed
-              docker pull ${IMAGE}:${ENV}-latest || true
-              docker tag ${IMAGE}:${ENV}-latest ${IMAGE}:${ENV}-failed || true
-              docker push ${IMAGE}:${ENV}-failed || true
+              docker pull ${IMAGE}:graphdb-${ENV}-latest || true
+              docker tag ${IMAGE}:graphdb-${ENV}-latest ${IMAGE}:graphdb-${ENV}-failed || true
+              docker push ${IMAGE}:graphdb-${ENV}-failed || true
 
               # Promote previous to latest
-              docker tag ${IMAGE}:${ENV}-previous ${IMAGE}:${ENV}-latest
-              docker push ${IMAGE}:${ENV}-latest
+              docker tag ${IMAGE}:graphdb-${ENV}-previous ${IMAGE}:graphdb-${ENV}-latest
+              docker push ${IMAGE}:graphdb-${ENV}-latest
 
               echo "✅ Rolled back ${component} to previous version"
             else
