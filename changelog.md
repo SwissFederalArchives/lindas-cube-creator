@@ -2,6 +2,14 @@
 
 All notable changes to the lindas-cube-creator repository are documented in this file.
 
+## 2026-02-16
+
+### Fixed
+- Fix yarn workspace version mismatches: align all inter-workspace dependency
+  version specifiers to 4.2.0 (was using old pre-fork versions like 1.0.0, 0.2.1, etc.)
+  which caused `yarn install --ci` to fail because the versions couldn't be resolved
+  from the npm registry
+
 ## 2026-02-15
 
 ### Added
