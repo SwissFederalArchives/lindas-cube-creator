@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@ckpack/vue-color": "^1.1.8",
-    "@cube-creator/core": "1.0.0",
-    "@cube-creator/model": "0.2.1",
+    "@cube-creator/core": "4.2.0",
+    "@cube-creator/model": "4.2.0",
     "@fortawesome/fontawesome-svg-core": "~1.2.32",
     "@fortawesome/free-regular-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",

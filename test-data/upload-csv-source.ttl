@@ -1,0 +1,7 @@
+@prefix schema: <http://schema.org/> .
+@prefix cc: <https://cube-creator.zazuko.com/vocab#> .
+
+<> a schema:MediaObject ;
+  schema:name "test-observations.csv" ;
+  schema:identifier "test-data/test-observations.csv" ;
+  <https://cube-creator.zazuko.com/vocab#sourceKind> <https://cube-creator.zazuko.com/vocab#MediaLocal> .

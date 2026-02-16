@@ -1,0 +1,10 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix cc: <https://cube-creator.zazuko.com/vocab#> .
+
+<> a cc:CubeProject ;
+  rdfs:label "Air Quality Test" ;
+  schema:maintainer <http://localhost:3000/organization/bafu> ;
+  dcterms:identifier "test/air-quality" ;
+  <https://cube-creator.zazuko.com/vocab#projectSourceKind> <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> .
