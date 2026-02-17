@@ -2,6 +2,15 @@
 
 All notable changes to the lindas-cube-creator repository are documented in this file.
 
+## 2026-02-17
+
+### Changed
+- Standardize Docker image tag naming across all 3 images (api, app, cli)
+  - Replaced `zazuko/action-docker-meta@main` with `docker/metadata-action@v5`
+  - CI on `master` push now produces `api-test_YYYY-MM-DD_HHmmss`, `app-test_YYYY-MM-DD_HHmmss`, `cli-test_YYYY-MM-DD_HHmmss` tags
+  - Updated promote/rollback workflow to use app-prefixed test tags
+  - Aligned with naming convention used across all LINDAS services
+
 ## 2026-02-16
 
 ### Fixed

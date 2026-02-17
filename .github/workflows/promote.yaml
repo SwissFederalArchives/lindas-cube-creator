@@ -14,7 +14,7 @@ on:
           - rollback-prod
         default: promote
       source_tag:
-        description: "Source image tag (e.g., pipeline-master-19136902977)"
+        description: "For promote/rollback-test: date portion (e.g., 2026-02-17_143022). For rollback-int/prod: full tag (e.g., int_2026-02-17_143022)"
         required: true
         type: string
 
@@ -45,24 +45,24 @@ jobs:
 
       - name: Retag API image for INT
         run: |
-          echo "Promoting API ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting API api-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.API_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.API_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.API_IMAGE }}:api-test_${{ inputs.source_tag }}
 
       - name: Retag APP image for INT
         run: |
-          echo "Promoting APP ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting APP app-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.APP_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.APP_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.APP_IMAGE }}:app-test_${{ inputs.source_tag }}
 
       - name: Retag CLI image for INT
         run: |
-          echo "Promoting CLI ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting CLI cli-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.CLI_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.CLI_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.CLI_IMAGE }}:cli-test_${{ inputs.source_tag }}
 
   # Promote to PROD (retag all 3 images as prod_*, no rebuild)
   move-to-prod:
@@ -86,26 +86,26 @@ jobs:
 
       - name: Retag API image for PROD
         run: |
-          echo "Promoting API ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting API api-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.API_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.API_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.API_IMAGE }}:api-test_${{ inputs.source_tag }}
 
       - name: Retag APP image for PROD
         run: |
-          echo "Promoting APP ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting APP app-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.APP_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.APP_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.APP_IMAGE }}:app-test_${{ inputs.source_tag }}
 
       - name: Retag CLI image for PROD
         run: |
-          echo "Promoting CLI ${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
+          echo "Promoting CLI cli-test_${{ inputs.source_tag }} to ${{ steps.docker_tag.outputs.tag }}"
           docker buildx imagetools create \
             --tag ${{ env.CLI_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.CLI_IMAGE }}:${{ inputs.source_tag }}
+            ${{ env.CLI_IMAGE }}:cli-test_${{ inputs.source_tag }}
 
-  # Rollback TEST (retag all 3 images with new pipeline-master-* tag)
+  # Rollback TEST (retag all 3 images with new test tags)
   rollback-test:
     if: github.ref == 'refs/heads/master' && inputs.action == 'rollback-test'
     runs-on: ubuntu-latest
@@ -120,30 +120,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create TEST rollback tag
+      - name: Create TEST rollback tags
         id: docker_tag
-        run: echo "tag=pipeline-master-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+        run: |
+          DATESTAMP=$(date '+%Y-%m-%d_%H%M%S')
+          echo "api_tag=api-test_${DATESTAMP}" >> "$GITHUB_OUTPUT"
+          echo "app_tag=app-test_${DATESTAMP}" >> "$GITHUB_OUTPUT"
+          echo "cli_tag=cli-test_${DATESTAMP}" >> "$GITHUB_OUTPUT"
 
       - name: Retag API image for TEST
         run: |
-          echo "Rolling back API to ${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.tag }}"
+          echo "Rolling back API to api-test_${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.api_tag }}"
           docker buildx imagetools create \
-            --tag ${{ env.API_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.API_IMAGE }}:${{ inputs.source_tag }}
+            --tag ${{ env.API_IMAGE }}:${{ steps.docker_tag.outputs.api_tag }} \
+            ${{ env.API_IMAGE }}:api-test_${{ inputs.source_tag }}
 
       - name: Retag APP image for TEST
         run: |
-          echo "Rolling back APP to ${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.tag }}"
+          echo "Rolling back APP to app-test_${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.app_tag }}"
           docker buildx imagetools create \
-            --tag ${{ env.APP_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.APP_IMAGE }}:${{ inputs.source_tag }}
+            --tag ${{ env.APP_IMAGE }}:${{ steps.docker_tag.outputs.app_tag }} \
+            ${{ env.APP_IMAGE }}:app-test_${{ inputs.source_tag }}
 
       - name: Retag CLI image for TEST
         run: |
-          echo "Rolling back CLI to ${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.tag }}"
+          echo "Rolling back CLI to cli-test_${{ inputs.source_tag }} as ${{ steps.docker_tag.outputs.cli_tag }}"
           docker buildx imagetools create \
-            --tag ${{ env.CLI_IMAGE }}:${{ steps.docker_tag.outputs.tag }} \
-            ${{ env.CLI_IMAGE }}:${{ inputs.source_tag }}
+            --tag ${{ env.CLI_IMAGE }}:${{ steps.docker_tag.outputs.cli_tag }} \
+            ${{ env.CLI_IMAGE }}:cli-test_${{ inputs.source_tag }}
 
   # Rollback INT (retag all 3 images with new int_* tag)
   rollback-int:
