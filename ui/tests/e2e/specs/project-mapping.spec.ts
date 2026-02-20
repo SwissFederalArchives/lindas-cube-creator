@@ -17,11 +17,17 @@ describe('CSV mapping flow', () => {
       .find('input')
       .type('My project')
 
+    // Select a publishing profile using a more robust selector. We first
+    // locate the whole form-property element by its label text instead of
+    // the inner label span to avoid querying from the wrong element.
     cy.contains('form-property', 'Publishing profile')
       .find('sl-select')
+      .should('be.visible')
       .click()
-      .contains('sl-menu-item', 'Federal Office for the Environment')
-      .click()
+
+    // Shoelace <sl-menu-item> elements appear with 0x0 size to Cypress,
+    // so force the click to actually select the option in headless runs.
+    cy.get('sl-menu-item').first().click({ force: true })
 
     cy.contains('form-property', 'Cube identifier')
       .find('input')
@@ -126,7 +132,7 @@ describe('CSV mapping flow', () => {
       .find('sl-select')
       .click()
       .contains('sl-menu-item', 'string')
-      .click()
+      .click({ force: true })
 
     cy.contains('Data type')
       // Click somewhere to validate the datatype selection
@@ -148,7 +154,7 @@ describe('CSV mapping flow', () => {
       .should('be.visible')
       .click()
       .contains('sl-menu-item', 'test.csv')
-      .click()
+      .click({ force: true })
 
     cy.contains('form-property', 'Table name')
       .find('input')

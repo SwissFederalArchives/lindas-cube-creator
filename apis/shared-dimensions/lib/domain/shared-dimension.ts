@@ -10,6 +10,7 @@ import { DESCRIBE, SELECT } from '@tpluscode/sparql-builder'
 import { StreamClient } from 'sparql-http-client/StreamClient'
 import { oa } from '@tpluscode/rdf-ns-builders/strict'
 import TermSet from '@rdfjs/term-set'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 import { parsingClient, streamClient } from '../sparql'
 import { SharedDimensionsStore } from '../store'
 import env from '../env'
@@ -158,7 +159,7 @@ const excludedProps = [
 export async function getExportedDimension({ resource, store, client = streamClient }: GetExportedDimension): Promise<ExportedDimension> {
   const dimension = await store.load(resource)
 
-  const quads = await DESCRIBE`${resource} ?term`
+  const quads = await applyDescribeEngine(DESCRIBE`${resource} ?term`, env.maybe.MANAGED_DIMENSIONS_STORE_ENGINE)
     .FROM(store.graph)
     .WHERE`
       ?term ${schema.inDefinedTermSet} ${resource}

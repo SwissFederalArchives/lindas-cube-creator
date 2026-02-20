@@ -5,11 +5,13 @@ cli/output/
 coverage/
 ui/tests/e2e/videos/
 ui/tests/e2e/screenshots/
+e2e-ui/
 
 # local env files
 .env.local
 .env.*.local
 .env
+docker-compose.override.yml
 
 # Log files
 npm-debug.log*
@@ -32,3 +34,6 @@ minio/*
 minio/cube-creator/*
 !minio/cube-creator/test-data/
 !minio/cube-creator/README.md
+
+# Removed files (kept locally instead of deleting)
+Removed/

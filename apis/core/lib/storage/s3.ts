@@ -9,9 +9,13 @@ import type { MediaStorage } from './types'
 const logError = log.extend('s3').extend('error')
 const logWarning = log.extend('s3').extend('warning')
 
+const awsRegion = env.maybe.AWS_REGION
+
 const s3 = new aws.S3({
   endpoint: env.AWS_S3_ENDPOINT,
   s3ForcePathStyle: true,
+  signatureVersion: 'v4',
+  region: awsRegion,
 })
 
 const defaultS3Options = {

@@ -14,7 +14,7 @@ export function deleteCurrentError(error: string, dimensionMetadataId: Term) {
       ?dataset ${cc.dimensionMetadata} ${dimensionMetadataId} .
       BIND(IRI(CONCAT(STR(?dataset), "#${error}")) as ?currentError)
 
-      ?currentError (<>|!<>)* ?s .
+      ?currentError (<urn:sparql:any>|!<urn:sparql:any>)* ?s .
       OPTIONAL { ?s ?p ?o }
     }
   `

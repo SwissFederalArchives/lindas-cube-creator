@@ -3,6 +3,7 @@ import { ActionTree, MutationTree, GetterTree } from 'vuex'
 import { api } from '@/api'
 import { RootState } from '../types'
 import { dcat } from '@tpluscode/rdf-ns-builders'
+import { cc } from '@cube-creator/core/namespace'
 
 export interface APIState {
   entrypoint: null | RdfResource
@@ -15,7 +16,10 @@ const initialState = {
 const getters: GetterTree<APIState, RootState> = {
   publicQueryEndpoint (state) {
     return state.entrypoint?.pointer.out(dcat.endpointURL).value || null
-  }
+  },
+  publicQueryEndpointEngine (state) {
+    return state.entrypoint?.pointer.out(cc.storeEngine).value || null
+  },
 }
 
 const actions: ActionTree<APIState, RootState> = {

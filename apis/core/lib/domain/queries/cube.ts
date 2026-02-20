@@ -29,7 +29,7 @@ async function selectIdentifiers(datasetId: Term, parsingClient: ParsingClient):
 }
 
 function constructPropertyShapes(shape: NamedNode, cubeData: NamedNode, excludeInLists: boolean, streamClient: StreamClient) {
-  const deepPaths = excludeInLists ? sparql`(!${sh.in})*` : sparql`(<>|!<>)*`
+  const deepPaths = excludeInLists ? sparql`(!${sh.in})*` : sparql`(<urn:sparql:any>|!<urn:sparql:any>)*`
 
   return CONSTRUCT`?s ?p ?o. ${shape} ?sp ?so .`
     .FROM(cubeData)

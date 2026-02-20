@@ -3,17 +3,24 @@ name: "Env setup"
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version-file: '.nvmrc'
         cache: "yarn"
-    - run: yarn install --ci
+    - run: yarn install --immutable
       shell: bash
+    - name: Cache Lando
+      uses: actions/cache@v4
+      with:
+        path: ~/.lando
+        key: lando-${{ runner.os }}-v3.11.0
+        restore-keys: |
+          lando-${{ runner.os }}-
     - name: Start site
       uses: tpluscode/action-setup-lando@v0.1.5
       with:
         version: v3.11.0
         healthcheck: https://cube-creator.lndo.site/ping
-        timeout: 30000
+        timeout: 90000
       env:
         DOCKER_BUILDKIT: "1"

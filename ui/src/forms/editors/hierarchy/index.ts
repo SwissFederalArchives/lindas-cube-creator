@@ -1,5 +1,6 @@
 import { InstancesSelectEditor } from '@hydrofoil/shaperone-core/components'
 import { dcterms, foaf, rdfs, sd } from '@tpluscode/rdf-ns-builders/strict'
+import { cc } from '@cube-creator/core/namespace'
 import $rdf from 'rdf-ext'
 import clownface, { GraphPointer } from 'clownface'
 import StreamClient from 'sparql-http-client'
@@ -20,6 +21,7 @@ export function loader (createQuery: (arg: GraphPointer) => Construct | null, ed
 
         const endpointUrl = source?.get(sd.endpoint).id.value
         const queryUi = source?.getString(foaf.page)
+        const endpointEngine = source?.get(cc.storeEngine)?.id.value
 
         let client: StreamClient | undefined
         if (endpointUrl) {
@@ -28,7 +30,7 @@ export function loader (createQuery: (arg: GraphPointer) => Construct | null, ed
           })
         }
 
-        context.updateComponentState({ client, queryUi })
+        context.updateComponentState({ client, queryUi, endpointEngine })
       }
 
       this._init?.(context)

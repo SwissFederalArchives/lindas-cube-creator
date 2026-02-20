@@ -3,6 +3,7 @@ import Parser from '@rdfjs/parser-n3'
 import toStream from 'string-to-stream'
 import StreamClient from 'sparql-http-client/StreamClient'
 import { TurtleTemplateResult } from '@tpluscode/rdf-string'
+import { customFetch } from './customFetch'
 
 const parser = new Parser()
 
@@ -20,6 +21,7 @@ export async function bootstrap({ base, storeUrl, user, password, resources, pos
     storeUrl,
     user,
     password,
+    fetch: customFetch,
   })
 
   const dataset = await resources.reduce((previous, turtle) => {

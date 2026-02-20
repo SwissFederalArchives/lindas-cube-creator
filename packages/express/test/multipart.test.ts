@@ -7,7 +7,7 @@ import { expect } from 'chai'
 import $rdf from 'rdf-ext'
 import { rdf, schema } from '@tpluscode/rdf-ns-builders/strict'
 import clownface from 'clownface'
-import { isMultipart, multiPartResourceHandler } from '../multipart'
+import { isMultipart, multiPartResourceHandler, resolveMultipartFile } from '../multipart'
 
 describe('@cube-creator/express/multipart', () => {
   describe('isMultipart', () => {
@@ -158,5 +158,29 @@ describe('@cube-creator/express/multipart', () => {
           .expect('http://foo.bar/baz/john-doe')
       })
     })
+  })
+})
+
+describe('resolveMultipartFile', () => {
+  const fileFn = () => {
+    throw new Error('not used')
+  }
+
+  it('matches NFC/NFD variants', () => {
+    const files = {
+      'cafe\u0301.trig': fileFn,
+    }
+
+    const resolved = resolveMultipartFile(files, 'café.trig')
+    expect(resolved).to.equal(fileFn)
+  })
+
+  it('repairs UTF-8-as-Latin1 mojibake', () => {
+    const files = {
+      'KleblÃ¤tter_hotspots2.trig': fileFn,
+    }
+
+    const resolved = resolveMultipartFile(files, 'Kleblätter_hotspots2.trig')
+    expect(resolved).to.equal(fileFn)
   })
 })
