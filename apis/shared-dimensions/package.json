@@ -6,6 +6,7 @@
     "@cube-creator/api-errors": "4.2.0",
     "@cube-creator/core": "4.2.0",
     "@cube-creator/express": "4.2.0",
+    "@cube-creator/sparql-query-logger": "4.2.0",
     "@hydrofoil/labyrinth": "^0.4.2",
     "@hydrofoil/shape-to-query": "^0.13.9",
     "@rdfine/hydra": "^0.8.2",

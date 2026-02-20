@@ -11,6 +11,7 @@
     "@cube-creator/express": "4.2.0",
     "@cube-creator/model": "4.2.0",
     "@cube-creator/shared-dimensions-api": "4.2.0",
+    "@cube-creator/sparql-query-logger": "4.2.0",
     "@hydrofoil/labyrinth": "^0.4.4",
     "@rdfine/csvw": "^0.6.3",
     "@rdfine/hydra": "^0.8.0",
