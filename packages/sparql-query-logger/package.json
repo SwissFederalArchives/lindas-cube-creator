@@ -1,6 +1,6 @@
 {
   "name": "@cube-creator/sparql-query-logger",
-  "version": "1.0.0",
+  "version": "4.2.0",
   "private": true,
   "description": "Reusable SPARQL query logging and profiling utility",
   "main": "index.ts",
