@@ -28,9 +28,20 @@ export async function bootstrap({ base, storeUrl, user, password, resources, pos
     })
   }, Promise.resolve($rdf.dataset()))
 
-  if (postRequest) {
-    await client.store.post(dataset.toStream())
-  } else {
-    await client.store.put(dataset.toStream())
+  const graphs = new Set<string>()
+  for (const quad of dataset) {
+    if (quad.graph.termType !== 'DefaultGraph') {
+      graphs.add(quad.graph.value)
+    }
+  }
+
+  for (const graphIri of graphs) {
+    const graphNode = $rdf.namedNode(graphIri)
+    const graphDataset = $rdf.dataset([...dataset].filter(q => q.graph.equals(graphNode)))
+    if (postRequest) {
+      await client.store.post(graphDataset.toStream())
+    } else {
+      await client.store.put(graphDataset.toStream())
+    }
   }
 }

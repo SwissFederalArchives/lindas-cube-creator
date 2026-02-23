@@ -2,6 +2,14 @@
 
 All notable changes to the lindas-cube-creator repository are documented in this file.
 
+## 2026-02-23
+
+### Fixed
+- `packages/core/bootstrap.ts`: iterate over named graphs explicitly and issue one PUT
+  per named graph instead of relying on `QuadStreamSeparator` auto-splitting a mixed
+  quad stream. Guarantees each named graph is written with its own `?graph=<iri>`
+  request regardless of quad ordering in the rdf-ext Dataset.
+
 ## 2026-02-17
 
 ### Changed
