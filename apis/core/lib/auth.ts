@@ -16,6 +16,7 @@ declare module '@hydrofoil/labyrinth' {
     name: string
     email?: string
     permissions: string[]
+    groups?: string[]
   }
 }
 
@@ -47,9 +48,11 @@ function devAuthHandler(req: Request, res: Response, next: NextFunction) {
 
   if (sub) {
     const permissionHeader = req.headers['x-permission']
+    const groupHeader = req.headers['x-group']
     const emailHeader = req.headers['x-email']
 
     const permissions = typeof permissionHeader === 'string' ? permissionHeader.split(',').map(s => s.trim()) : permissionHeader || []
+    const groups = typeof groupHeader === 'string' ? groupHeader.split(',').map(s => s.trim()) : groupHeader || []
     const email = typeof emailHeader === 'string' ? emailHeader : (emailHeader || []).shift()
 
     req.user = {
@@ -57,12 +60,32 @@ function devAuthHandler(req: Request, res: Response, next: NextFunction) {
       name: sub,
       email,
       permissions,
+      groups,
     }
 
     return next()
   }
 
   next(new error.Unauthorized())
+}
+
+function requireAccessMembership(req: Request, _res: Response, next: NextFunction) {
+  const requiredGroup = env.maybe.AUTH_REQUIRED_GROUP
+
+  if (!requiredGroup) {
+    return next()
+  }
+
+  const user = (req.user || {}) as Partial<{
+    groups: string[]
+  }>
+  const groups = Array.isArray(user.groups) ? user.groups : []
+
+  if (groups.includes(requiredGroup)) {
+    return next()
+  }
+
+  return next(new error.Forbidden('Access denied'))
 }
 
 function setUserId(req: Request, res: Response, next: NextFunction) {
@@ -92,7 +115,7 @@ export default async () => {
     router.use(devAuthHandler)
   }
 
-  router.use(setUserId).use(updateUserResource())
+  router.use(requireAccessMembership).use(setUserId).use(updateUserResource())
 
   return router
 }

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mdClients = exports.ccClients = void 0;
 const StreamClient_1 = __importDefault(require("sparql-http-client/StreamClient"));
 const ParsingClient_1 = __importDefault(require("sparql-http-client/ParsingClient"));
+const customFetch_1 = require("@cube-creator/core/customFetch");
 const endpoints = (db) => {
     if (db === 'cube-creator') {
         return {
@@ -20,11 +21,12 @@ const endpoints = (db) => {
         storeUrl: process.env.MANAGED_DIMENSIONS_STORE_GRAPH_ENDPOINT || `https://db.cube-creator.lndo.site/${db}/data`,
     };
 };
+
 exports.ccClients = {
-    parsingClient: new ParsingClient_1.default(endpoints('cube-creator')),
-    streamClient: new StreamClient_1.default(endpoints('cube-creator')),
+    parsingClient: new ParsingClient_1.default({ ...endpoints('cube-creator'), fetch: customFetch_1.customFetch }),
+    streamClient: new StreamClient_1.default({ ...endpoints('cube-creator'), fetch: customFetch_1.customFetch }),
 };
 exports.mdClients = {
-    parsingClient: new ParsingClient_1.default(endpoints('shared-dimensions')),
-    streamClient: new StreamClient_1.default(endpoints('shared-dimensions')),
+    parsingClient: new ParsingClient_1.default({ ...endpoints('shared-dimensions'), fetch: customFetch_1.customFetch }),
+    streamClient: new StreamClient_1.default({ ...endpoints('shared-dimensions'), fetch: customFetch_1.customFetch }),
 };
