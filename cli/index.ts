@@ -23,7 +23,7 @@ async function main() {
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
     ],
-    tracesSampleRate: 1.0,
+    tracesSampler: () => 1.0,
   })
 
   const { logger } = await import('./lib/log')
