@@ -6,6 +6,6 @@ prefix code: <https://code.described.at/>
 ] .
 
 [
-    code:imports <./validation/profile-opendataswiss-lindas> ;
+    code:imports <./cube-link/validation/profile-opendataswiss-lindas> ;
     code:extension "ttl" ;
 ] .
