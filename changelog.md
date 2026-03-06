@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-03-06 - Replace bundled shapes with git submodule
+
+### Problem
+Bundling SHACL validation shapes directly in the cube-creator repository
+created tight coupling: every shapes update required a cube-creator rebuild.
+Shapes should be managed in the `lindas-cube-link` repository and referenced
+dynamically so they can be updated independently.
+
+### Solution
+Replace the bundled `cli/validation/` directory with a git submodule pointing
+to `SwissFederalArchives/lindas-cube-link`, pinned to tag `v0.2.4`. Shape
+entry-point files now reference `./cube-link/validation/...` paths. To update
+shapes, update the submodule pointer to a new tag or commit.
+
+### Changes
+
+- **Removed** bundled `cli/validation/` directory (9 .ttl files)
+- **Added** `cli/cube-link` as a git submodule of `lindas-cube-link` at `v0.2.4`
+- **Updated** `cli/shapes-*.ttl` to import from `./cube-link/validation/...`
+- **Updated** `cli.Dockerfile` to copy from `cli/cube-link/validation/`
+- **Updated** `.github/workflows/main.yaml` checkout steps with `submodules: true`
+
 ## 2026-02-03 - Add deploy/promote workflows
 
 ### Added
