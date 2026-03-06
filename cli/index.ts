@@ -100,7 +100,9 @@ async function main() {
       span.end()
     }
   }).finally(async () => {
-    await Sentry.close(2000)
+    await Sentry.close(2000).catch((err: any) => {
+      logger.warn(`Sentry flush failed: ${err?.message || err}`)
+    })
     await shutdownOtel()
   })
 }

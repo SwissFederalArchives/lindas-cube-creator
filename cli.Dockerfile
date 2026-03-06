@@ -33,6 +33,7 @@ COPY ./cli/pipelines ./cli/pipelines/
 COPY ./packages/core/package.json ./packages/core/
 COPY ./packages/model/package.json ./packages/model/
 COPY ./packages/testing/package.json ./packages/testing/
+COPY ./patches/ ./patches/
 
 # for every new package foo add
 #COPY ./packages/foo/package.json ./packages/foo/
