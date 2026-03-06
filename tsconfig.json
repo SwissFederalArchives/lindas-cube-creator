@@ -26,6 +26,7 @@
     "mocha-setup.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "cli/cube-link"
   ]
 }
