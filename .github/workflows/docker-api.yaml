@@ -3,7 +3,8 @@ name: Build and push API Docker image
 on:
   push:
     branches:
-      - disabled-for-merge
+      - master
+      - main
     tags:
       - "lindas-cube-creator-api/v*.*.*"
 
