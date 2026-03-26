@@ -3,8 +3,7 @@ name: Build and push CLI Docker image
 on:
   push:
     branches:
-      - master
-      - main
+      - disabled-for-merge
     tags:
       - "lindas-cube-creator-cli/v*.*.*"
 

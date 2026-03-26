@@ -3,8 +3,7 @@ name: Build and push frontend Docker image
 on:
   push:
     branches:
-      - master
-      - main
+      - disabled-for-merge
     tags:
       - "lindas-cube-creator-app/v*.*.*"
 
