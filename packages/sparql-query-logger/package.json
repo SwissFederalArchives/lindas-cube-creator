@@ -1,0 +1,16 @@
+{
+  "name": "@cube-creator/sparql-query-logger",
+  "version": "4.2.0",
+  "private": true,
+  "description": "Reusable SPARQL query logging and profiling utility",
+  "main": "index.ts",
+  "dependencies": {
+    "@rdfjs/data-model": "^1.3.0",
+    "@tpluscode/rdf-ns-builders": "^1.0.0",
+    "rdf-ext": "^1.3.0",
+    "sparql-http-client": "^2.2.2"
+  },
+  "devDependencies": {
+    "@types/sparql-http-client": "^2.2.5"
+  }
+}

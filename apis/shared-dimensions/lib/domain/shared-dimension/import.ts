@@ -2,7 +2,7 @@ import { createReadStream } from 'fs'
 import path from 'path'
 import type { NamedNode, Quad } from '@rdfjs/types'
 import httpError, { BadRequest } from 'http-errors'
-import { Files } from '@cube-creator/express/multipart'
+import { Files, resolveMultipartFile } from '@cube-creator/express/multipart'
 import $rdf from 'rdf-ext'
 import SHACLValidator from 'rdf-validate-shacl'
 import ValidationReport from 'rdf-validate-shacl/src/validation-report'
@@ -53,7 +53,7 @@ export async function importDimension({
     throw new BadRequest('Import must contain exactly one Shared Dimension')
   }
 
-  const exportedData = files[importedDimension]
+  const exportedData = resolveMultipartFile(files, importedDimension)
   if (!exportedData) {
     throw new BadRequest(`Missing data for file ${importedDimension}`)
   }

@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid'
 import $rdf from 'rdf-ext'
 
 import { sourceWithFilenameExists } from './domain/queries/csv-source'
+import { isAsciiPrintable, toSafeFilename } from './filename'
 
 const apiURL = new URL(env.API_CORE_BASE)
 
@@ -22,8 +23,15 @@ function getUploadUrls(): string[] {
 app.post('/s3/multipart', async (req, res, next) => {
   const filename = req.body.filename
   const metadata = req.body.metadata || {}
+  // Validate filename
+  if (!filename || typeof filename !== 'string' || filename.includes('..') || filename.includes('/')) {
+    res.status(400).send({ message: 'Invalid filename' })
+    return
+  }
+
   const csvMapping = $rdf.namedNode(metadata.csvMapping)
   const isReplace = !!metadata.replace
+  req.body.metadata = sanitizeMultipartMetadata(metadata, filename)
 
   if (!metadata.csvMapping) {
     res.status(400).send({ message: 'Missing csvMapping metadata' })
@@ -38,6 +46,8 @@ app.use(companion.app({
   s3: {
     awsClientOptions: {
       endpoint: env.AWS_S3_ENDPOINT,
+      signatureVersion: 'v4',
+      region: env.maybe.AWS_REGION,
       s3ForcePathStyle: true,
     },
     key: env.AWS_ACCESS_KEY_ID,
@@ -61,11 +71,11 @@ function buildKey(filename: string, metadata: Record<string, string>) {
   const isReplace = !!metadata.replace
   const csvMappingURI = metadata.csvMapping
 
-  // When replacing a source file, we add a random value in the file name to
-  // avoid overriding the old version before validation.
-  const fileKey = isReplace ? addRandom(filename) : filename
+  const prefix = csvMappingURI.replace(env.API_CORE_BASE, '').replace(/\/+$/, '')
+  const safeFilename = toSafeFilename(filename)
+  const fileKey = isReplace ? addRandom(safeFilename) : safeFilename
 
-  return `${csvMappingURI.replace(env.API_CORE_BASE, '')}/${fileKey}`
+  return `${prefix}/${fileKey}`
 }
 
 function addRandom(filename: string) {
@@ -76,6 +86,27 @@ function addRandom(filename: string) {
   const ext = parts.slice(-1)[0]
 
   return [start, random].filter(Boolean).join('-') + '.' + ext
+}
+
+function sanitizeMultipartMetadata(metadata: Record<string, any>, filename: string) {
+  const sanitized: Record<string, any> = { ...metadata }
+
+  if (typeof sanitized.name === 'string' && !isAsciiPrintable(sanitized.name)) {
+    sanitized.name = filename
+  }
+
+  if (typeof sanitized.originalName === 'string' && !isAsciiPrintable(sanitized.originalName)) {
+    delete sanitized.originalName
+  }
+
+  for (const [key, value] of Object.entries(sanitized)) {
+    if (key === 'csvMapping' || key === 'replace') continue
+    if (typeof value === 'string' && !isAsciiPrintable(value)) {
+      delete sanitized[key]
+    }
+  }
+
+  return sanitized
 }
 
 export default app

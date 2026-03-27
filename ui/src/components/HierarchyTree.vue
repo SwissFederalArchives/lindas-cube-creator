@@ -6,6 +6,7 @@
       :root="root"
       :next-level="nextLevel"
       :endpoint-url="endpointUrl"
+      :endpoint-engine="endpointEngine"
     />
     <li v-if="roots.length === 0" class="has-text-grey">
       Empty
@@ -36,6 +37,10 @@ export default defineComponent({
     endpointUrl: {
       type: String,
       required: true,
+    },
+    endpointEngine: {
+      type: String,
+      default: null,
     },
   },
 })

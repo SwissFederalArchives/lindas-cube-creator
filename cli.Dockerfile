@@ -1,5 +1,5 @@
 # First step: build the assets
-FROM node:18-alpine AS builder
+FROM node:18.19.1-alpine3.19 AS builder
 
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -12,27 +12,23 @@ COPY ./packages/testing/package.json ./packages/testing/
 # COPY ./packages/foo/package.json ./packages/foo/
 
 # install and build backend
-RUN yarn install --frozen-lockfile
+RUN yarn install && yarn cache clean
 
 COPY . .
-RUN rm -rf ./ui
-RUN rm -rf ./apis
-RUN rm -rf ./cli/test
-RUN rm -rf ./packages/model/test
-RUN rm -rf ./packages/testing
-RUN rm -rf ./packages/express
-RUN rm -rf ./packages/express-rdf-request
-RUN rm -rf ./packages/shacl-middleware
+RUN rm -rf ./ui ./apis ./cli/test ./packages/model/test \
+    ./packages/testing ./packages/express ./packages/express-rdf-request \
+    ./packages/shacl-middleware ./e2e-ui
 
 RUN yarn tsc --outDir dist --module CommonJS
 
-FROM node:18-alpine
+FROM node:18.19.1-alpine3.19
 
 WORKDIR /app
 
 COPY package.json yarn.lock ./
 COPY ./cli/package.json ./cli/
 COPY ./cli/*.ttl ./cli/
+COPY ./cli/validation ./cli/validation/
 COPY ./cli/pipelines ./cli/pipelines/
 COPY ./packages/core/package.json ./packages/core/
 COPY ./packages/model/package.json ./packages/model/
@@ -41,9 +37,13 @@ COPY ./packages/testing/package.json ./packages/testing/
 # for every new package foo add
 #COPY ./packages/foo/package.json ./packages/foo/
 
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --production && yarn cache clean
 COPY --from=builder /app/dist/cli ./cli/
 COPY --from=builder /app/dist/packages/ ./packages/
+
+EXPOSE 8080
+RUN apk add --no-cache git curl
+USER node
 
 # build with `docker build --build-arg COMMIT=$(git rev-parse HEAD)`
 ARG COMMIT

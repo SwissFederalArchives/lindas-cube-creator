@@ -3,7 +3,7 @@ import type { DatasetCore, NamedNode, Quad, Term } from '@rdfjs/types'
 import { BadRequest } from 'http-errors'
 import $rdf from 'rdf-ext'
 import { cc } from '@cube-creator/core/namespace'
-import { Files } from '@cube-creator/express/multipart'
+import { Files, resolveMultipartFile } from '@cube-creator/express/multipart'
 import { createMinimalProject, Project } from '@cube-creator/model/Project'
 import { dcterms, rdfs, schema, rdf } from '@tpluscode/rdf-ns-builders/strict'
 import clownface, { GraphPointer } from 'clownface'
@@ -108,7 +108,7 @@ export async function importProject({
 
   let importedDataset = $rdf.dataset()
   for (const file of resource.out(cc.export).toArray()) {
-    const next = files[file.value]
+    const next = resolveMultipartFile(files, file.value)
     if (!next) {
       throw new BadRequest(`Missing file ${file.value}`)
     }

@@ -36,6 +36,7 @@
           :roots="hierarchyRoots"
           :next-level="hierarchy.nextInHierarchy"
           :endpoint-url="endpointUrl"
+          :endpoint-engine="endpointEngine"
         />
       </section>
 
@@ -57,6 +58,7 @@ import PageContent from '@/components/PageContent.vue'
 import { mapState } from 'vuex'
 import { BaseTree } from '@he-tree/vue3'
 import { Hierarchy, NextInHierarchy } from '@/store/types'
+import { cc } from '@cube-creator/core/namespace'
 
 interface Node {
   text: string
@@ -74,6 +76,7 @@ export default defineComponent({
   },
 
   mounted (): void {
+    this.$store.dispatch('api/fetchEntrypoint')
     this.$store.dispatch('hierarchy/fetchHierarchy', this.$route.params.id)
   },
 
@@ -85,9 +88,16 @@ export default defineComponent({
     ...mapState('hierarchy', {
       hierarchy: 'hierarchy',
     }),
+    ...mapState('api', {
+      publicQueryEndpointEngine: 'publicQueryEndpointEngine',
+    }),
 
     endpointUrl (): string {
       return this.hierarchy.pointer.out(dcterms.source).out(sd.endpoint).value
+    },
+    endpointEngine (): string | null {
+      const engine = this.hierarchy.pointer.out(dcterms.source).out(cc.storeEngine).value
+      return engine || this.publicQueryEndpointEngine || null
     },
 
     hierarchyRoots (): GraphPointer[] {

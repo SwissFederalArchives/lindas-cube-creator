@@ -104,6 +104,14 @@ async function defineConstraintComponents() {
           case 'fuseki':
             yield new TextSearch('fuseki', patternElement.pointer.value)
             break
+          case 'graphdb':
+            // match prefix + case-insensitive to align with Stardog/Fuseki behavior.
+            // TODO GraphDB FTS
+            yield new PatternConstraintComponent(
+              $rdf.literal(`^${patternElement.pointer.value}`, (patternElement.pointer.term as Literal).language || (patternElement.pointer.term as Literal).datatype),
+              $rdf.literal('i'),
+            )
+            break
           default:
             yield new PatternConstraintComponent(patternElement.pointer.term as Literal)
         }

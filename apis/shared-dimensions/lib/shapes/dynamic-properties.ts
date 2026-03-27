@@ -38,7 +38,8 @@ const dynamicPropertiesFromStore: DynamicPropertiesQuery = async function (targe
                 ${hydra.required} ?required ;
       .
 
-      BIND(IRI(CONCAT("urn:property:", str(?property))) as ?shProperty)
+      # Stable, dimension-scoped property shape IRI (prevents cross-dimension collisions).
+      BIND(IRI(CONCAT("urn:property:", ENCODE_FOR_URI(str(${targetClass})), ":", ENCODE_FOR_URI(str(?predicate)))) as ?shProperty)
       BIND( IF(?required, 1, 0) as ?minCount )
 
       optional {
@@ -80,10 +81,12 @@ const dynamicPropertiesFromStore: DynamicPropertiesQuery = async function (targe
     .WHERE`
     ${targetClass} a ${md.SharedDimension} ;
                    ${schema.additionalProperty} ?property .
-    ?property ${sh.class} ?termSet .
+    ?property ${rdf.predicate} ?predicate ;
+              ${sh.class} ?termSet .
 
-    BIND(IRI(CONCAT("urn:property:", str(?property))) as ?shProperty)
-    BIND (CONCAT("${env.MANAGED_DIMENSIONS_API_BASE}", "dimension/_terms?dimension=", ENCODE_FOR_URI(STR(?termSet)), "{&q}") as ?collectionSearch)
+    # Stable, dimension-scoped property shape IRI (prevents cross-dimension collisions).
+    BIND(IRI(CONCAT("urn:property:", ENCODE_FOR_URI(str(${targetClass})), ":", ENCODE_FOR_URI(str(?predicate)))) as ?shProperty)
+    BIND (CONCAT("${env.MANAGED_DIMENSIONS_API_BASE}", "dimension/_terms?dimension=", ENCODE_FOR_URI(STR(?predicate)), "{&q}") as ?collectionSearch)
   `.execute(parsingClient.query)
 
   const quads = await Promise.all([basicProperties, collectionSearchTemplates])

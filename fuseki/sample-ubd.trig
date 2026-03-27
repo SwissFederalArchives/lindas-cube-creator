@@ -44,6 +44,13 @@ graph <user/ubd-test> {
   <user/ubd-test> schema:name "UBD User" ; a schema:Person, hydra:Resource .
 }
 
+<organization/bafu> void:inDataset <ubd-example> .
+graph <organization/bafu> {
+  <organization/bafu> a schema:Organization, hydra:Resource ;
+    schema:name "BAFU" ;
+    cc:namespace <https://environment.ld.admin.ch/foen/> .
+}
+
 <https://lindas.admin.ch/foen/cube> void:inDataset <ubd-example> .
 graph <https://lindas.admin.ch/foen/cube> {
   <https://environment.ld.admin.ch/foen/ubd/28>
