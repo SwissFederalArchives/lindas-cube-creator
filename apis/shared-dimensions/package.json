@@ -1,11 +1,11 @@
 {
   "name": "@cube-creator/shared-dimensions-api",
-  "version": "3.3.0",
+  "version": "4.2.0",
   "private": true,
   "dependencies": {
-    "@cube-creator/api-errors": "0.0.6",
-    "@cube-creator/core": "1.0.0",
-    "@cube-creator/express": "0.0.0",
+    "@cube-creator/api-errors": "4.2.0",
+    "@cube-creator/core": "4.2.0",
+    "@cube-creator/express": "4.2.0", "@cube-creator/sparql-query-logger": "1.0.0",
     "@cube-creator/sparql-query-logger": "1.0.0",
     "@hydrofoil/labyrinth": "^0.4.2",
     "@hydrofoil/shape-to-query": "^0.13.9",
@@ -30,7 +30,7 @@
     "express-conditional-middleware": "^2.1.1",
     "http-errors": "^2.0.0",
     "http-status": "^1.5.0",
-    "hydra-box-middleware-shacl": "1.1.0",
+    "hydra-box-middleware-shacl": "4.2.0",
     "is-graph-pointer": "^1.2.2",
     "middleware-async": "^1.2.7",
     "nanoid": "^3.3.8",
@@ -48,7 +48,7 @@
     "through2": "^2.0.5"
   },
   "devDependencies": {
-    "@cube-creator/testing": "^0.1.21",
+    "@cube-creator/testing": "4.2.0",
     "@types/camouflage-rewrite": "^1.2.0",
     "@types/clownface": "^1.2.6",
     "@types/parse-prefer-header": "^1.0.0",

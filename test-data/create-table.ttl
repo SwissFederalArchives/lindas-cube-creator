@@ -1,0 +1,10 @@
+@prefix schema: <http://schema.org/> .
+@prefix cc: <https://cube-creator.zazuko.com/vocab#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<> a cc:Table ;
+  schema:name "Observations" ;
+  cc:csvSource <http://localhost:3000/cube-project/air-quality-test-k7pbxxo2yr7/csv-mapping/csv-source/test-observations-csv-qvnzekwerve> ;
+  cc:identifierTemplate "{station_id}/{year}/{pollutant}" ;
+  cc:isObservationTable true ;
+  schema:color "#4A90D9" .

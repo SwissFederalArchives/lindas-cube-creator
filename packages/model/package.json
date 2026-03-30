@@ -1,9 +1,9 @@
 {
   "name": "@cube-creator/model",
-  "version": "0.2.1",
+  "version": "4.2.0",
   "private": true,
   "dependencies": {
-    "@cube-creator/core": "1.0.0",
+    "@cube-creator/core": "4.2.0",
     "@rdf-esm/data-model": "^0.5.3",
     "@rdfine/csvw": "^0.6.3",
     "@rdfine/hydra": "^0.8.0",
@@ -18,7 +18,7 @@
     "uri-template": "^1.0.1"
   },
   "devDependencies": {
-    "@cube-creator/testing": "^0.1.21",
+    "@cube-creator/testing": "4.2.0",
     "@types/clownface": "^1",
     "@types/is-uri": "^1",
     "@types/rdf-validate-datatype": "^0.1",

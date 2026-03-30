@@ -1,6 +1,6 @@
 {
   "name": "@cube-creator/express",
-  "version": "0.0.0",
+  "version": "4.2.0",
   "private": true,
   "dependencies": {
     "@rdfjs-elements/formats-pretty": "^0.4.3",

@@ -1,6 +1,6 @@
 {
   "name": "@cube-creator/cli",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Runs a pipeline to create an RDF data cube",
   "main": "index.js",
   "scripts": {
@@ -11,8 +11,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@cube-creator/core": "1.0.0",
-    "@cube-creator/model": "0.2.1",
+    "@cube-creator/core": "4.2.0",
+    "@cube-creator/model": "4.2.0",
     "@opentelemetry/api": "^1.4.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.35.1",
     "@opentelemetry/instrumentation-http": "^0.35.1",
@@ -82,7 +82,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@cube-creator/testing": "^0.1.21",
+    "@cube-creator/testing": "4.2.0",
     "@tpluscode/rdf-ns-builders": "^1.0.0",
     "@tpluscode/sparql-builder": "^0.3.15",
     "@types/body-parser": "^1.19.0",
