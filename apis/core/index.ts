@@ -115,7 +115,7 @@ async function main() {
 
   s3.setup()
 
-  if (!env.production) {
+  if (!env.production && !process.env.LANDO_HOST_UID) {
     const key = fs.readFileSync('/certs/cert.key')
     const cert = fs.readFileSync('/certs/cert.crt')
     https.createServer({ key, cert }, app)

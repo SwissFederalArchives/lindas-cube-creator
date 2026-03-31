@@ -98,8 +98,11 @@ function setUserId(req: Request, res: Response, next: NextFunction) {
 
 export default async () => {
   const router = Router()
+  const useMockAuth = process.env.MOCK_AUTH === 'true'
 
-  if (env.has('AUTH_ISSUER')) {
+  if (useMockAuth) {
+    log('Skipping OIDC setup in CI/mock auth mode')
+  } else if (env.has('AUTH_ISSUER')) {
     log('Setting up OIDC')
     const response = await fetch(`${env.AUTH_ISSUER}/.well-known/openid-configuration`)
     if (response.ok) {

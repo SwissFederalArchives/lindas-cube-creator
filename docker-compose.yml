@@ -4,9 +4,10 @@ services:
     network_mode: "host"
     environment:
       NODE_EXTRA_CA_CERTS: "/lndo.site.crt"
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
       BASE_URI: "https://cube-creator.lndo.site/"
     volumes:
-      - ~/.lando/certs/lndo.site.crt:/lndo.site.crt
+      - ~/.lando/certs/LandoCA.crt:/lndo.site.crt
       - ./e2e-tests:/tests
   cli:
     build:

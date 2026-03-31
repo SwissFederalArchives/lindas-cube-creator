@@ -1,0 +1,76 @@
+PREFIX api: <https://cube-creator.zazuko.com/vocab#>
+PREFIX hydra: <http://www.w3.org/ns/hydra/core#>
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX query: <http://hypermedia.app/query#>
+PREFIX csvw: <http://www.w3.org/ns/csvw#>
+PREFIX schema: <http://schema.org/>
+
+HEADERS {
+  x-user "john-doe"
+  x-permission "pipelines:write"
+}
+
+
+With Class api:EntryPoint {
+    Expect Property cc:projects {
+        With Operation schema:CreateAction {
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX schema: <http://schema.org/>
+                PREFIX dcterms: <http://purl.org/dc/terms/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Delete Source Test Project" ;
+                   dcterms:identifier "delete-csv-test-cube" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 201
+            }
+        }
+    }
+}
+
+With Class cc:CubeProject {
+    Expect Link cc:csvMapping {
+        Expect Property cc:csvSourceCollection {
+            Expect Operation schema:CreateAction {
+                Invoke {
+                    Content-Type "text/turtle"
+
+                    ```
+                    prefix schema: <http://schema.org/>
+                    prefix cc: <https://cube-creator.zazuko.com/vocab#>
+
+                    <> cc:sourceKind cc:MediaLocal ;
+                       schema:name "test.csv" ;
+                       schema:identifier "test-data/delete-source-test-cube/test.csv" ;
+                    ```
+                } => {
+                    Expect Status 201
+                }
+
+            }
+        }
+    }
+}
+
+With Class cc:CSVSource {
+    Expect Operation schema:DeleteAction {
+        Invoke {
+        } => {
+            Expect Status 204
+        }
+    }
+    Expect Operation schema:DownloadAction {
+        Invoke {
+        } => {
+            Expect Status 404
+        }
+    }
+}

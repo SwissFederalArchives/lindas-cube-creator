@@ -1,0 +1,38 @@
+PREFIX cc:     <https://cube-creator.zazuko.com/vocab#>
+PREFIX schema: <http://schema.org/>
+PREFIX void:   <http://rdfs.org/ns/void#>
+PREFIX cube:   <https://cube.link/>
+PREFIX hydra:  <http://www.w3.org/ns/hydra/core#>
+
+ENTRYPOINT "cube-project/ubd/dataset"
+
+HEADERS {
+  x-user "john-doe"
+  x-permission "pipelines:write"
+}
+
+// Check that dataset comes bundled with all necessary resources
+
+With Class void:Dataset {
+
+    Expect Property schema:hasPart {
+        Expect Type <https://cube.link/Cube>
+    }
+
+    Expect Property cc:dimensionMetadata {
+        Expect Type <https://cube-creator.zazuko.com/vocab#DimensionMetadataCollection>
+        Expect Property schema:hasPart {
+            Expect Property schema:about
+        }
+    }
+}
+
+With Class cube:Cube {
+    Expect Property cube:observationConstraint {
+        Expect Type <https://cube.link/Constraint>
+    }
+
+    Expect Property cc:observations {
+        Expect Type hydra:IriTemplate
+    }
+}

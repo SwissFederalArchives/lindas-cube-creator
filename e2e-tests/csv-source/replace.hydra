@@ -1,0 +1,64 @@
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX schema: <http://schema.org/>
+
+ENTRYPOINT "cube-project/ubd/csv-mapping/sources"
+
+HEADERS {
+  x-user "john-doe"
+  x-permission "pipelines:write"
+}
+
+With Class cc:CSVSourceCollection {
+    Expect Operation schema:CreateAction {
+        Invoke {
+            Content-Type "text/turtle"
+
+            ```
+            prefix schema: <http://schema.org/>
+            prefix cc: <https://cube-creator.zazuko.com/vocab#>
+
+            <> cc:sourceKind cc:MediaLocal ;
+               schema:name "original.csv" ;
+               schema:identifier "test-data/replace-test-cube/original.csv" ;
+            ```
+        } => {
+            Expect Status 201
+        }
+    }
+}
+
+With Class cc:CSVSource {
+    Expect Operation cc:ReplaceCSVAction {
+        Invoke {
+            Content-Type "text/turtle"
+
+            ```
+            prefix schema: <http://schema.org/>
+            prefix cc: <https://cube-creator.zazuko.com/vocab#>
+
+            <> cc:sourceKind cc:MediaLocal ;
+               schema:name "replacement_invalid.csv" ;
+               schema:identifier "test-data/replace-test-cube/replacement_invalid.csv" ;
+            ```
+        } => {
+            Expect Status 400
+        }
+
+        Invoke {
+            Content-Type "text/turtle"
+
+            ```
+            prefix schema: <http://schema.org/>
+            prefix cc: <https://cube-creator.zazuko.com/vocab#>
+
+            <> cc:sourceKind cc:MediaLocal ;
+               schema:name "replacement_valid.csv" ;
+               schema:identifier "test-data/replace-test-cube/replacement_valid.csv" ;
+            ```
+        } => {
+            Expect Status 200
+
+            Expect Type <https://cube-creator.zazuko.com/vocab#CSVSource>
+        }
+    }
+}

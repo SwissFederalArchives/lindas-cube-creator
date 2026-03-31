@@ -31,8 +31,20 @@ graph <cube-project/px> {
     cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/ExistingCube> ;
     CubeProject:sourceCube <https://environment.ld.admin.ch/foen/example/px-cube> ;
     CubeProject:sourceGraph <http://example.org/px-cube> ;
-    CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube> ;
+    CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube/query> ;
     cc:projectDetails <cube-project/px/details> ;
+}
+
+<organization/bafu> void:inDataset <px-example> .
+graph <organization/bafu> {
+  <organization/bafu> a schema:Organization, hydra:Resource ;
+    schema:name "BAFU" ;
+    cc:namespace <https://environment.ld.admin.ch/foen/> ;
+    cc:publishGraph <https://lindas.admin.ch/foen/cube> ;
+    schema:dataset <https://environment.ld.admin.ch/.well-known/void> ;
+    dcat:accessURL <https://environment.ld.admin.ch/sparql> ;
+    void:sparqlEndpoint <https://environment.ld.admin.ch/query> ;
+    cube:observedBy <https://ld.admin.ch/office/VII.1.7> .
 }
 
 <cube-project/px/cube-data> void:inDataset <px-example> .
@@ -135,6 +147,6 @@ graph <cube-project/px/jobs/import-job> {
     cc:dataset <cube-project/px/dataset> ;
     CubeProject:sourceCube <https://environment.ld.admin.ch/foen/example/px-cube> ;
     CubeProject:sourceGraph <http://example.org/px-cube> ;
-    CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube> ;
+    CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube/query> ;
   .
 }

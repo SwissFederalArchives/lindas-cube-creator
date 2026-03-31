@@ -68,7 +68,15 @@ async function validateNewFile(csvSource: CsvSource, media: MediaObject, storage
   }
 
   // Check header
-  const { header, headerTrimmed } = await parse(head, parserOptions)
+  let header: string[]
+  let headerTrimmed: boolean
+
+  try {
+    ({ header, headerTrimmed } = await parse(head, parserOptions))
+  } catch (e) {
+    const message = e instanceof Error ? e.message : 'CSV validation failed'
+    throw new DomainError(message)
+  }
 
   if (headerTrimmed) {
     csvSource.setTrimError()

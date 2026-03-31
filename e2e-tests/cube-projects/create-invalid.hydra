@@ -1,0 +1,173 @@
+PREFIX api: <https://cube-creator.zazuko.com/vocab#>
+PREFIX hydra: <http://www.w3.org/ns/hydra/core#>
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX schema: <http://schema.org/>
+
+HEADERS {
+  x-user "john-doe"
+  x-permission "pipelines:write"
+}
+
+With Class api:EntryPoint {
+    Expect Property cc:projects {
+        With Operation schema:CreateAction {
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix schema: <http://schema.org/>
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/Foo> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Test Project" ;
+                   cc:namespace <http://example.com/test-cube> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            // identifier clashes with existing CSV project
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix dcterms: <http://purl.org/dc/terms/>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Test Project" ;
+                   dcterms:identifier "ubd/28" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            // identifier clashes with existing import project
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix dcterms: <http://purl.org/dc/terms/>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Test Project" ;
+                   dcterms:identifier "example/px-cube" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            // imported cube clashes with existing CSV project
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix CubeProject: <https://cube-creator.zazuko.com/vocab#CubeProject/>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/ExistingCube> ;
+                   rdfs:label "Test Project" ;
+                   CubeProject:sourceCube <https://environment.ld.admin.ch/foen/ubd/28> ;
+                   CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            // imported cube clashes with existing import project
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix CubeProject: <https://cube-creator.zazuko.com/vocab#CubeProject/>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/ExistingCube> ;
+                   rdfs:label "Test Project" ;
+                   CubeProject:sourceCube <https://environment.ld.admin.ch/foen/example/px-cube> ;
+                   CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+
+            // imported cube has wrong base namespace
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                prefix CubeProject: <https://cube-creator.zazuko.com/vocab#CubeProject/>
+                prefix schema: <http://schema.org/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/ExistingCube> ;
+                   rdfs:label "Test Project" ;
+                   CubeProject:sourceCube <https://environment.ld.admin.ch/bafu/example/px2> ;
+                   CubeProject:sourceEndpoint <https://db.cube-creator.lndo.site/px-cube> ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+        }
+    }
+}

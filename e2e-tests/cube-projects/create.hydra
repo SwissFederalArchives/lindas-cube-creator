@@ -1,0 +1,83 @@
+PREFIX api: <https://cube-creator.zazuko.com/vocab#>
+PREFIX hydra: <http://www.w3.org/ns/hydra/core#>
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX schema: <http://schema.org/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+HEADERS {
+  x-user "john-doe"
+  x-permission "pipelines:write"
+}
+
+With Class api:EntryPoint {
+    Expect Property cc:projects {
+        With Operation schema:CreateAction {
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX schema: <http://schema.org/>
+                prefix dcterms: <http://purl.org/dc/terms/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Test Project" ;
+                   dcterms:identifier "test-cube" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 201
+
+                Expect Type <https://cube-creator.zazuko.com/vocab#CubeProject>
+                Expect Property rdfs:label "Test Project"
+                Expect Link cc:csvMapping {
+                    Expect Type <https://cube-creator.zazuko.com/vocab#CsvMapping>
+                }
+                Expect Property dcterms:creator
+                Expect Property cc:cubeGraph
+                Expect Property schema:maintainer
+                Expect Property dcterms:identifier
+                Expect Property cc:export
+                Expect Link cc:projectDetails {
+                    Expect Property schema:hasPart
+                }
+
+                Expect Link dcterms:creator {
+                    Expect Type schema:Person
+                    Expect Property schema:name "john-doe"
+                }
+
+                // Project dataset
+                Expect Link cc:dataset {
+                  Expect Property schema:hasPart {
+                    // Default cube metadata
+                    Expect Property schema:dateCreated
+                    Expect Property dcterms:creator
+                  }
+                }
+            }
+
+            // New cube, same identifier
+            Invoke {
+                Content-Type "text/turtle"
+
+                ```
+                prefix cc: <https://cube-creator.zazuko.com/vocab#>
+                prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX schema: <http://schema.org/>
+                prefix dcterms: <http://purl.org/dc/terms/>
+
+                <> cc:projectSourceKind <https://cube-creator.zazuko.com/vocab#projectSourceKind/CSV> ;
+                   rdfs:label "Test Project" ;
+                   dcterms:identifier "test-cube" ;
+                   schema:maintainer <https://cube-creator.lndo.site/organization/bafu> .
+                ```
+            } => {
+                Expect Status 400
+            }
+        }
+    }
+}
