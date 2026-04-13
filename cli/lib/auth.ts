@@ -101,7 +101,7 @@ function defaultAuthConfig(log: Logger): AuthConfig | null {
 export function setupAuthentication(config: Partial<AuthConfig>, log: Logger, Hydra: HydraClient) {
   let token: LiveToken | undefined
 
-  Hydra.defaultHeaders = async () => {
+  Hydra.defaultHeaders = async (): Promise<Record<string, string>> => {
     const authConfig = defaultAuthConfig(log)
 
     // Mock authentication mode for CI
