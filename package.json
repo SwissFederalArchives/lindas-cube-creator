@@ -98,6 +98,7 @@
     "@babel/runtime": "^7.26.10",
     "serialize-javascript": "^6.0.2",
     "undici": "^5.29.0",
+    "@changesets/parse/js-yaml": "3.14.2",
     "js-yaml": "^4.1.1",
     "path-to-regexp": "^0.1.12",
     "express": "^4.21.2",
