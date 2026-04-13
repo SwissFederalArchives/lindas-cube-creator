@@ -19,8 +19,10 @@ ADD ./typings ./
 # for every new package foo add:
 # ADD ./packages/foo/package.json ./packages/foo/
 
-# install and build backend
-RUN yarn install && yarn cache clean
+# install dependencies deterministically; retry once to absorb transient npm registry failures
+RUN yarn install --frozen-lockfile --network-timeout 600000 || \
+    yarn install --frozen-lockfile --network-timeout 600000 && \
+    yarn cache clean
 
 COPY . .
 
