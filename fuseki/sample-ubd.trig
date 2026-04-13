@@ -44,6 +44,18 @@ graph <user/ubd-test> {
   <user/ubd-test> schema:name "UBD User" ; a schema:Person, hydra:Resource .
 }
 
+<organization/bafu> void:inDataset <ubd-example> .
+graph <organization/bafu> {
+  <organization/bafu> a schema:Organization, hydra:Resource ;
+    schema:name "BAFU" ;
+    cc:namespace <https://environment.ld.admin.ch/foen/> ;
+    cc:publishGraph <https://lindas.admin.ch/foen/cube> ;
+    schema:dataset <https://environment.ld.admin.ch/.well-known/void> ;
+    dcat:accessURL <https://environment.ld.admin.ch/sparql> ;
+    void:sparqlEndpoint <https://environment.ld.admin.ch/query> ;
+    cube:observedBy <https://ld.admin.ch/office/VII.1.7> .
+}
+
 <https://lindas.admin.ch/foen/cube> void:inDataset <ubd-example> .
 graph <https://lindas.admin.ch/foen/cube> {
   <https://environment.ld.admin.ch/foen/ubd/28>

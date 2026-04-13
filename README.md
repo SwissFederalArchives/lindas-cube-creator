@@ -33,6 +33,20 @@ VUE_APP_X_PERMISSION=pipelines:read,pipelines:write
 
 If you have already started the application, make sure to run `lando rebuild -y` to apply the changes.
 
+### Publishing to an RDF Store
+
+Cube publishing uses separate graph store protocol and query endpoints.
+
+```dotenv
+PUBLISH_GRAPH_STORE_ENDPOINT=
+PUBLISH_GRAPH_QUERY_ENDPOINT=
+PUBLISH_GRAPH_STORE_USER=...
+PUBLISH_GRAPH_STORE_PASSWORD=...
+```
+
+If you pass `publishStore` in job configuration, use:
+`storeEndpoint` and `queryEndpoint`.
+
 ### Starting
 
 The easiest way it to start a local dockerized environment which will run the database, API and UI, and provide set up local HTTPS endpoints for them.

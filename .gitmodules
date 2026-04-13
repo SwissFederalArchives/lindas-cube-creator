@@ -1,0 +1,3 @@
+[submodule "cube-link"]
+	path = cli/cube-link
+	url = https://github.com/SwissFederalArchives/lindas-cube-link.git

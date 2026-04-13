@@ -10,6 +10,7 @@ import { csvw, rdf, rdfs, schema, sh, unit, xsd } from '@tpluscode/rdf-ns-builde
 import { ccClients } from '@cube-creator/testing/lib'
 import { insertTestProject } from '@cube-creator/testing/lib/seedData'
 import { cc, cube } from '@cube-creator/core/namespace'
+import { applyDescribeEngine } from '@cube-creator/core/describe'
 import { setupEnv } from '../../support/env'
 import runner from '../../../lib/commands/transform'
 
@@ -17,6 +18,7 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
   this.timeout(360 * 1000)
 
   const executionUrl = 'http://example.com/transformation-test'
+  const withDescribeEngine = (query: any) => applyDescribeEngine(query, env.maybe.STORE_ENGINE)
 
   before(async () => {
     setupEnv()
@@ -74,7 +76,8 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('produces observations', async () => {
-      const query = DESCRIBE`${cubeNs('observation/so2-blBAS-2000-annualmean')}`.FROM(expectedGraph)
+      const query = withDescribeEngine(DESCRIBE`${cubeNs('observation/so2-blBAS-2000-annualmean')}`)
+        .FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
       const observation = clownface({ dataset }).node(cubeNs('observation/so2-blBAS-2000-annualmean'))
@@ -140,7 +143,8 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('produces non-observation resources', async () => {
-      const query = DESCRIBE`${cubeNs('station/blBAS')}`.FROM(expectedGraph)
+      const query = withDescribeEngine(DESCRIBE`${cubeNs('station/blBAS')}`)
+        .FROM(expectedGraph)
       const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query))
 
       const station = clownface({ dataset }).node(cubeNs('station/blBAS'))
@@ -243,13 +247,13 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('includes ""^^cube:Undefined in property shape sh:in of literal columns', async () => {
-      const dataset = await $rdf.dataset().import(await DESCRIBE`?property`
+      const query = withDescribeEngine(DESCRIBE`?property`)
         .FROM(expectedGraph)
         .WHERE`
           <shape/> ${sh.property} ?property .
           ?property ${sh.path} ${rdfs.comment} .
         `
-        .execute(ccClients.streamClient.query, { base: cubeBase }))
+      const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query, { base: cubeBase }))
 
       const ins = [...clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
 
@@ -257,13 +261,13 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('does not emit sh:in for min/max dimensions', async () => {
-      const dataset = await $rdf.dataset().import(await DESCRIBE`?property`
+      const query = withDescribeEngine(DESCRIBE`?property`)
         .FROM(expectedGraph)
         .WHERE`
           <shape/> ${sh.property} ?property .
           ?property ${sh.path} ${cubeNs('dimension/value')} .
         `
-        .execute(ccClients.streamClient.query, { base: cubeBase }))
+      const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query, { base: cubeBase }))
 
       const propShape = clownface({ dataset }).has(sh.path)
 
@@ -273,13 +277,13 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('includes cube:Undefined in property shape sh:in of mapped columns', async () => {
-      const dataset = await $rdf.dataset().import(await DESCRIBE`?property`
+      const query = withDescribeEngine(DESCRIBE`?property`)
         .FROM(expectedGraph)
         .WHERE`
           <shape/> ${sh.property} ?property .
           ?property ${sh.path} <unit> .
         `
-        .execute(ccClients.streamClient.query, { base: cubeBase }))
+      const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query, { base: cubeBase }))
 
       const ins = [...clownface({ dataset }).has(sh.in).out(sh.in).list()!].map(ptr => ptr.term)
 
@@ -287,13 +291,13 @@ describe('@cube-creator/cli/lib/commands/transform', function () {
     })
 
     it('emits an sh:or alternative to include cube:Undefined datatype', async () => {
-      const dataset = await $rdf.dataset().import(await DESCRIBE`?property`
+      const query = withDescribeEngine(DESCRIBE`?property`)
         .FROM(expectedGraph)
         .WHERE`
           <shape/> ${sh.property} ?property .
           ?property ${sh.path} ${rdfs.comment} .
         `
-        .execute(ccClients.streamClient.query, { base: cubeBase }))
+      const dataset = await $rdf.dataset().import(await query.execute(ccClients.streamClient.query, { base: cubeBase }))
 
       const ors = [...clownface({ dataset }).has(sh.or).out(sh.or).list()!]
         .flatMap(ptr => ptr.out(sh.datatype).terms)

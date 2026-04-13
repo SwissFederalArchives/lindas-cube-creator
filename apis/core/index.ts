@@ -52,8 +52,9 @@ async function main() {
     next()
   })
 
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean)
   app.use(cors({
-    origin: '*',
+    origin: allowedOrigins.length > 0 ? allowedOrigins : false,
     credentials: true,
     // Add OPTIONS
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
@@ -114,7 +115,7 @@ async function main() {
 
   s3.setup()
 
-  if (!env.production) {
+  if (!env.production && !process.env.LANDO_HOST_UID) {
     const key = fs.readFileSync('/certs/cert.key')
     const cert = fs.readFileSync('/certs/cert.crt')
     https.createServer({ key, cert }, app)

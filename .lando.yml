@@ -5,12 +5,12 @@ env_file:
 services:
   core:
     type: node:custom
-    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w apis --verbose --ext ts,ttl,js,trig --ignore **/*.test.ts --ignore **/*.spec-graphs.ts --exec node --inspect=0.0.0.0:45671 -r ts-node/register --inspect apis/core/index.ts
+    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w apis --verbose --ext ts,ttl,js,trig --ignore **/*.test.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register apis/core/index.ts
+    port: 45670
     ssl: true
+    scanner: false
     overrides:
       image: node:18
-      ports:
-        - "45671:45671"
       environment:
         TS_NODE_TRANSPILE_ONLY: "true"
         TS_NODE_PROJECT: apis/core/tsconfig.json
@@ -19,8 +19,6 @@ services:
       depends_on:
         store:
           condition: service_healthy
-    moreHttpPorts:
-      - 45671
   ui:
     type: node:custom
     command: (cd ui; yarn serve --public app.cube-creator.lndo.site --hostname 0.0.0.0 --port 80)
@@ -38,6 +36,8 @@ services:
       image: ghcr.io/zazuko/fuseki-geosparql:v2.0.3
       command: /opt/fuseki/entrypoint.sh
       user: root
+      ports:
+        - "3030:3030"
       environment:
         ADMIN_PASSWORD: password
         OTEL_SERVICE_NAME: store
@@ -78,18 +78,14 @@ services:
         - ./minio:/data/
   pipeline:
     type: node:custom
-    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w cli --verbose --ext ts,ttl,js,trig --ignore **/*.spec.ts --ignore **/*.spec-graphs.ts --exec node --inspect=0.0.0.0:45681 -r ts-node/register --inspect cli/server.ts
+    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w cli --verbose --ext ts,ttl,js,trig --ignore **/*.spec.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register cli/server.ts
     port: 80
     scanner: false
     overrides:
       image: node:18
-      ports:
-        - "45681:45681"
       environment:
         TS_NODE_TRANSPILE_ONLY: "true"
         NODE_TLS_REJECT_UNAUTHORIZED: 0
-    moreHttpPorts:
-      - 45681
   collector:
     type: compose
     scanner: false

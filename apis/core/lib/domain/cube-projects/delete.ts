@@ -26,9 +26,7 @@ export async function deleteProject({
 
   const graphs: Array<{ graph?: NamedNode }> = await SELECT.DISTINCT`?graph`
     .WHERE`
-      graph ?graph {
-        ?s ?p ?o
-      }
+      ?any <http://www.ontotext.com/graphs> ?graph .
       filter(strstarts(str(?graph), "${project.id.value}"))
     `.execute(client.query)
 

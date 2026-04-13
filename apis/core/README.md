@@ -6,6 +6,7 @@ The API is secured with a JWT middleware. To configure set these environment var
 
 - `AUTH_ISSUER`
 - `AUTH_AUDIENCE`
+- `AUTH_REQUIRED_GROUP` (optional, deny all users who are not members of this JWT `groups` claim value)
 
 ## Configuration variables
 
@@ -22,6 +23,7 @@ In the local environment it is possible to authorize requests with HTTP headers 
 - `X-USER` - the user id
 - `X-EMAIL` - the user email
 - `X-PERMISSION` - authorized permissions (multiple values allowed)
+- `X-GROUP` - authorized groups (multiple values allowed, comma-separated)
 
 ### Debugging
 

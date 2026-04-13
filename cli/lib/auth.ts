@@ -76,7 +76,12 @@ const getToken = async function (config: AuthConfig) {
   }
 }
 
-function defaultAuthConfig(log: Logger): AuthConfig {
+function defaultAuthConfig(log: Logger): AuthConfig | null {
+  if (process.env.MOCK_AUTH === 'true') {
+    log.info('Using mock authentication (CI mode)')
+    return null
+  }
+
   const clientId = process.env.AUTH_RUNNER_CLIENT_ID
   const clientSecret = process.env.AUTH_RUNNER_CLIENT_SECRET
   const issuer = process.env.AUTH_RUNNER_ISSUER
@@ -89,7 +94,7 @@ function defaultAuthConfig(log: Logger): AuthConfig {
     }
   }
 
-  log.info('OIDC config ' + JSON.stringify({ clientId, clientSecret, issuer }, null, 2))
+  log.info('OIDC config ' + JSON.stringify({ clientId, issuer }, null, 2))
   throw new Error('Incomplete OIDC config')
 }
 
@@ -97,8 +102,18 @@ export function setupAuthentication(config: Partial<AuthConfig>, log: Logger, Hy
   let token: LiveToken | undefined
 
   Hydra.defaultHeaders = async () => {
+    const authConfig = defaultAuthConfig(log)
+
+    // Mock authentication mode for CI
+    if (authConfig === null) {
+      return {
+        'X-User': 'john-doe',
+        'X-Permission': 'pipelines:read,pipelines:write',
+      }
+    }
+
     if (!token || !isValid(token)) {
-      token = await getToken({ ...defaultAuthConfig(log), ...config })
+      token = await getToken({ ...authConfig, ...config })
     }
 
     return {

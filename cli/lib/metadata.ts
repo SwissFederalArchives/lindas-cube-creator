@@ -105,7 +105,7 @@ function cubeMetadata({ project, revision, timestamp }: QueryParams) {
         ${project.dataset.id} ${schema.hasPart}|${cc.dimensionMetadata} ?cubeMeta
     }
 
-    ?cubeMeta !<>* ?deepMetaS .
+    ?cubeMeta (<urn:sparql:any>|!<urn:sparql:any>)* ?deepMetaS .
     optional {
       ?deepMetaS ?deepMetaP ?deepMetaO .
     }
@@ -126,7 +126,7 @@ function propertyMetadata({ project }: QueryParams) {
     graph ?dimensionMetadata {
       ?dimensionMetadata ${schema.hasPart} ?dimension .
       ?dimension ${schema.about} ?path ; ?dimensionP ?dimensionO ;
-        !<>+ ?dimensionMetaDeepS .
+        (<urn:sparql:any>|!<urn:sparql:any>)+ ?dimensionMetaDeepS .
       optional {
         ?dimensionMetaDeepS ?dimensionMetaDeepP ?dimensionMetaDeepO .
       }
@@ -247,7 +247,7 @@ export async function loadCubeMetadata(this: Context, { jobUri, endpoint, user, 
     endpointUrl: endpoint,
     user,
     password,
-  }).query)
+  }).query, { operation: 'postDirect' })
 
   stream.on('end', span.end.bind(span)).on('error', span.end.bind(span))
 

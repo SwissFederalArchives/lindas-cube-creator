@@ -7,7 +7,8 @@ import * as runner from './runner'
 
 interface UnlistRunOptions extends runner.RunOptions {
   publishStore?: {
-    endpoint: string
+    storeEndpoint?: string
+    queryEndpoint?: string
     user: string
     password: string
   }
@@ -24,8 +25,13 @@ export default runner.create<UnlistRunOptions>({
     const { job, namespace, cubeIdentifier } = await getJob(jobUri, Hydra)
 
     variable.set('unlist-job', job)
-    variable.set('publish-graph-store-endpoint', publishStore?.endpoint || process.env.PUBLISH_GRAPH_STORE_ENDPOINT)
-    variable.set('publish-graph-query-endpoint', publishStore?.endpoint || process.env.PUBLISH_GRAPH_QUERY_ENDPOINT)
+    const publishStoreEndpoint = publishStore?.storeEndpoint ||
+      process.env.PUBLISH_GRAPH_STORE_ENDPOINT
+    const publishQueryEndpoint = publishStore?.queryEndpoint ||
+      process.env.PUBLISH_GRAPH_QUERY_ENDPOINT
+
+    variable.set('publish-graph-store-endpoint', publishStoreEndpoint)
+    variable.set('publish-graph-query-endpoint', publishQueryEndpoint)
     variable.set('publish-graph-store-user', publishStore?.user || process.env.PUBLISH_GRAPH_STORE_USER)
     variable.set('publish-graph-store-password', publishStore?.password || process.env.PUBLISH_GRAPH_STORE_PASSWORD)
 

@@ -23,7 +23,7 @@ async function main() {
     integrations: [
       new Sentry.Integrations.Http({ tracing: true }),
     ],
-    tracesSampleRate: 1.0,
+    tracesSampler: () => 1.0,
   })
 
   const { logger } = await import('./lib/log')
@@ -100,7 +100,10 @@ async function main() {
       span.end()
     }
   }).finally(async () => {
-    await Sentry.close(2000)
+    await Sentry.close(2000).catch((err: any) => {
+      logger.warn(`Sentry flush failed: ${err?.message || err}`)
+      throw err
+    })
     await shutdownOtel()
   })
 }

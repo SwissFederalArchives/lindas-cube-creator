@@ -35,7 +35,7 @@ export default class implements SharedDimensionsStore {
     const quads = await this.client.query.construct(query, {
       operation: 'postDirect',
       defaultGraphUri: [this.graph],
-    })
+    } as unknown as Record<string, unknown>)
     return clownface({
       dataset: $rdf.dataset(quads),
       term,

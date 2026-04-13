@@ -1,0 +1,28 @@
+diff --git a/node_modules/@sentry/core/dist/request.js b/node_modules/@sentry/core/dist/request.js
+index 8c6c49f..d3e1b2f 100644
+--- a/node_modules/@sentry/core/dist/request.js
++++ b/node_modules/@sentry/core/dist/request.js
+@@ -84,10 +84,7 @@
+     delete event.sdkProcessingMetadata;
+     var envelopeHeaders = tslib_1.__assign(tslib_1.__assign({ event_id: event.event_id, sent_at: new Date().toISOString() }, (sdkInfo && { sdk: sdkInfo })), (!!api.tunnel && { dsn: utils_1.dsnToString(api.dsn) }));
+     var eventItem = [
+-        {
+-            type: eventType,
+-            sample_rates: [{ id: samplingMethod, rate: sampleRate }],
+-        },
++        tslib_1.__assign({ type: eventType }, (samplingMethod !== undefined ? { sample_rates: [{ id: samplingMethod, rate: sampleRate }] } : {})),
+         event,
+     ];
+     return utils_1.createEnvelope(envelopeHeaders, [eventItem]);
+@@ -168,10 +165,7 @@
+     if (useEnvelope) {
+         var envelopeHeaders = tslib_1.__assign(tslib_1.__assign({ event_id: event.event_id, sent_at: new Date().toISOString() }, (sdkInfo && { sdk: sdkInfo })), (!!api.tunnel && { dsn: utils_1.dsnToString(api.dsn) }));
+         var eventItem = [
+-            {
+-                type: eventType,
+-                sample_rates: [{ id: samplingMethod, rate: sampleRate }],
+-            },
++            tslib_1.__assign({ type: eventType }, (samplingMethod !== undefined ? { sample_rates: [{ id: samplingMethod, rate: sampleRate }] } : {})),
+             req.body,
+         ];
+         var envelope = utils_1.createEnvelope(envelopeHeaders, [eventItem]);

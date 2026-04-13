@@ -80,6 +80,70 @@ function pageId({ offset, page, template, ...rest }: { template: IriTemplate; te
   return $rdf.namedNode(new URL(template.expand(templateParams), env.API_CORE_BASE).toString())
 }
 
+// Builds an optimized SPARQL query for GraphDB that avoids the N-way join explosion
+// caused by placing all observation patterns in a single GRAPH block.
+// The inner sub-SELECT fetches only the ORDER BY dimension with LIMIT/OFFSET so GraphDB
+// can apply top-N pruning early; the outer GRAPH block then does 10 cheap point-lookups.
+export function buildOptimizedObservationsQuery(viewQuery: any): string {
+  const src = viewQuery.sources.array[0]
+  const resultDims: any[] = viewQuery.dimensions.array.filter((d: any) => d.isResult)
+
+  const orderBy: [any, string][] = viewQuery.result.buildOrderBy()
+  const orderDimVar = orderBy.length > 0 ? orderBy[0][0].value : resultDims[0].variable.value
+  const orderDir = orderBy.length > 0 ? orderBy[0][1] : 'ASC'
+
+  const orderDim = resultDims.find((d: any) => d.variable.value === orderDimVar) ?? resultDims[0]
+  const otherDims = resultDims.filter((d: any) => d !== orderDim)
+
+  const sourceGraph = src.graph.value
+  const sourceVar = src.variable.value
+  const orderVar = orderDim.variable.value
+  const orderPred = orderDim.property.value
+  const limit = viewQuery.result.limit ?? 20
+  const offset = viewQuery.result.offset ?? 0
+
+  const selectVars = resultDims.map((d: any) => `?${d.variable.value}`).join(' ')
+
+  const outerBlock = otherDims.length > 0
+    ? `  GRAPH <${sourceGraph}> {\n` +
+      otherDims.map((d: any) => `    ?${sourceVar} <${d.property.value}> ?${d.variable.value} .`).join('\n') +
+      '\n  }'
+    : ''
+
+  return `SELECT ${selectVars}\nWHERE {\n  {\n    SELECT ?${sourceVar} ?${orderVar}\n    WHERE {\n      GRAPH <${sourceGraph}> {\n        ?${sourceVar} <${orderPred}> ?${orderVar} .\n      }\n    }\n    ORDER BY ${orderDir}(?${orderVar})\n    LIMIT ${limit}\n    OFFSET ${offset}\n  }${outerBlock ? `\n${outerBlock}` : ''}\n}`
+}
+
+// Counts all observations via the first result dimension — equivalent to a full scan count
+// but much simpler for GraphDB to execute (single GRAPH + predicate lookup).
+export function buildOptimizedCountQuery(viewQuery: any): string {
+  const src = viewQuery.sources.array[0]
+  const resultDims: any[] = viewQuery.dimensions.array.filter((d: any) => d.isResult)
+
+  const orderDim = resultDims[0]
+  const sourceGraph = src.graph.value
+  const sourceVar = src.variable.value
+  const orderDimVar = orderDim.variable.value
+  const orderDimPred = orderDim.property.value
+
+  return `SELECT (COUNT(?${sourceVar}) AS ?count)\nWHERE {\n  GRAPH <${sourceGraph}> {\n    ?${sourceVar} <${orderDimPred}> ?${orderDimVar} .\n  }\n}`
+}
+
+export function mapObservationRows(rows: any[], viewQuery: any): Record<string, Term>[] {
+  const columns: [any, any][] = viewQuery.dimensions.array
+    .filter((d: any) => d.isResult)
+    .map((d: any) => [d.variable, d.property])
+
+  return rows.map((row: any) => {
+    const output: Record<string, Term> = {}
+    for (const [variable, property] of columns) {
+      if (row[variable.value]) {
+        output[property.value] = row[variable.value]
+      }
+    }
+    return output
+  })
+}
+
 export function createHydraCollection({ templateParams, template, observations, totalItems, pageSize }: HydraCollectionParams): Collection {
   const collectionId = template.expand(
     clownface({ dataset: $rdf.dataset() }).blankNode()
