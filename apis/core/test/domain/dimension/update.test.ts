@@ -6,7 +6,7 @@ import $rdf from 'rdf-ext'
 import sinon from 'sinon'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 import { prov, rdf, schema, sh, qudt, time } from '@tpluscode/rdf-ns-builders'
-import { cc, meta } from '@cube-creator/core/namespace'
+import { cc, meta, md } from '@cube-creator/core/namespace'
 import { ex } from '@cube-creator/testing/lib/namespace'
 import { namedNode } from '@cube-creator/testing/clownface'
 import { update } from '../../../lib/domain/dimension/update'
@@ -211,6 +211,81 @@ describe('domain/dimension/update', function () {
         hasValue: ex.stationMappingResource,
       }],
     })
+  })
+
+  it('normalizes hierarchy proxy URL to canonical IRI in schema:isBasedOn', async () => {
+    // given
+    const canonicalIri = 'https://ld.admin.ch/cube/dimension/hierarchy/my-hierarchy'
+    const proxyUrl = `https://cube-creator.lindas.admin.ch/dimension/_hierarchy/proxy?id=${encodeURIComponent(canonicalIri)}`
+    const dimensionMetadata = clownface({ dataset: $rdf.dataset() })
+      .namedNode('dimension/pollutant')
+      .addOut(schema.about, ex.pollutantDimension)
+      .addOut(meta.inHierarchy, inHierarchy => {
+        inHierarchy.addOut(schema.isBasedOn, $rdf.namedNode(proxyUrl))
+      })
+
+    // when
+    const updated = await update({
+      store,
+      metadataCollection: metadataCollection.term,
+      dimensionMetadata,
+    })
+
+    // then
+    const isBasedOn = updated.out(meta.inHierarchy).out(schema.isBasedOn).value
+    expect(isBasedOn).to.eq(canonicalIri)
+  })
+
+  it('normalizes direct managed-dimensions hierarchy IRIs to canonical IRIs', async () => {
+    // given
+    const directIri = 'https://cube-creator.lindas.admin.ch/dimension/hierarchy/my-hierarchy'
+    const dimensionMetadata = clownface({ dataset: $rdf.dataset() })
+      .namedNode('dimension/pollutant')
+      .addOut(schema.about, ex.pollutantDimension)
+      .addOut(meta.inHierarchy, inHierarchy => {
+        inHierarchy.addOut(schema.isBasedOn, $rdf.namedNode(directIri))
+      })
+
+    // when
+    const updated = await update({
+      store,
+      metadataCollection: metadataCollection.term,
+      dimensionMetadata,
+    })
+
+    // then
+    const isBasedOn = updated.out(meta.inHierarchy).out(schema.isBasedOn).value
+    expect(isBasedOn).to.eq('https://ld.admin.ch/cube/dimension/hierarchy/my-hierarchy')
+  })
+
+  it('normalizes copied hierarchy references throughout the hierarchy subgraph', async () => {
+    // given
+    const dimensionMetadata = clownface({ dataset: $rdf.dataset() })
+      .namedNode('dimension/pollutant')
+      .addOut(schema.about, ex.pollutantDimension)
+      .addOut(meta.inHierarchy, inHierarchy => {
+        inHierarchy
+          .addOut(schema.isBasedOn, $rdf.namedNode('https://cube-creator.lindas.admin.ch/dimension/hierarchy/my-hierarchy'))
+          .addOut(md.sharedDimension, $rdf.namedNode('https://cube-creator.lindas.admin.ch/dimension/my-dimension'))
+          .addOut(meta.hierarchyRoot, $rdf.namedNode('https://cube-creator.lindas.admin.ch/dimension/my-dimension/root'))
+          .addOut(meta.nextInHierarchy, nextInHierarchy => {
+            nextInHierarchy.addOut(sh.path, $rdf.namedNode('https://cube-creator.lindas.admin.ch/dimension/my-dimension/child'))
+          })
+      })
+
+    // when
+    const updated = await update({
+      store,
+      metadataCollection: metadataCollection.term,
+      dimensionMetadata,
+    })
+
+    // then
+    const hierarchy = updated.out(meta.inHierarchy)
+    expect(hierarchy.out(schema.isBasedOn).value).to.eq('https://ld.admin.ch/cube/dimension/hierarchy/my-hierarchy')
+    expect(hierarchy.out(md.sharedDimension).value).to.eq('https://ld.admin.ch/cube/dimension/my-dimension')
+    expect(hierarchy.out(meta.hierarchyRoot).value).to.eq('https://ld.admin.ch/cube/dimension/my-dimension/root')
+    expect(hierarchy.out(meta.nextInHierarchy).out(sh.path).value).to.eq('https://ld.admin.ch/cube/dimension/my-dimension/child')
   })
 
   it('replaces child blank nodes recursively', async () => {
