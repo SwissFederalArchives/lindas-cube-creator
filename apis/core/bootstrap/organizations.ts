@@ -139,6 +139,23 @@ export const organizations = turtle`
     ${cube.observedBy} <https://ld.admin.ch/office/VII.1.3> ;
   .
 }
+
+<organization/fot> {
+  <organization/fot>
+    a ${schema.Organization} ;
+    ${cc.publishGraph}  <https://lindas.admin.ch/fot/cube> ;
+    ${cc.namespace} <https://transport.ld.admin.ch/fot/> ;
+    ${schema.dataset} <https://transport.ld.admin.ch/.well-known/void> ;
+    ${rdfs.label} "Federal Office of Transport"@en ;
+    ${rdfs.label} "Bundesamt für Verkehr"@de ;
+    ${rdfs.label} "Ufficio federale dei trasporti"@it ;
+    ${rdfs.label} "Office fédéral des transports"@fr ;
+    ${dcat.accessURL} <https://transport.ld.admin.ch/sparql> ;
+    ${_void.sparqlEndpoint} <https://transport.ld.admin.ch/query> ;
+    ${cube.observedBy} <https://ld.admin.ch/office/VII.1.2> ;
+  .
+}
+
 <organization/fatc> {
   <organization/fatc>
     a ${schema.Organization} ;
