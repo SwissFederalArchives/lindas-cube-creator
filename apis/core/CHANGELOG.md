@@ -1,5 +1,11 @@
 # @cube-creator/core-api
 
+## 4.3.0
+
+### Minor Changes
+
+- 69b0e59: Added BAV publication profile
+
 ## 4.2.1
 
 ### Patch Changes
