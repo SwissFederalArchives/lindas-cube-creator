@@ -9,11 +9,22 @@ runs:
         cache: "yarn"
     - run: yarn install --immutable
       shell: bash
-    - name: Start site
-      uses: tpluscode/action-setup-lando@v0.1.5
+    - name: Install Lando
+      uses: lando/setup-lando@v3
       with:
-        version: v3.11.0
-        healthcheck: https://cube-creator.lndo.site/ping
-        timeout: 90000
+        lando-version: 3.26.9
+        config-file: .github/lando-ci.yml
+    - name: Start site
+      run: |
+        if ! timeout 10m lando start -vvv; then
+          echo "::warning::Lando failed to start; retrying once"
+          timeout 10m lando start -vvv
+        fi
+      shell: bash
       env:
         DOCKER_BUILDKIT: "1"
+    - name: Wait for site
+      run: |
+        timeout 90s bash -c \
+          'until curl --fail --silent --insecure https://cube-creator.lndo.site/ping; do sleep 2; done'
+      shell: bash

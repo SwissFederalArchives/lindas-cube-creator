@@ -5,9 +5,10 @@ env_file:
 services:
   core:
     type: node:custom
-    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w apis --verbose --ext ts,ttl,js,trig --ignore **/*.test.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register apis/core/index.ts
+    command: install -d -o node -g node /var/www/.npm-global /var/www/.npm-global/lib && npx nodemon -w packages -w apis --verbose --ext ts,ttl,js,trig --ignore **/*.test.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register apis/core/index.ts
     port: 45670
     ssl: true
+    sslExpose: false
     scanner: false
     overrides:
       image: node:18
@@ -19,10 +20,13 @@ services:
       depends_on:
         store:
           condition: service_healthy
+        s3-init:
+          condition: service_healthy
   ui:
     type: node:custom
     command: (cd ui; yarn serve --public app.cube-creator.lndo.site --hostname 0.0.0.0 --port 80)
     ssl: true
+    sslExpose: false
     overrides:
       image: node:18
       environment:
@@ -30,8 +34,9 @@ services:
   store:
     type: compose
     ssl: true
+    sslExpose: false
     build_as_root:
-      - /opt/java-minimal/bin/keytool -importcert -trustcacerts -noprompt -storepass changeit -cacerts -file /usr/share/ca-certificates/lndo.site.pem -alias LandoCert
+      - /opt/java-minimal/bin/keytool -importcert -trustcacerts -noprompt -storepass changeit -cacerts -file /lando/certs/LandoCA.crt -alias LandoCert
     services:
       image: ghcr.io/zazuko/fuseki-geosparql:v2.0.3
       command: /opt/fuseki/entrypoint.sh
@@ -57,6 +62,7 @@ services:
     type: compose
     app_mount: false
     ssl: true
+    sslExpose: false
     scanner: false
     services:
       image: ghcr.io/zazuko/trifid:v2
@@ -66,19 +72,57 @@ services:
         DEBUG: "trifid*"
   s3:
     type: compose
+    app_mount: false
     ssl: true
+    sslExpose: false
     scanner: false
+    overrides:
+      entrypoint: /usr/bin/docker-entrypoint.sh
     services:
-      image: minio/minio:RELEASE.2020-12-03T05-49-24Z
-      command: usr/bin/docker-entrypoint.sh server /data
+      image: quay.io/minio/minio:RELEASE.2023-09-30T07-02-29Z
+      command: server /data
       environment:
-        MINIO_ACCESS_KEY: minio
-        MINIO_SECRET_KEY: password
+        MINIO_ROOT_USER: minio
+        MINIO_ROOT_PASSWORD: password
       volumes:
-        - ./minio:/data/
+        - minio-data:/data
+        - ./docker/minio/update-ca-certificates:/usr/local/bin/update-ca-certificates:ro
+      healthcheck:
+        test: ["CMD", "mc", "ready", "local"]
+        interval: 2s
+        timeout: 2s
+        retries: 30
+      networks:
+        - default
+        - landonet
+    networks:
+      landonet:
+        name: lando_bridge_network
+        external: true
+    volumes:
+      minio-data:
+  s3-init:
+    type: compose
+    app_mount: false
+    scanner: false
+    overrides:
+      entrypoint: /bin/sh
+    services:
+      image: quay.io/minio/mc:RELEASE.2023-09-29T16-41-22Z
+      command: -c 'until mc alias set local http://s3:9000 minio password; do sleep 2; done; mc mb --ignore-existing local/cube-creator; mc mirror --overwrite /fixtures local/cube-creator; touch /tmp/ready; exec tail -f /dev/null'
+      depends_on:
+        s3:
+          condition: service_healthy
+      volumes:
+        - ./minio/cube-creator:/fixtures:ro
+      healthcheck:
+        test: ["CMD-SHELL", "test -f /tmp/ready"]
+        interval: 2s
+        timeout: 2s
+        retries: 30
   pipeline:
     type: node:custom
-    command: mkdir -p /var/www/.npm-global/lib && npx nodemon -w packages -w cli --verbose --ext ts,ttl,js,trig --ignore **/*.spec.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register cli/server.ts
+    command: install -d -o node -g node /var/www/.npm-global /var/www/.npm-global/lib && npx nodemon -w packages -w cli --verbose --ext ts,ttl,js,trig --ignore **/*.spec.ts --ignore **/*.spec-graphs.ts --exec node -r ts-node/register cli/server.ts
     port: 80
     scanner: false
     overrides:
