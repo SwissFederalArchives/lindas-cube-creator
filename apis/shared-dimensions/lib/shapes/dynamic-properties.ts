@@ -86,7 +86,7 @@ const dynamicPropertiesFromStore: DynamicPropertiesQuery = async function (targe
 
     # Stable, dimension-scoped property shape IRI (prevents cross-dimension collisions).
     BIND(IRI(CONCAT("urn:property:", ENCODE_FOR_URI(str(${targetClass})), ":", ENCODE_FOR_URI(str(?predicate)))) as ?shProperty)
-    BIND (CONCAT("${env.MANAGED_DIMENSIONS_API_BASE}", "dimension/_terms?dimension=", ENCODE_FOR_URI(STR(?predicate)), "{&q}") as ?collectionSearch)
+    BIND (CONCAT("${env.MANAGED_DIMENSIONS_API_BASE}", "dimension/_terms?dimension=", ENCODE_FOR_URI(STR(?termSet)), "{&q}") as ?collectionSearch)
   `.execute(parsingClient.query)
 
   const quads = await Promise.all([basicProperties, collectionSearchTemplates])

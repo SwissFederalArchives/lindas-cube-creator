@@ -9,6 +9,7 @@ import { hydra, qb, rdfs, schema, sh, xsd } from '@tpluscode/rdf-ns-builders/str
 import { expect } from 'chai'
 import { toRdf } from 'rdf-literal'
 import { DynamicPropertiesQuery, loadDynamicTermProperties } from '../../../lib/shapes/dynamic-properties'
+import env from '../../../lib/env'
 
 describe('@cube-creator/shared-dimensions-api/lib/shapes/dynamic-properties @SPARQL', () => {
   let shape: GraphPointer<NamedNode>
@@ -122,6 +123,22 @@ describe('@cube-creator/shared-dimensions-api/lib/shapes/dynamic-properties @SPA
         maxCount: 0,
       }],
     })
+
+    const searchTemplate = colorProp.out(hydra.search).out(hydra.template)
+    expect(searchTemplate.value).to.eq(`${env.MANAGED_DIMENSIONS_API_BASE}dimension/_terms?dimension=http%3A%2F%2Fexample.com%2Fdimension%2Fcolors{&q}`)
+  })
+
+  it('uses a dimension-scoped identifier for the generated property shape', async () => {
+    // when
+    const dynamicProperties = clownface({
+      dataset: $rdf.dataset([
+        ...await loadDynamicTermProperties(targetClass, shape),
+      ]),
+    })
+
+    // then
+    const colorProp = dynamicProperties.has(sh.path, schema.color)
+    expect(colorProp.value).to.eq('urn:property:https%3A%2F%2Fld.admin.ch%2Fcube%2Fdimension%2Ftechnologies:http%3A%2F%2Fschema.org%2Fcolor')
   })
 
   it('populates sh:languageIn as list from queried values', async () => {
