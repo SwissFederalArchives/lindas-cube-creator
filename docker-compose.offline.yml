@@ -131,7 +131,7 @@ services:
       - ./fuseki/config.ttl:/fuseki/config.ttl:ro
 
   minio:
-    image: minio/minio:latest
+    image: quay.io/minio/minio:RELEASE.2023-09-30T07-02-29Z
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -149,7 +149,7 @@ services:
       - minio-data:/data
 
   minio-init:
-    image: minio/mc:latest
+    image: quay.io/minio/mc:RELEASE.2023-09-29T16-41-22Z
     depends_on:
       minio:
         condition: service_healthy

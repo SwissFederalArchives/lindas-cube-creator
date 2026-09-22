@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+mkdir -p /etc/pki/ca-trust/source/anchors
+
+for directory in /usr/local/share/ca-certificates /usr/share/ca-certificates; do
+  [ -d "$directory" ] || continue
+  for certificate in "$directory"/*; do
+    [ -f "$certificate" ] || continue
+    cp -f "$certificate" /etc/pki/ca-trust/source/anchors/
+  done
+done
+
+update-ca-trust extract
