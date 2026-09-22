@@ -1,5 +1,11 @@
 # @cube-creator/shared-dimensions-api
 
+## 4.2.2
+
+### Patch Changes
+
+- 2dfc031: Fix dynamic Shared Term autocomplete to query the configured shared dimension and update nanoid to a patched release.
+
 ## 4.2.1
 
 ### Patch Changes
