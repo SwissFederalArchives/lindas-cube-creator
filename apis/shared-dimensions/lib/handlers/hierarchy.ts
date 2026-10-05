@@ -14,20 +14,21 @@ import shapeToQuery from '../shapeToQuery'
 import { loadShapes } from '../store/shapes'
 import { parsingClient } from '../sparql'
 
+// Roots identify resources in the public query endpoint, not API resources.
+const noRewriteRoots: ShouldRewrite = (quad: Quad) => {
+  if (quad.predicate.equals(meta.hierarchyRoot)) {
+    return {
+      object: false,
+    }
+  }
+
+  return true
+}
+
 export const get = asyncMiddleware(async (req, res) => {
   const hierarchy: any = await req.hydra.resource.clownface()
 
   ensureEndpoint(hierarchy)
-
-  const noRewriteRoots: ShouldRewrite = (quad: Quad) => {
-    if (quad.predicate.equals(meta.hierarchyRoot)) {
-      return {
-        object: false,
-      }
-    }
-
-    return true
-  }
 
   res.locals.noRewrite = noRewriteRoots
 
@@ -60,6 +61,7 @@ export const getExternal = asyncMiddleware(async (req, res) => {
   }).namedNode(url)
   ensureEndpoint(hierarchy)
 
+  res.locals.noRewrite = noRewriteRoots
   res.setLink(url, 'canonical')
   return res.dataset(hierarchy.dataset)
 })
