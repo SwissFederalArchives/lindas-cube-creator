@@ -1,5 +1,11 @@
 # @cube-creator/shared-dimensions-api
 
+## 4.2.3
+
+### Patch Changes
+
+- 35c3325: Preserve canonical hierarchy roots in proxy responses so saved hierarchies correctly display their children.
+
 ## 4.2.2
 
 ### Patch Changes
