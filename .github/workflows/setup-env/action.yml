@@ -16,10 +16,25 @@ runs:
         config-file: .github/lando-ci.yml
     - name: Start site
       run: |
-        if ! timeout 10m lando start -vvv; then
-          echo "::warning::Lando failed to start; retrying once"
-          timeout 10m lando start -vvv
-        fi
+        for attempt in 1 2; do
+          if timeout 10m lando start -vvv; then
+            exit 0
+          fi
+
+          echo "::group::Lando startup diagnostics (attempt ${attempt})"
+          docker ps -a --filter label=com.docker.compose.project=cubecreator || true
+          containers=$(docker ps -aq --filter label=com.docker.compose.project=cubecreator) || containers=""
+          for container in $containers; do
+            docker inspect --format '{{.Name}} status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} error={{.State.Error}} health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$container" || true
+            docker logs --timestamps --tail 100 "$container" || true
+          done
+          echo "::endgroup::"
+
+          if [ "$attempt" = 1 ]; then
+            echo "::warning::Lando failed to start; retrying once"
+          fi
+        done
+        exit 1
       shell: bash
       env:
         DOCKER_BUILDKIT: "1"
