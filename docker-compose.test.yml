@@ -15,7 +15,8 @@ services:
       retries: 15
 
   minio:
-    image: quay.io/minio/minio:RELEASE.2023-09-30T07-02-29Z
+    image: cgr.dev/chainguard/minio:latest-dev@sha256:f4420fd36b8ea52655addd4bf3458c16ce78af7d0ceb605cf25039b8488a63f4
+    user: root
     container_name: cc-test-minio
     command: server /data --console-address ":9001"
     environment:
@@ -31,7 +32,7 @@ services:
       retries: 10
 
   minio-init:
-    image: quay.io/minio/mc:RELEASE.2023-09-29T16-41-22Z
+    image: cgr.dev/chainguard/minio-client:latest-dev@sha256:7341127e324e0e8d7f399e199d0890564f5af9f5770e8b8956e2c620ed1d302d
     container_name: cc-test-minio-init
     depends_on:
       minio:

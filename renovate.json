@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.lando\\.yml$/",
+        "/^docker-compose\\.(test|e2e|offline)\\.yml$/"
+      ],
+      "matchStrings": [
+        "image:\\s+(?<depName>cgr\\.dev/chainguard/minio(?:-client)?):(?<currentValue>latest-dev)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "cgr.dev/chainguard/minio",
+        "cgr.dev/chainguard/minio-client"
+      ],
+      "groupName": "MinIO images",
+      "automerge": false,
+      "schedule": ["before 6am on monday"]
+    }
+  ]
+}
