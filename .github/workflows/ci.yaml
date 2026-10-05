@@ -96,7 +96,6 @@ jobs:
           path: ui/tests/e2e/screenshots/*
 
   pipeline:
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
