@@ -1,5 +1,11 @@
 # @cube-creator/core
 
+## 4.2.1
+
+### Patch Changes
+
+- 8bf4fb9: Update transitive Lodash dependencies to 4.17.23 to fix prototype pollution in unset and omit.
+
 ## 1.0.0
 
 ### Major Changes

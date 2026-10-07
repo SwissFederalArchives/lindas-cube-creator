@@ -1,10 +1,10 @@
 {
   "name": "@cube-creator/shared-dimensions-api",
-  "version": "4.2.3",
+  "version": "4.2.4",
   "private": true,
   "dependencies": {
-    "@cube-creator/api-errors": "4.2.0",
-    "@cube-creator/core": "4.2.0",
+    "@cube-creator/api-errors": "4.2.1",
+    "@cube-creator/core": "4.2.1",
     "@cube-creator/express": "4.2.0",
     "@cube-creator/sparql-query-logger": "1.0.0",
     "@hydrofoil/labyrinth": "^0.4.2",
@@ -48,7 +48,7 @@
     "through2": "^2.0.5"
   },
   "devDependencies": {
-    "@cube-creator/testing": "4.2.0",
+    "@cube-creator/testing": "4.2.1",
     "@types/camouflage-rewrite": "^1.2.0",
     "@types/clownface": "^1.2.6",
     "@types/parse-prefer-header": "^1.0.0",

@@ -1,5 +1,12 @@
 # @cube-creator/model
 
+## 4.2.1
+
+### Patch Changes
+
+- Updated dependencies [8bf4fb9]
+  - @cube-creator/core@4.2.1
+
 ## 0.2.1
 
 ### Patch Changes
