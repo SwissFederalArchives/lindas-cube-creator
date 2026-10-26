@@ -7,8 +7,8 @@ export const customFetch = async (url: any, options: any = {}): Promise<any> => 
   const headers = new FetchHeaders(options.headers)
 
   if (!headers.has('accept-encoding')) {
-    // Request gzip and deflate compression (node-fetch v2 supports these)
-    // Note: brotli (br) is not supported by node-fetch v2, only by native fetch
+    // Prefer gzip/deflate. Servers can still send Brotli responses, which
+    // node-fetch v2 decodes; the Node runtime must have a patched Brotli decoder.
     headers.set('accept-encoding', 'gzip, deflate')
   }
 
