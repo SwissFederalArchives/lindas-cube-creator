@@ -57,6 +57,7 @@
     "winston": "^3.3.3"
   },
   "mocha": {
+    "node-option": ["no-experimental-strip-types"],
     "extension": "ts",
     "recursive": true,
     "watch-files": [
