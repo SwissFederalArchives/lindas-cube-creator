@@ -1,5 +1,13 @@
 # @cube-creator/ui
 
+## 4.2.2
+
+### Patch Changes
+
+- 251979c: Update the UI build tooling's transitive fast-uri dependency from 3.1.8 to 3.1.9 to fix URI scheme spoofing, host confusion, relative-reference normalization, and suffix-reference scheme injection.
+- 30a22df: Override Mocha's pinned js-yaml dependency to 4.1.1 to fix prototype pollution when parsing YAML test configuration (CVE-2025-64718).
+- 49f4e98: Update the UI build tooling's postcss-selector-parser dependency from 6.0.9 to 6.1.5 to fix CPU exhaustion when parsing crafted CSS selectors (CVE-2026-104844).
+
 ## 4.2.1
 
 ### Patch Changes

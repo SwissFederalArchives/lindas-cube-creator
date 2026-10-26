@@ -1,5 +1,15 @@
 # @cube-creator/core-api
 
+## 4.3.4
+
+### Patch Changes
+
+- f41f3f2: Update body-parser from 1.20.3 to 1.20.9 and its request-parsing dependencies to address security issues, including CVE-2026-111181 and CVE-2026-12590. Invalid body-size limit configuration now throws instead of silently disabling limit enforcement.
+- 8697c15: Update Multer from 2.4.0 to 2.5.0 to address CVE-2026-113872 in multipart upload handling.
+- Updated dependencies [8697c15]
+  - @cube-creator/express@4.2.1
+  - @cube-creator/shared-dimensions-api@4.2.5
+
 ## 4.3.3
 
 ### Patch Changes
