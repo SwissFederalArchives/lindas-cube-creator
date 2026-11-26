@@ -33,6 +33,11 @@ jobs:
     if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      TERMDAT_ID: ${{ inputs.termdat_id }}
+      NAMESPACE: ${{ inputs.namespace }}
+      PUBLISH_GRAPH: ${{ inputs.publish_graph }}
+      OBSERVED_BY: ${{ inputs.observed_by }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,14 +47,19 @@ jobs:
           node-version-file: .nvmrc
       - name: Test generator
         run: node --test tools/propose-organization.test.mjs
-      - name: Generate profile from TERMDAT
+      - name: Validate inputs and prepare SPARQL bindings
         id: profile
-        run: node tools/propose-organization.mjs
-        env:
-          TERMDAT_ID: ${{ inputs.termdat_id }}
-          NAMESPACE: ${{ inputs.namespace }}
-          PUBLISH_GRAPH: ${{ inputs.publish_graph }}
-          OBSERVED_BY: ${{ inputs.observed_by }}
+        run: node tools/propose-organization.mjs --bindings > "$RUNNER_TEMP/organization-bindings.rq"
+      - name: Execute SPARQL CONSTRUCT on LINDAS
+        run: |
+          cat tools/propose-organization.rq "$RUNNER_TEMP/organization-bindings.rq" > "$RUNNER_TEMP/organization-query.rq"
+          curl --fail --silent --show-error --max-time 30 --get \
+            --header 'Accept: application/n-triples' \
+            --data-urlencode "query@$RUNNER_TEMP/organization-query.rq" \
+            --output "$RUNNER_TEMP/organization.nt" \
+            https://lindas.admin.ch/query
+      - name: Append profile to organizations.ts
+        run: node tools/propose-organization.mjs "$RUNNER_TEMP/organization.nt"
       - name: Create or update proposal PR
         uses: peter-evans/create-pull-request@v8
         with:

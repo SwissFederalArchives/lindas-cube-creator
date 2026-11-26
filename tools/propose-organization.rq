@@ -1,0 +1,23 @@
+PREFIX schema: <http://schema.org/>
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Supply the input IRIs using a standard VALUES clause after this query.
+# No template substitution is needed.
+CONSTRUCT {
+  <urn:cube-creator:publishing-profile> a schema:Organization ;
+    cc:publishGraph ?publishGraph ;
+    cc:namespace ?namespace ;
+    schema:dataset ?dataset ;
+    rdfs:label ?name ;
+    <http://www.w3.org/ns/dcat#accessURL> ?accessURL ;
+    <http://rdfs.org/ns/void#sparqlEndpoint> ?endpoint ;
+    <https://cube.link/observedBy> ?observer .
+} WHERE {
+  GRAPH <https://lindas.admin.ch/fch/termdat> {
+    ?entry a <https://schema.ld.admin.ch/Name>, <https://schema.ld.admin.ch/ValidatedEntry> ;
+      schema:name ?name .
+    FILTER NOT EXISTS { ?entry a <https://version.link/Deprecated> }
+    FILTER (LANG(?name) IN ("de", "fr", "it", "en", "rm"))
+  }
+}

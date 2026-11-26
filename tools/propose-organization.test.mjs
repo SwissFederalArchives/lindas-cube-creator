@@ -14,9 +14,10 @@ const inputs = {
 const triple = '<urn:cube-creator:publishing-profile> <http://www.w3.org/2000/01/rdf-schema#label> "Bundesamt für Gesundheit"@de .\n'
 
 test('appends CONSTRUCT output while preserving existing content and rejecting duplicate profiles', () => {
-  const { id, query } = prepare(source, inputs)
+  const { id, bindings } = prepare(source, inputs)
   assert.equal(id, 'foph')
-  assert.ok(query.includes('schema:dataset <https://example.org/.well-known/void>'))
+  assert.ok(bindings.includes('<https://example.org/health/foph/>'))
+  assert.ok(bindings.includes('<https://example.org/.well-known/void>'))
   const updated = appendProfile(source, triple, id)
   assert.ok(updated.startsWith(source.slice(0, source.lastIndexOf('`'))))
   assert.ok(updated.includes('<organization/foph> {'))

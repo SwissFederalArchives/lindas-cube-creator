@@ -28,27 +28,11 @@ export function prepare (source, inputs) {
   for (const value of [`<organization/${id}>`, `<${namespace}>`, `<${graph}>`, `<${observer}>`]) {
     if (source.includes(value)) throw new Error(`Publishing profile already uses ${value}`)
   }
-  const query = `PREFIX schema: <http://schema.org/>
-PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-CONSTRUCT {
-  ${subject} a schema:Organization ;
-    cc:publishGraph <${graph}> ;
-    cc:namespace <${namespace}> ;
-    schema:dataset <${url.origin}/.well-known/void> ;
-    rdfs:label ?name ;
-    <http://www.w3.org/ns/dcat#accessURL> <${url.origin}/sparql> ;
-    <http://rdfs.org/ns/void#sparqlEndpoint> <${url.origin}/query> ;
-    <https://cube.link/observedBy> <${observer}> .
-} WHERE {
-  GRAPH <https://lindas.admin.ch/fch/termdat> {
-    VALUES ?entry { <https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}> }
-    ?entry a <https://schema.ld.admin.ch/Name>, <https://schema.ld.admin.ch/ValidatedEntry> ; schema:name ?name .
-    FILTER NOT EXISTS { ?entry a <https://version.link/Deprecated> }
-    FILTER (LANG(?name) IN ("de", "fr", "it", "en", "rm"))
-  }
-}`
-  return { id, query }
+  const values = [
+    `https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}`, namespace, graph, observer,
+    `${url.origin}/.well-known/void`, `${url.origin}/sparql`, `${url.origin}/query`
+  ]
+  return { id, bindings: `VALUES (?entry ?namespace ?publishGraph ?observer ?dataset ?accessURL ?endpoint) { (${values.map(value => `<${value}>`).join(' ')}) }\n` }
 }
 
 export function appendProfile (source, triples, id) {
@@ -63,21 +47,19 @@ export function appendProfile (source, triples, id) {
 }
 
 async function main () {
-  const file = process.argv[2] || 'apis/core/bootstrap/organizations.ts'
+  const file = process.argv[3] || 'apis/core/bootstrap/organizations.ts'
   const source = await readFile(file, 'utf8')
-  const { id, query } = prepare(source, process.env)
-  const endpoint = new URL('https://lindas.admin.ch/query')
-  endpoint.searchParams.set('query', query)
-  const response = await fetch(endpoint, {
-    headers: { Accept: 'application/n-triples' },
-    signal: AbortSignal.timeout(30000)
-  })
-  if (!response.ok) throw new Error(`LINDAS query failed: HTTP ${response.status}`)
-  const updated = appendProfile(source, await response.text(), id)
+  const { id, bindings } = prepare(source, process.env)
+  if (process.argv[2] === '--bindings') {
+    process.stdout.write(bindings)
+    if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `profile_id=${id}\n`)
+    return
+  }
+  if (!process.argv[2]) throw new Error('Usage: node tools/propose-organization.mjs --bindings|triples.nt [organizations.ts]')
+  const updated = appendProfile(source, await readFile(process.argv[2], 'utf8'), id)
   const bodyPath = join(process.env.RUNNER_TEMP || tmpdir(), 'organization-proposal.md')
   await writeFile(bodyPath, `Add publishing profile \`${id}\` using [TERMDAT entry ${process.env.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${process.env.TERMDAT_ID}).\n\nThe profile was constructed from validated TERMDAT names on LINDAS production and the supplied publishing settings. Review the translations, organisation identity, graph permissions and public routing before merging.\n`)
   await writeFile(file, updated)
-  if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `profile_id=${id}\n`)
   console.log(`Generated ${id} in ${file}; PR description: ${bodyPath}`)
 }
 
