@@ -1,5 +1,13 @@
 # @cube-creator/cli
 
+## 4.2.3
+
+### Patch Changes
+
+- 7bd3a8f: Update the transitive Lodash dependency from 4.17.23 to 4.18.1 to fix prototype pollution and template import validation vulnerabilities, including fixes for modular builds used by transformation dependencies.
+- 9ba9eed: Update the transitive protobufjs dependency from 7.5.4 to 7.6.6 for parser and serialization fixes used by gRPC and OpenTelemetry.
+- b5f485a: Update qs for query parsing and serialization fixes: use 6.16.2 in Express and body-parser, 6.17.1 for consumers accepting compatible minor versions, and 6.5.5 for the Cypress request client.
+
 ## 4.2.2
 
 ### Patch Changes

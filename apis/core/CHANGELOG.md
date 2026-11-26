@@ -1,5 +1,16 @@
 # @cube-creator/core-api
 
+## 4.3.5
+
+### Patch Changes
+
+- 9b07b56: Update csv-parse from 5.5.6 to 7.0.2 for CSV parsing fixes, including protection against prototype replacement through column names. Preserve upload dialect detection, header trimming, BOM handling, and replacement-file validation.
+- 7bd3a8f: Update the transitive Lodash dependency from 4.17.23 to 4.18.1 to fix prototype pollution and template import validation vulnerabilities, including fixes for modular builds used by transformation dependencies.
+- b5f485a: Update qs for query parsing and serialization fixes: use 6.16.2 in Express and body-parser, 6.17.1 for consumers accepting compatible minor versions, and 6.5.5 for the Cypress request client.
+- Updated dependencies [7bd3a8f]
+- Updated dependencies [b5f485a]
+  - @cube-creator/shared-dimensions-api@4.2.6
+
 ## 4.3.4
 
 ### Patch Changes
