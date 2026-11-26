@@ -38,23 +38,21 @@ export function propose (source, bindings, inputs) {
     names.set(lang, term.value)
   }
   if (!names.size) throw new Error('TERMDAT entry has no supported language names')
-  const abbreviations = [...new Set(values(schema + 'alternateName')
-    .filter(term => term['xml:lang'] === 'en').map(term => term.value.toLowerCase()))]
-  const id = inputs.PROFILE_ID?.trim() || (abbreviations.length === 1 ? abbreviations[0] : '')
-  if (!/^[a-z][a-z0-9-]*$/.test(id)) {
-    throw new Error('Supply PROFILE_ID using lowercase letters, digits and hyphens; no usable English abbreviation found')
-  }
   const namespace = iri(inputs.NAMESPACE, 'NAMESPACE')
   if (!namespace.endsWith('/') && !namespace.endsWith('#')) {
     throw new Error('NAMESPACE must end with / or #')
+  }
+  const namespaceUrl = new URL(namespace)
+  const id = namespaceUrl.pathname.split('/').filter(Boolean).at(-1)
+  if (!/^[a-z][a-z0-9-]*$/.test(id || '')) {
+    throw new Error('The last NAMESPACE path segment must use lowercase letters, digits and hyphens')
   }
   const graph = iri(inputs.PUBLISH_GRAPH, 'PUBLISH_GRAPH')
   const observer = iri(inputs.OBSERVED_BY, 'OBSERVED_BY')
   if (observer.startsWith('https://register.ld.admin.ch/termdat/')) {
     throw new Error('OBSERVED_BY must identify the organisation, not its TERMDAT concept')
   }
-  const service = iri(inputs.SERVICE_BASE?.trim() || new URL(namespace).origin, 'SERVICE_BASE').replace(/\/+$/, '')
-  if (/[?#]/.test(service)) throw new Error('SERVICE_BASE cannot contain a query or fragment')
+  const service = namespaceUrl.origin
   for (const value of [`<organization/${id}>`, `<${namespace}>`, `<${graph}>`, `<${observer}>`]) {
     if (source.includes(value)) throw new Error(`Publishing profile already uses ${value}`)
   }

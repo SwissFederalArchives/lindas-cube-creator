@@ -19,11 +19,19 @@ on:
         description: 'Organisation IRI, not the TERMDAT concept (e.g. https://ld.admin.ch/office/II.1.6)'
         required: true
         type: string
-      profile_id:
-        description: 'Profile ID; defaults to lowercase English TERMDAT abbreviation'
+  workflow_call:
+    inputs:
+      termdat_id:
+        required: true
         type: string
-      service_base:
-        description: 'Public service base URL; defaults to namespace origin'
+      namespace:
+        required: true
+        type: string
+      publish_graph:
+        required: true
+        type: string
+      observed_by:
+        required: true
         type: string
 
 permissions:
@@ -31,17 +39,19 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: propose-organization
+  group: propose-organization-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   propose:
+    # Reusable entry point must also originate from a manual dispatch.
+    if: github.event_name == 'workflow_dispatch' && github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -55,12 +65,11 @@ jobs:
           NAMESPACE: ${{ inputs.namespace }}
           PUBLISH_GRAPH: ${{ inputs.publish_graph }}
           OBSERVED_BY: ${{ inputs.observed_by }}
-          PROFILE_ID: ${{ inputs.profile_id }}
-          SERVICE_BASE: ${{ inputs.service_base }}
       - name: Create or update proposal PR
         uses: peter-evans/create-pull-request@v8
         with:
-          branch: propose-organization/${{ steps.profile.outputs.profile_id }}
+          base: ${{ github.ref_name }}
+          branch: propose-organization/${{ github.ref_name }}/${{ steps.profile.outputs.profile_id }}
           title: 'Add publishing profile: ${{ steps.profile.outputs.profile_id }}'
           commit-message: 'Add publishing profile: ${{ steps.profile.outputs.profile_id }}'
           body-path: ${{ runner.temp }}/organization-proposal.md

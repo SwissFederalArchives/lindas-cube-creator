@@ -32,10 +32,10 @@ test('copies names, derives defaults, and preserves existing profiles', () => {
   assert.ok(result.body.includes('/entry/3076'))
 })
 
-test('supports explicit profile and service base overrides', () => {
-  const result = propose(source, bindings, { ...inputs, PROFILE_ID: 'bag', SERVICE_BASE: 'https://example.org/public/' })
+test('derives the profile ID and service base from the namespace', () => {
+  const result = propose(source, bindings, { ...inputs, NAMESPACE: 'https://example.org/health/bag/' })
   assert.equal(result.id, 'bag')
-  assert.ok(result.source.includes('<https://example.org/public/.well-known/void>'))
+  assert.ok(result.source.includes('<https://example.org/.well-known/void>'))
 })
 
 test('rejects missing, unvalidated, deprecated and ambiguous entries', () => {
@@ -46,15 +46,14 @@ test('rejects missing, unvalidated, deprecated and ambiguous entries', () => {
   assert.throws(() => propose(source, bindings.filter(row => row.p.value !== 'http://schema.org/name'), inputs), /no supported/)
 })
 
-test('requires an override when the English abbreviation is missing', () => {
+test('does not require an English abbreviation', () => {
   const noAbbreviation = bindings.filter(row => row.p.value !== 'http://schema.org/alternateName')
-  assert.throws(() => propose(source, noAbbreviation, inputs), /PROFILE_ID/)
-  assert.equal(propose(source, noAbbreviation, { ...inputs, PROFILE_ID: 'bag' }).id, 'bag')
+  assert.equal(propose(source, noAbbreviation, inputs).id, 'foph')
 })
 
 test('rejects duplicate profile IDs, namespaces, graphs and observers', () => {
   for (const override of [
-    { PROFILE_ID: 'bafu' },
+    { NAMESPACE: 'https://example.org/bafu/' },
     { NAMESPACE: 'https://environment.ld.admin.ch/foen/' },
     { PUBLISH_GRAPH: 'https://lindas.admin.ch/foen/cube' },
     { OBSERVED_BY: 'https://ld.admin.ch/office/VII.1.7' }
@@ -63,11 +62,12 @@ test('rejects duplicate profile IDs, namespaces, graphs and observers', () => {
 
 test('rejects invalid identifiers, template injection and concept observers', () => {
   for (const override of [
-    { PROFILE_ID: '../bad' },
+    { NAMESPACE: 'https://example.org/Bad/' },
+    { NAMESPACE: 'https://example.org/' },
     { NAMESPACE: 'https://example.org/no-delimiter' },
     { PUBLISH_GRAPH: 'https://example.org/${bad}' },
     { OBSERVED_BY: 'https://register.ld.admin.ch/termdat/3076' },
-    { SERVICE_BASE: 'https://example.org/?query' }
+    { NAMESPACE: 'https://example.org/${bad}/' }
   ]) assert.throws(() => propose(source, bindings, { ...inputs, ...override }))
 })
 
