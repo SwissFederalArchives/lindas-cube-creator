@@ -29,10 +29,13 @@ verify the organisation identity. Publishing settings must already be agreed.
 The service base generates `/sparql`, `/query` and `/.well-known/void` URLs using
 the same convention as existing profiles.
 
-The generator requires a validated, non-deprecated TERMDAT Name entry. It copies
-available German, French, Italian, English and Romansh names and reports missing
-languages in the PR. It rejects ambiguous names and duplicate profile IDs,
-namespaces, publishing graphs or observer IRIs. Re-running before merge
+The SPARQL `CONSTRUCT` query builds the complete profile from a validated,
+non-deprecated TERMDAT Name entry and the supplied publishing settings, including
+available German, French, Italian, English and Romansh names. LINDAS serializes
+the triples as N-Triples; the script wraps them in the organisation's named graph
+and appends them to the TypeScript template. No RDF parsing or literal serialization
+is needed in JavaScript. Duplicate profile IDs, namespaces, publishing graphs and
+observer IRIs are rejected. Re-running before merge
 regenerates the same `propose-organization/<selected_branch>/<profile_id>` PR;
 re-running after merge fails with the duplicate profile message.
 
@@ -60,8 +63,8 @@ to create and approve pull requests**. The workflow uses the built-in
 `GITHUB_TOKEN` with `contents: write` and `pull-requests: write`. Reviewers may need
 to approve CI runs on bot-created PRs, depending on GitHub policy.
 
-The PR includes the source entry, modification date, language coverage and chosen
-publishing settings. Review these before merging. Graph permissions, public
+The PR links the source entry and contains the generated profile. Review its
+translations and publishing settings before merging. Graph permissions, public
 routing and deployment of the bootstrap configuration remain separate operations.
 
 To test locally without modifying the real profiles:

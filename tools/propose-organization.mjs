@@ -3,7 +3,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-const languages = ['de', 'fr', 'it', 'en', 'rm']
+const subject = '<urn:cube-creator:publishing-profile>'
+const closing = /\n`\s*$/
 
 function iri (value, field) {
   if (!value || /[\s<>"{}|^`\\$]/u.test(value) || !/^https?:\/\//.test(value)) {
@@ -13,95 +14,71 @@ function iri (value, field) {
   return value
 }
 
-// Escape both the RDF literal and the enclosing TypeScript template literal.
-function literal (value) {
-  return JSON.stringify(value).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
-}
-
-export function propose (source, bindings, inputs) {
-  const names = new Map()
-  for (const { name } of bindings) {
-    const lang = name['xml:lang']
-    if (!languages.includes(lang)) continue
-    if (!name.value.trim() || (names.has(lang) && names.get(lang) !== name.value)) {
-      throw new Error(`Empty or ambiguous TERMDAT name for ${lang}`)
-    }
-    names.set(lang, name.value)
-  }
-  if (!names.size) throw new Error('No validated, non-deprecated TERMDAT names found in supported languages')
+export function prepare (source, inputs) {
+  if (!/^[1-9][0-9]*$/.test(inputs.TERMDAT_ID || '')) throw new Error('TERMDAT_ID must be a positive entry number')
   const namespace = iri(inputs.NAMESPACE, 'NAMESPACE')
-  if (!namespace.endsWith('/') && !namespace.endsWith('#')) {
-    throw new Error('NAMESPACE must end with / or #')
-  }
-  const namespaceUrl = new URL(namespace)
-  const id = namespaceUrl.pathname.split('/').filter(Boolean).at(-1)
-  if (!/^[a-z][a-z0-9-]*$/.test(id || '')) {
-    throw new Error('The last NAMESPACE path segment must use lowercase letters, digits and hyphens')
-  }
   const graph = iri(inputs.PUBLISH_GRAPH, 'PUBLISH_GRAPH')
   const observer = iri(inputs.OBSERVED_BY, 'OBSERVED_BY')
-  if (observer.startsWith('https://register.ld.admin.ch/termdat/')) {
-    throw new Error('OBSERVED_BY must identify the organisation, not its TERMDAT concept')
+  const url = new URL(namespace)
+  const id = url.pathname.split('/').filter(Boolean).at(-1)
+  if (!/[/#]$/.test(namespace) || !/^[a-z][a-z0-9-]*$/.test(id || '')) {
+    throw new Error('NAMESPACE must end in / or # and have a lowercase profile ID as its last path segment')
   }
-  const service = namespaceUrl.origin
+  if (observer.startsWith('https://register.ld.admin.ch/termdat/')) throw new Error('OBSERVED_BY must identify an organisation, not a TERMDAT concept')
   for (const value of [`<organization/${id}>`, `<${namespace}>`, `<${graph}>`, `<${observer}>`]) {
     if (source.includes(value)) throw new Error(`Publishing profile already uses ${value}`)
   }
-  if (!/\n`\s*$/.test(source)) throw new Error('Cannot find organizations template closing delimiter')
-  const labels = languages.filter(lang => names.has(lang))
-    .map(lang => `    \${rdfs.label} ${literal(names.get(lang))}@${lang} ;`).join('\n')
-  const block = `<organization/${id}> {
-  <organization/${id}>
-    a \${schema.Organization} ;
-    \${cc.publishGraph} <${graph}> ;
-    \${cc.namespace} <${namespace}> ;
-    \${schema.dataset} <${service}/.well-known/void> ;
-${labels}
-    \${dcat.accessURL} <${service}/sparql> ;
-    \${_void.sparqlEndpoint} <${service}/query> ;
-    \${cube.observedBy} <${observer}> ;
-  .
+  const query = `PREFIX schema: <http://schema.org/>
+PREFIX cc: <https://cube-creator.zazuko.com/vocab#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+CONSTRUCT {
+  ${subject} a schema:Organization ;
+    cc:publishGraph <${graph}> ;
+    cc:namespace <${namespace}> ;
+    schema:dataset <${url.origin}/.well-known/void> ;
+    rdfs:label ?name ;
+    <http://www.w3.org/ns/dcat#accessURL> <${url.origin}/sparql> ;
+    <http://rdfs.org/ns/void#sparqlEndpoint> <${url.origin}/query> ;
+    <https://cube.link/observedBy> <${observer}> .
+} WHERE {
+  GRAPH <https://lindas.admin.ch/fch/termdat> {
+    VALUES ?entry { <https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}> }
+    ?entry a <https://schema.ld.admin.ch/Name>, <https://schema.ld.admin.ch/ValidatedEntry> ; schema:name ?name .
+    FILTER NOT EXISTS { ?entry a <https://version.link/Deprecated> }
+    FILTER (LANG(?name) IN ("de", "fr", "it", "en", "rm"))
+  }
+}`
+  return { id, query }
 }
-`
-  const missing = languages.filter(lang => !names.has(lang))
-  const body = `Add publishing profile \`${id}\` using [TERMDAT entry ${inputs.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${inputs.TERMDAT_ID}) from LINDAS production.
 
-TERMDAT modification date: ${bindings[0]?.modified?.value || 'not provided'}.
-Missing languages: ${missing.join(', ') || 'none'}.
-
-Publishing settings are supplied by the operator. Review the generated profile,
-organisation identity, graph permissions and public routing before merging.
-`
-  return { id, source: source.replace(/\n`\s*$/, () => `\n${block}\n\`\n`), body }
+export function appendProfile (source, triples, id) {
+  if (!triples.trim()) throw new Error('No validated, non-deprecated TERMDAT names found in supported languages')
+  if (!closing.test(source)) throw new Error('Cannot find organizations template closing delimiter')
+  // Convert the temporary CONSTRUCT subject to the API-relative organisation IRI.
+  const relative = triples.trim().split('\n').sort().map(line => line.replace(subject + ' ', `<organization/${id}> `)).join('\n')
+  const block = `<organization/${id}> {\n${relative}\n}`
+  // RDF is already serialized by LINDAS; escape only the enclosing JS template.
+  const escaped = block.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
+  return source.replace(closing, () => `\n${escaped}\n\n\`\n`)
 }
 
 async function main () {
-  const inputs = process.env
-  if (!/^[1-9][0-9]*$/.test(inputs.TERMDAT_ID || '')) throw new Error('TERMDAT_ID must be a positive entry number')
+  const file = process.argv[2] || 'apis/core/bootstrap/organizations.ts'
+  const source = await readFile(file, 'utf8')
+  const { id, query } = prepare(source, process.env)
   const endpoint = new URL('https://lindas.admin.ch/query')
-  endpoint.searchParams.set('query', `PREFIX schema: <http://schema.org/>
-    PREFIX lindas: <https://schema.ld.admin.ch/>
-    SELECT ?name ?modified WHERE {
-      GRAPH <https://lindas.admin.ch/fch/termdat> {
-        VALUES ?entry { <https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}> }
-        ?entry a lindas:Name, lindas:ValidatedEntry ; schema:name ?name .
-        FILTER NOT EXISTS { ?entry a <https://version.link/Deprecated> }
-        OPTIONAL { ?entry schema:dateModified ?modified }
-      }
-    }`)
+  endpoint.searchParams.set('query', query)
   const response = await fetch(endpoint, {
-    headers: { Accept: 'application/sparql-results+json' },
+    headers: { Accept: 'application/n-triples' },
     signal: AbortSignal.timeout(30000)
   })
   if (!response.ok) throw new Error(`LINDAS query failed: HTTP ${response.status}`)
-  const { results: { bindings } } = await response.json()
-  const file = process.argv[2] || 'apis/core/bootstrap/organizations.ts'
-  const result = propose(await readFile(file, 'utf8'), bindings, inputs)
-  const bodyPath = join(inputs.RUNNER_TEMP || tmpdir(), 'organization-proposal.md')
-  await writeFile(bodyPath, result.body)
-  await writeFile(file, result.source)
-  if (inputs.GITHUB_OUTPUT) await appendFile(inputs.GITHUB_OUTPUT, `profile_id=${result.id}\n`)
-  console.log(`Generated ${result.id} in ${file}; PR description: ${bodyPath}`)
+  const updated = appendProfile(source, await response.text(), id)
+  const bodyPath = join(process.env.RUNNER_TEMP || tmpdir(), 'organization-proposal.md')
+  await writeFile(bodyPath, `Add publishing profile \`${id}\` using [TERMDAT entry ${process.env.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${process.env.TERMDAT_ID}).\n\nThe profile was constructed from validated TERMDAT names on LINDAS production and the supplied publishing settings. Review the translations, organisation identity, graph permissions and public routing before merging.\n`)
+  await writeFile(file, updated)
+  if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `profile_id=${id}\n`)
+  console.log(`Generated ${id} in ${file}; PR description: ${bodyPath}`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
