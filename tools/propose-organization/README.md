@@ -29,7 +29,7 @@ verify the organisation identity. Publishing settings must already be agreed.
 The service base generates `/sparql`, `/query` and `/.well-known/void` URLs using
 the same convention as existing profiles.
 
-The standalone [SPARQL CONSTRUCT query](../tools/propose-organization.rq) builds the complete profile from a validated,
+The standalone [SPARQL CONSTRUCT query](profile.rq) builds the complete profile from a validated,
 non-deprecated TERMDAT Name entry and the supplied publishing settings, including
 available German, French, Italian, English and Romansh names. LINDAS serializes
 the triples as N-Triples; the script wraps them in the organisation's named graph
@@ -73,20 +73,20 @@ routing and deployment of the bootstrap configuration remain separate operations
 To test locally without modifying the real profiles:
 
 ```bash
-node --test tools/propose-organization.test.mjs
+node --test tools/propose-organization/index.test.mjs
 cp apis/core/bootstrap/organizations.ts /tmp/proposed-organizations.ts
 export TERMDAT_ID=3076
 export NAMESPACE=https://health.ld.admin.ch/foph/
 export PUBLISH_GRAPH=https://lindas.admin.ch/foph/cube
 export OBSERVED_BY=https://ld.admin.ch/office/II.1.6
-node tools/propose-organization.mjs --bindings /tmp/proposed-organizations.ts > /tmp/organization-bindings.rq
-cat tools/propose-organization.rq /tmp/organization-bindings.rq > /tmp/organization-query.rq
+node tools/propose-organization/index.mjs --bindings /tmp/proposed-organizations.ts > /tmp/organization-bindings.rq
+cat tools/propose-organization/profile.rq /tmp/organization-bindings.rq > /tmp/organization-query.rq
 curl --fail --silent --show-error --max-time 30 --get \
   --header 'Accept: application/n-triples' \
   --data-urlencode query@/tmp/organization-query.rq \
   --output /tmp/organization.nt \
   https://lindas.admin.ch/query
-node tools/propose-organization.mjs /tmp/organization.nt /tmp/proposed-organizations.ts
+node tools/propose-organization/index.mjs /tmp/organization.nt /tmp/proposed-organizations.ts
 ```
 
 The local run also writes the PR description to

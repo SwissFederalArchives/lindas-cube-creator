@@ -55,7 +55,7 @@ async function main () {
     if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `profile_id=${id}\n`)
     return
   }
-  if (!process.argv[2]) throw new Error('Usage: node tools/propose-organization.mjs --bindings|triples.nt [organizations.ts]')
+  if (!process.argv[2]) throw new Error('Usage: node tools/propose-organization/index.mjs --bindings|triples.nt [organizations.ts]')
   const updated = appendProfile(source, await readFile(process.argv[2], 'utf8'), id)
   const bodyPath = join(process.env.RUNNER_TEMP || tmpdir(), 'organization-proposal.md')
   await writeFile(bodyPath, `Add publishing profile \`${id}\` using [TERMDAT entry ${process.env.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${process.env.TERMDAT_ID}).\n\nThe profile was constructed from validated TERMDAT names on LINDAS production and the supplied publishing settings. Review the translations, organisation identity, graph permissions and public routing before merging.\n`)

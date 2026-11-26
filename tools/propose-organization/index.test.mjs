@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { runInNewContext } from 'node:vm'
-import { prepare, appendProfile } from './propose-organization.mjs'
+import { prepare, appendProfile } from './index.mjs'
 
 const source = 'export const organizations = turtle`\n<organizations> {}\n`\n'
 const inputs = {
