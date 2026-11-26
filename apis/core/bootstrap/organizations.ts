@@ -207,4 +207,19 @@ export const organizations = turtle`
   .
 }
 
+<organization/foph> {
+<organization/foph> <http://rdfs.org/ns/void#sparqlEndpoint> <https://health.ld.admin.ch/query> .
+<organization/foph> <http://schema.org/dataset> <https://health.ld.admin.ch/.well-known/void> .
+<organization/foph> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://schema.org/Organization> .
+<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label> "Bundesamt für Gesundheit"@de .
+<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label> "Federal Office of Public Health"@en .
+<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label> "Office fédéral de la santé publique"@fr .
+<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label> "Ufficio federale della sanità pubblica"@it .
+<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label> "Uffizi federal da sanadad publica"@rm .
+<organization/foph> <http://www.w3.org/ns/dcat#accessURL> <https://health.ld.admin.ch/sparql> .
+<organization/foph> <https://cube-creator.zazuko.com/vocab#namespace> <https://health.ld.admin.ch/foph/> .
+<organization/foph> <https://cube-creator.zazuko.com/vocab#publishGraph> <https://lindas.admin.ch/foph/cube> .
+<organization/foph> <https://cube.link/observedBy> <https://ld.admin.ch/office/II.1.6> .
+}
+
 `
