@@ -3,9 +3,6 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-const schema = 'http://schema.org/'
-const lindas = 'https://schema.ld.admin.ch/'
-const type = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
 const languages = ['de', 'fr', 'it', 'en', 'rm']
 
 function iri (value, field) {
@@ -22,22 +19,16 @@ function literal (value) {
 }
 
 export function propose (source, bindings, inputs) {
-  const values = predicate => bindings.filter(row => row.p.value === predicate).map(row => row.o)
-  const types = values(type).map(term => term.value)
-  if (!types.includes(lindas + 'Name') || !types.includes(lindas + 'ValidatedEntry') ||
-      types.includes('https://version.link/Deprecated')) {
-    throw new Error('TERMDAT entry must be a validated, non-deprecated Name entry')
-  }
   const names = new Map()
-  for (const term of values(schema + 'name')) {
-    const lang = term['xml:lang']
+  for (const { name } of bindings) {
+    const lang = name['xml:lang']
     if (!languages.includes(lang)) continue
-    if (!term.value.trim() || (names.has(lang) && names.get(lang) !== term.value)) {
+    if (!name.value.trim() || (names.has(lang) && names.get(lang) !== name.value)) {
       throw new Error(`Empty or ambiguous TERMDAT name for ${lang}`)
     }
-    names.set(lang, term.value)
+    names.set(lang, name.value)
   }
-  if (!names.size) throw new Error('TERMDAT entry has no supported language names')
+  if (!names.size) throw new Error('No validated, non-deprecated TERMDAT names found in supported languages')
   const namespace = iri(inputs.NAMESPACE, 'NAMESPACE')
   if (!namespace.endsWith('/') && !namespace.endsWith('#')) {
     throw new Error('NAMESPACE must end with / or #')
@@ -73,21 +64,13 @@ ${labels}
 }
 `
   const missing = languages.filter(lang => !names.has(lang))
-  const body = `Add publishing profile \`${id}\` using [TERMDAT entry ${inputs.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${inputs.TERMDAT_ID}).
+  const body = `Add publishing profile \`${id}\` using [TERMDAT entry ${inputs.TERMDAT_ID}](https://www.termdat.bk.admin.ch/entry/${inputs.TERMDAT_ID}) from LINDAS production.
 
-Names copied from the validated entry in the LINDAS production graph \`https://lindas.admin.ch/fch/termdat\`.
-TERMDAT modification date: ${values(schema + 'dateModified')[0]?.value || 'not provided'}.
-Languages included: ${[...names.keys()].join(', ')}. Missing languages: ${missing.join(', ') || 'none'}.
+TERMDAT modification date: ${bindings[0]?.modified?.value || 'not provided'}.
+Missing languages: ${missing.join(', ') || 'none'}.
 
-| Publishing setting | Value |
-| --- | --- |
-| Namespace | ${namespace} |
-| Publishing graph | ${graph} |
-| Observed by | ${observer} |
-| Public service base | ${service} |
-
-Publishing settings were supplied by the operator; endpoints and dataset URL follow the existing profile convention.
-Review the organisation identity, graph permissions and public routing before merging. This proposal does not provision infrastructure.
+Publishing settings are supplied by the operator. Review the generated profile,
+organisation identity, graph permissions and public routing before merging.
 `
   return { id, source: source.replace(/\n`\s*$/, () => `\n${block}\n\`\n`), body }
 }
@@ -96,11 +79,16 @@ async function main () {
   const inputs = process.env
   if (!/^[1-9][0-9]*$/.test(inputs.TERMDAT_ID || '')) throw new Error('TERMDAT_ID must be a positive entry number')
   const endpoint = new URL('https://lindas.admin.ch/query')
-  endpoint.searchParams.set('query', `SELECT ?p ?o WHERE {
-    GRAPH <https://lindas.admin.ch/fch/termdat> {
-      <https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}> ?p ?o
-    }
-  }`)
+  endpoint.searchParams.set('query', `PREFIX schema: <http://schema.org/>
+    PREFIX lindas: <https://schema.ld.admin.ch/>
+    SELECT ?name ?modified WHERE {
+      GRAPH <https://lindas.admin.ch/fch/termdat> {
+        VALUES ?entry { <https://register.ld.admin.ch/termdat/${inputs.TERMDAT_ID}> }
+        ?entry a lindas:Name, lindas:ValidatedEntry ; schema:name ?name .
+        FILTER NOT EXISTS { ?entry a <https://version.link/Deprecated> }
+        OPTIONAL { ?entry schema:dateModified ?modified }
+      }
+    }`)
   const response = await fetch(endpoint, {
     headers: { Accept: 'application/sparql-results+json' },
     signal: AbortSignal.timeout(30000)

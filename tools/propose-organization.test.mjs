@@ -11,13 +11,10 @@ const inputs = {
   PUBLISH_GRAPH: 'https://lindas.admin.ch/foph/cube',
   OBSERVED_BY: 'https://ld.admin.ch/office/II.1.6'
 }
-const row = (p, value, lang) => ({ p: { value: p }, o: { value, 'xml:lang': lang } })
-const type = value => row('http://www.w3.org/1999/02/22-rdf-syntax-ns#type', value)
+const row = (value, lang) => ({ name: { value, 'xml:lang': lang } })
 const bindings = [
-  type('https://schema.ld.admin.ch/Name'),
-  type('https://schema.ld.admin.ch/ValidatedEntry'),
-  row('http://schema.org/name', 'Bundesamt für Gesundheit', 'de'),
-  row('http://schema.org/name', 'Federal Office of Public Health', 'en')
+  row('Bundesamt für Gesundheit', 'de'),
+  row('Federal Office of Public Health', 'en')
 ]
 
 test('adds names and derived publishing settings while preserving existing content', () => {
@@ -37,9 +34,7 @@ test('adds names and derived publishing settings while preserving existing conte
 
 test('rejects unusable entries and invalid publishing inputs', () => {
   assert.throws(() => propose(source, [], inputs), /validated/)
-  assert.throws(() => propose(source, bindings.filter(row => !row.o.value.endsWith('ValidatedEntry')), inputs), /validated/)
-  assert.throws(() => propose(source, [...bindings, type('https://version.link/Deprecated')], inputs), /validated/)
-  assert.throws(() => propose(source, [...bindings, row('http://schema.org/name', 'Another name', 'de')], inputs), /ambiguous/)
+  assert.throws(() => propose(source, [...bindings, row('Another name', 'de')], inputs), /ambiguous/)
   for (const override of [
     { NAMESPACE: 'https://example.org/Bad/' },
     { NAMESPACE: 'https://example.org/' },
@@ -51,7 +46,7 @@ test('rejects unusable entries and invalid publishing inputs', () => {
 
 test('preserves RDF escaping through the TypeScript template without evaluating names', () => {
   const name = 'Office "quoted" \\ newline\n tab\t ` ${throwIfExecuted()} $& $` $\' $$'
-  const result = propose(source, [...bindings, row('http://schema.org/name', name, 'fr')], inputs)
+  const result = propose(source, [...bindings, row(name, 'fr')], inputs)
   const label = result.source.split('\n').find(line => line.endsWith('@fr ;')).trim()
   const evaluated = runInNewContext('`' + label + '`', { rdfs: { label: 'label' } })
   assert.equal(evaluated, `label ${JSON.stringify(name)}@fr ;`)
