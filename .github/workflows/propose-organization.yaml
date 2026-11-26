@@ -1,0 +1,71 @@
+name: Propose organisation
+
+on:
+  workflow_dispatch:
+    inputs:
+      termdat_id:
+        description: 'TERMDAT entry number (e.g. 3076 for BAG/FOPH)'
+        required: true
+        type: string
+      namespace:
+        description: 'Cube namespace, including trailing slash (e.g. https://health.ld.admin.ch/foph/)'
+        required: true
+        type: string
+      publish_graph:
+        description: 'Publishing graph (e.g. https://lindas.admin.ch/foph/cube)'
+        required: true
+        type: string
+      observed_by:
+        description: 'Organisation IRI, not the TERMDAT concept (e.g. https://ld.admin.ch/office/II.1.6)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: propose-organization-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  propose:
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TERMDAT_ID: ${{ inputs.termdat_id }}
+      NAMESPACE: ${{ inputs.namespace }}
+      PUBLISH_GRAPH: ${{ inputs.publish_graph }}
+      OBSERVED_BY: ${{ inputs.observed_by }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Test generator
+        run: node --test tools/propose-organization/index.test.mjs
+      - name: Validate inputs and prepare SPARQL bindings
+        id: profile
+        run: node tools/propose-organization/index.mjs --bindings > "$RUNNER_TEMP/organization-bindings.rq"
+      - name: Execute SPARQL CONSTRUCT on LINDAS
+        run: |
+          cat tools/propose-organization/profile.rq "$RUNNER_TEMP/organization-bindings.rq" > "$RUNNER_TEMP/organization-query.rq"
+          curl --fail --silent --show-error --max-time 30 --get \
+            --header 'Accept: application/n-triples' \
+            --data-urlencode "query@$RUNNER_TEMP/organization-query.rq" \
+            --output "$RUNNER_TEMP/organization.nt" \
+            https://lindas.admin.ch/query
+      - name: Append profile to organizations.ts
+        run: node tools/propose-organization/index.mjs "$RUNNER_TEMP/organization.nt"
+      - name: Create or update proposal PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          base: ${{ github.ref_name }}
+          branch: propose-organization/${{ github.ref_name }}/${{ steps.profile.outputs.profile_id }}
+          title: 'Add publishing profile: ${{ steps.profile.outputs.profile_id }}'
+          commit-message: 'Add publishing profile: ${{ steps.profile.outputs.profile_id }}'
+          body-path: ${{ runner.temp }}/organization-proposal.md
+          add-paths: apis/core/bootstrap/organizations.ts
