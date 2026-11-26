@@ -21,7 +21,7 @@ test('appends CONSTRUCT output while preserving existing content and rejecting d
   const updated = appendProfile(source, triple, id)
   assert.ok(updated.startsWith(source.slice(0, source.lastIndexOf('`'))))
   assert.ok(updated.includes('<organization/foph> {'))
-  assert.ok(updated.includes('<organization/foph> <http://www.w3.org/2000/01/rdf-schema#label>'))
+  assert.ok(updated.includes('    ${rdfs.label} "Bundesamt für Gesundheit"@de ;'))
   assert.throws(() => prepare(updated, inputs), /already uses/)
 })
 
@@ -42,7 +42,8 @@ test('preserves serialized RDF through the JS template without evaluating names'
   const rdf = `<urn:cube-creator:publishing-profile> <http://www.w3.org/2000/01/rdf-schema#label> ${JSON.stringify(name)}@fr .\n`
   const updated = appendProfile(source, rdf, 'foph')
   const evaluated = runInNewContext(updated.replace('export const', 'const') + '\norganizations', {
-    turtle: strings => strings[0]
+    turtle: (strings, ...values) => strings.reduce((result, text, i) => result + text + (values[i] || ''), ''),
+    rdfs: { label: 'label' }
   })
-  assert.ok(evaluated.includes(`${JSON.stringify(name)}@fr .`))
+  assert.ok(evaluated.includes(`${JSON.stringify(name)}@fr ;`))
 })

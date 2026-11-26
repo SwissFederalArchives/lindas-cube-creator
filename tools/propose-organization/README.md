@@ -32,9 +32,10 @@ the same convention as existing profiles.
 The standalone [SPARQL CONSTRUCT query](profile.rq) builds the complete profile from a validated,
 non-deprecated TERMDAT Name entry and the supplied publishing settings, including
 available German, French, Italian, English and Romansh names. LINDAS serializes
-the triples as N-Triples; the script wraps them in the organisation's named graph
-and appends them to the TypeScript template. No RDF parsing or literal serialization
-is needed in JavaScript. The action executes the query with `curl`; input IRIs are
+the triples as N-Triples; the script formats them as a grouped Turtle block with
+the same namespace references and indentation as existing profiles, then appends
+the block to the TypeScript template. RDF literals remain serialized by LINDAS.
+The action executes the query with `curl`; input IRIs are
 supplied through a standard SPARQL `VALUES` clause, without template substitution.
 JavaScript validates those inputs and transforms the result into the TypeScript
 addition. Duplicate profile IDs, namespaces, publishing graphs and
