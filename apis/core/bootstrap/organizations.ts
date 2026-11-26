@@ -207,4 +207,21 @@ export const organizations = turtle`
   .
 }
 
+<organization/foph> {
+  <organization/foph>
+    a ${schema.Organization} ;
+    ${cc.publishGraph} <https://lindas.admin.ch/foph/cube> ;
+    ${cc.namespace} <https://health.ld.admin.ch/foph/> ;
+    ${schema.dataset} <https://health.ld.admin.ch/.well-known/void> ;
+    ${rdfs.label} "Bundesamt für Gesundheit"@de ;
+    ${rdfs.label} "Office fédéral de la santé publique"@fr ;
+    ${rdfs.label} "Ufficio federale della sanità pubblica"@it ;
+    ${rdfs.label} "Federal Office of Public Health"@en ;
+    ${rdfs.label} "Uffizi federal da sanadad publica"@rm ;
+    ${dcat.accessURL} <https://health.ld.admin.ch/sparql> ;
+    ${_void.sparqlEndpoint} <https://health.ld.admin.ch/query> ;
+    ${cube.observedBy} <https://ld.admin.ch/office/II.1.6> ;
+  .
+}
+
 `
