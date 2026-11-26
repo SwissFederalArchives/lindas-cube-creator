@@ -1,5 +1,13 @@
 # @cube-creator/ui
 
+## 4.2.3
+
+### Patch Changes
+
+- 7bd3a8f: Update the transitive Lodash dependency from 4.17.23 to 4.18.1 to fix prototype pollution and template import validation vulnerabilities, including fixes for modular builds used by transformation dependencies.
+- fa4fdcd: Update the transitive lodash-es dependency used by the color picker from 4.17.23 to 4.18.1, including fixes for prototype pollution, template validation, and modular builds.
+- 7d36085: Update Markdown-it from 12.3.2 to 14.3.3 for parser security and CommonMark fixes. Preserve custom link attributes; some Markdown edge cases render differently under the updated CommonMark rules.
+
 ## 4.2.2
 
 ### Patch Changes
