@@ -19,20 +19,6 @@ on:
         description: 'Organisation IRI, not the TERMDAT concept (e.g. https://ld.admin.ch/office/II.1.6)'
         required: true
         type: string
-  workflow_call:
-    inputs:
-      termdat_id:
-        required: true
-        type: string
-      namespace:
-        required: true
-        type: string
-      publish_graph:
-        required: true
-        type: string
-      observed_by:
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -44,8 +30,7 @@ concurrency:
 
 jobs:
   propose:
-    # Reusable entry point must also originate from a manual dispatch.
-    if: github.event_name == 'workflow_dispatch' && github.ref_type == 'branch'
+    if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

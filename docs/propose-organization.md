@@ -3,8 +3,8 @@
 The **Propose organisation** GitHub Actions workflow runs only via **Run workflow**
 (`workflow_dispatch`). It queries TERMDAT on LINDAS production and opens or updates
 a PR changing only `apis/core/bootstrap/organizations.ts`. It has no scheduled,
-push or pull-request trigger. It also exposes a reusable entry point, guarded to
-accept only manual dispatches. No LINDAS credentials or new dependencies are needed.
+push or pull-request trigger. Existing workflows are unchanged. No LINDAS
+credentials or new dependencies are needed.
 
 After the workflow is merged into the default branch, open **Actions → Propose
 organisation → Run workflow**. Select the branch to test; the workflow checks out
@@ -36,33 +36,24 @@ namespaces, publishing graphs or observer IRIs. Re-running before merge
 regenerates the same `propose-organization/<selected_branch>/<profile_id>` PR;
 re-running after merge fails with the duplicate profile message.
 
-## Testing before this workflow is merged
+GitHub requires the new manual workflow to be merged into the default branch
+before its **Run workflow** button is available. The local generator can be tested
+before merging, using the command below. Once merged, the equivalent CLI command
+for creating a proposal is:
 
-GitHub requires a new `workflow_dispatch` workflow to exist on the default branch
-before it can be dispatched. The existing **CI** workflow therefore has a manual
-`propose_organization` option that calls this workflow from the selected branch.
-It skips the regular CI jobs in this mode. Pushes and PR events continue running
-normal CI and never create an organisation proposal.
-
-To test this PR's code, dispatch the already-registered CI workflow using GitHub
-CLI (the branch version defines the new inputs):
-
-```sh
-gh workflow run ci.yaml --repo SwissFederalArchives/lindas-cube-creator \
-  --ref feat/manual-organization-proposals \
-  -f propose_organization=true \
+```bash
+gh workflow run propose-organization.yaml --repo SwissFederalArchives/lindas-cube-creator \
+  --ref master \
   -f termdat_id=3076 \
   -f namespace=https://health.ld.admin.ch/foph/ \
   -f publish_graph=https://lindas.admin.ch/foph/cube \
   -f observed_by=https://ld.admin.ch/office/II.1.6
 ```
 
-Watch the resulting run under **Actions → CI**. It should create a PR from
-`propose-organization/feat/manual-organization-proposals/foph` into
-`feat/manual-organization-proposals`, containing only the new organisation block.
-This keeps the test addition out of the implementation PR until explicitly merged.
-The branch is part of the proposal branch name so testing cannot update a proposal
-against a different base branch.
+Watch the resulting run under **Actions → Propose organisation**. It should create
+a PR from `propose-organization/master/foph` into `master`, containing only the new
+organisation block. The selected branch is part of the proposal branch name so
+testing cannot update a proposal against a different base branch.
 
 Enable **Settings → Actions → General → Workflow permissions → Allow GitHub Actions
 to create and approve pull requests**. The workflow uses the built-in

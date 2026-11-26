@@ -8,39 +8,9 @@ on:
     branches:
       - master
   workflow_dispatch:
-    inputs:
-      propose_organization:
-        description: 'Run only the organisation proposal workflow (also usable from a PR branch)'
-        type: boolean
-        default: false
-      termdat_id:
-        description: 'TERMDAT entry number (required for organisation proposals, e.g. 3076)'
-        type: string
-      namespace:
-        description: 'Cube namespace, e.g. https://health.ld.admin.ch/foph/'
-        type: string
-      publish_graph:
-        description: 'Publishing graph, e.g. https://lindas.admin.ch/foph/cube'
-        type: string
-      observed_by:
-        description: 'Organisation IRI, e.g. https://ld.admin.ch/office/II.1.6'
-        type: string
 
 jobs:
-  propose-organization:
-    if: github.event_name == 'workflow_dispatch' && inputs.propose_organization
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: ./.github/workflows/propose-organization.yaml
-    with:
-      termdat_id: ${{ inputs.termdat_id }}
-      namespace: ${{ inputs.namespace }}
-      publish_graph: ${{ inputs.publish_graph }}
-      observed_by: ${{ inputs.observed_by }}
-
   unit-test:
-    if: github.event_name != 'workflow_dispatch' || !inputs.propose_organization
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -68,7 +38,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
-    if: github.event_name != 'workflow_dispatch' || !inputs.propose_organization
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -83,7 +52,6 @@ jobs:
       - run: yarn workspace @cube-creator/ui lint
 
   e2e-tests:
-    if: github.event_name != 'workflow_dispatch' || !inputs.propose_organization
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     steps:
@@ -128,7 +96,6 @@ jobs:
           path: ui/tests/e2e/screenshots/*
 
   pipeline:
-    if: github.event_name != 'workflow_dispatch' || !inputs.propose_organization
     strategy:
       fail-fast: false
       matrix:
